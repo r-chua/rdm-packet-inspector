@@ -16,11 +16,23 @@
 export const normalizeHex = (input: string): Uint8Array => {
   const cleaned = input
     .trim()
+    .toLowerCase() // Normalize to lowercase
     .replace(/0x/g, '') // Remove '0x' prefixes
-    .replace(/[\s,]+/g, '') // Remove all whitespace and commas
-    .toLowerCase(); // Normalize to lowercase
+    .replace(/[\s,]+/g, ''); // Remove all whitespace and commas
+
+  if (cleaned.length % 2 !== 0) {
+    throw new Error(
+      `Invalid hex: odd length after cleaning. Incomplete byte detected in ` +
+        `input '${input}'`
+    );
+  }
 
   return new Uint8Array(
-    cleaned.match(/.{1,2}/g)?.map((byteStr) => parseInt(byteStr, 16)) || []
+    cleaned.match(/.{1,2}/g)?.map((byteStr) => {
+      if (!/^[0-9a-f]{2}$/.test(byteStr)) {
+        throw new Error(`Invalid hex byte: '${byteStr}' in input '${input}'`);
+      }
+      return parseInt(byteStr, 16);
+    }) || []
   );
 };

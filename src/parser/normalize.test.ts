@@ -35,6 +35,8 @@ test('normalizeHex parses hex string without spaces', () => {
 test('normalizeHex parses hex string with 0x prefixes', () => {
   const input = '0xCC 0x01 0x18';
   expect(normalizeHex(input)).toEqual(EXPECTED_CC_01_18);
+  const mixedInput = '0xCC 01 0X18';
+  expect(normalizeHex(mixedInput)).toEqual(EXPECTED_CC_01_18);
 });
 
 test('normalizeHex parses 0x prefixes without spaces', () => {
