@@ -25,5 +25,9 @@ describe('lookupPid', () => {
     expect(lowerBound.name).toBe(MANUFACTURER_DEFINED_NAME);
     const underLowerBound = lookupPid(0x7fff);
     expect(underLowerBound.name).toBe(DEFAULT_PID_NAME);
+    const upperBound = lookupPid(0xffdf);
+    expect(upperBound.name).toBe(MANUFACTURER_DEFINED_NAME);
+    const overUpperBound = lookupPid(0xffe0);
+    expect(overUpperBound.name).toBe(DEFAULT_PID_NAME);
   });
 });
