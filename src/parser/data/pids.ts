@@ -290,7 +290,8 @@ export function lookupPid(pid: number): ParameterId {
 
   return {
     pid,
-    name: pid >= 0x8000 ? 'MANUFACTURER_DEFINED' : 'UNKNOWN_PID',
+    name:
+      pid >= 0x8000 && pid <= 0xffdf ? 'MANUFACTURER_DEFINED' : 'UNKNOWN_PID',
     description: `PID 0x${pid.toString(16).padStart(4, '0').toUpperCase()}`,
   };
 }
