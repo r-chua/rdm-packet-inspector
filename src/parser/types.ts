@@ -47,12 +47,12 @@ type RdmPacketBase = {
   validChecksum: boolean;
 };
 
-type RdmCommandPacket = RdmPacketBase & {
+export type RdmCommandPacket = RdmPacketBase & {
   direction: 'command';
   portId: RdmField<number>;
 };
 
-type RdmResponsePacket = RdmPacketBase & {
+export type RdmResponsePacket = RdmPacketBase & {
   direction: 'response';
   responseType: RdmField<RdmResponseType>;
 };
