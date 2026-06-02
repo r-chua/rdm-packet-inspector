@@ -25,7 +25,7 @@ export type RdmField<T> = {
  * extended by specific command and response packet types to include additional
  * fields relevant to their direction.
  */
-type RdmPacketBase = {
+export type RdmPacketBase = {
   startCode: RdmField<number>;
   subStartCode: RdmField<number>;
   messageLength: RdmField<number>;
