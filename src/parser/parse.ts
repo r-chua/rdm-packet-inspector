@@ -9,6 +9,8 @@ import type { ParseResult, RdmField, RdmPacketBase } from './types';
  * spanning the specified length, applying a transformation function to convert
  * the raw bytes into a meaningful value.
  *
+ * Should not be called with a length of 0.
+ *
  * @param data - The byte array containing the field data
  * @param offset - The starting byte offset of the field within the data array
  * @param length - The number of bytes that make up the field
@@ -16,6 +18,7 @@ import type { ParseResult, RdmField, RdmPacketBase } from './types';
  *  returns a transformed value of type T
  * @returns An object containing the transformed value, the start and end byte
  *  offsets, and the raw bytes of the field
+ * @throws Error if the length is not greater than 0
  * @throws Error if the specified offset and length exceed the bounds of the
  *  data array
  *
@@ -35,6 +38,11 @@ const readField = <T>(
   length: number,
   transform: (bytes: Uint8Array) => T
 ): RdmField<T> => {
+  if (length <= 0) {
+    throw new Error(
+      `readField length must be greater than 0, but got ${length}`
+    );
+  }
   if (offset + length > data.length) {
     throw new Error(
       `Attempt to read beyond end of data: offset ${offset}, ` +
@@ -231,10 +239,10 @@ export const parseRdmPacket = (packet: string): ParseResult => {
 
     const parameterDataLength = reader.read(1, (bytes) => bytes[0]);
 
-    const parameterData = reader.read(
-      parameterDataLength.value,
-      (bytes) => bytes
-    );
+    const parameterData =
+      parameterDataLength.value > 0
+        ? reader.read(parameterDataLength.value, (bytes) => bytes)
+        : null;
 
     const checksum = reader.read(2, transformUint16);
 

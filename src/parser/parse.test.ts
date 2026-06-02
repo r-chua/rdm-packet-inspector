@@ -5,6 +5,7 @@ import type {
   RdmPacket,
   RdmCommandPacket,
   RdmResponsePacket,
+  RdmField,
 } from './types';
 
 /** Example RDM packet for getting device info */
