@@ -51,6 +51,14 @@ const expectResponse = (packet: RdmPacket): RdmResponsePacket => {
   return packet;
 };
 
+const expectBodyData = (packet: RdmPacket): RdmField<Uint8Array> => {
+  expect(packet.parameterData).not.toBeNull();
+  if (packet.parameterData === null) {
+    throw new Error(`Expected parameter data but got null`);
+  }
+  return packet.parameterData;
+};
+
 describe('parseRdmPacket', () => {
   describe('header fields', () => {
     it('parses the start code', () => {
@@ -186,15 +194,16 @@ describe('parseRdmPacket', () => {
     it('parses the parameter data', () => {
       const responseResult = parseRdmPacket(GET_DEVICE_INFO_RESPONSE);
       const responsePacket = expectSuccess(responseResult);
-      expect(responsePacket.parameterData.value).toEqual(
+      const parameterData = expectBodyData(responsePacket);
+      expect(parameterData.value).toEqual(
         new Uint8Array([
           0x01, 0x00, 0x00, 0x2d, 0x00, 0x04, 0x00, 0x2d, 0x00, 0x01, 0x00,
           0x08, 0x00, 0x02, 0x00, 0x01, 0x00, 0x00, 0x01,
         ])
       );
-      expect(responsePacket.parameterData.startByte).toBe(24);
-      expect(responsePacket.parameterData.endByte).toBe(42);
-      expect(responsePacket.parameterData.rawBytes).toEqual(
+      expect(parameterData.startByte).toBe(24);
+      expect(parameterData.endByte).toBe(42);
+      expect(parameterData.rawBytes).toEqual(
         new Uint8Array([
           0x01, 0x00, 0x00, 0x2d, 0x00, 0x04, 0x00, 0x2d, 0x00, 0x01, 0x00,
           0x08, 0x00, 0x02, 0x00, 0x01, 0x00, 0x00, 0x01,
@@ -205,22 +214,19 @@ describe('parseRdmPacket', () => {
     it('parses an empty parameter data field', () => {
       const result = parseRdmPacket(GET_DEVICE_INFO);
       const packet = expectSuccess(result);
-      expect(packet.parameterData.value).toEqual(new Uint8Array([]));
-      expect(packet.parameterData.startByte).toBe(24);
-      expect(packet.parameterData.endByte).toBe(24);
-      expect(packet.parameterData.rawBytes).toEqual(new Uint8Array([]));
+      expect(packet.parameterData).toBeNull();
     });
 
     it('matches the data length to the parameter data length', () => {
       const result = parseRdmPacket(GET_DEVICE_INFO_RESPONSE);
       const packet = expectSuccess(result);
-      expect(packet.parameterData.value.length).toBe(
-        packet.parameterDataLength.value
-      );
+      const parameterData = expectBodyData(packet);
+      expect(parameterData.value.length).toBe(packet.parameterDataLength.value);
 
       const setResult = parseRdmPacket(SET_START_ADDRESS);
       const setPacket = expectSuccess(setResult);
-      expect(setPacket.parameterData.value.length).toBe(
+      const setParameterData = expectBodyData(setPacket);
+      expect(setParameterData.value.length).toBe(
         setPacket.parameterDataLength.value
       );
     });

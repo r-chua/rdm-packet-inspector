@@ -38,7 +38,7 @@ export type RdmPacketBase = {
   parameterId: RdmField<ParameterId>;
   parameterDataLength: RdmField<number>;
   /** The raw parameter data bytes, which are interpreted based on the PID */
-  parameterData: RdmField<Uint8Array>;
+  parameterData: RdmField<Uint8Array> | null;
   /** The checksum value extracted from the packet */
   checksum: RdmField<number>;
   /** The calculated checksum based on the packet data */
