@@ -17,6 +17,14 @@ const GET_DEVICE_INFO_RESPONSE =
   'cc 01 2b 01 04 98 76 54 32 01 04 12 34 56 78 25 00 00 00 00 21 00 60 ' +
   '13 01 00 00 2d 00 04 00 2d 00 01 00 08 00 02 00 01 00 00 01 04 cf';
 
+const SET_START_ADDRESS =
+  'cc 01 1a 01 04 98 76 54 32 01 04 12 34 56 78 26 01 00 00 00 20 00 f0 ' +
+  '02 01 37 05 0a';
+
+const INVALID_CHECKSUM_START_ADDRESS =
+  'cc 01 1a 01 04 98 76 54 32 01 04 12 34 56 78 26 01 00 00 00 20 00 f0 ' +
+  '02 01 37 05 ff';
+
 const expectSuccess = (result: ParseResult): RdmPacket => {
   expect(result.success).toBe(true);
   if (!result.success) {
@@ -171,6 +179,86 @@ describe('parseRdmPacket', () => {
       expect(packet.parameterDataLength.rawBytes).toEqual(
         new Uint8Array([0x00])
       );
+    });
+  });
+
+  describe('body fields', () => {
+    it('parses the parameter data', () => {
+      const responseResult = parseRdmPacket(GET_DEVICE_INFO_RESPONSE);
+      const responsePacket = expectSuccess(responseResult);
+      expect(responsePacket.parameterData.value).toEqual(
+        new Uint8Array([
+          0x01, 0x00, 0x00, 0x2d, 0x00, 0x04, 0x00, 0x2d, 0x00, 0x01, 0x00,
+          0x08, 0x00, 0x02, 0x00, 0x01, 0x00, 0x00, 0x01,
+        ])
+      );
+      expect(responsePacket.parameterData.startByte).toBe(24);
+      expect(responsePacket.parameterData.endByte).toBe(42);
+      expect(responsePacket.parameterData.rawBytes).toEqual(
+        new Uint8Array([
+          0x01, 0x00, 0x00, 0x2d, 0x00, 0x04, 0x00, 0x2d, 0x00, 0x01, 0x00,
+          0x08, 0x00, 0x02, 0x00, 0x01, 0x00, 0x00, 0x01,
+        ])
+      );
+    });
+
+    it('parses an empty parameter data field', () => {
+      const result = parseRdmPacket(GET_DEVICE_INFO);
+      const packet = expectSuccess(result);
+      expect(packet.parameterData.value).toEqual(new Uint8Array([]));
+      expect(packet.parameterData.startByte).toBe(24);
+      expect(packet.parameterData.endByte).toBe(24);
+      expect(packet.parameterData.rawBytes).toEqual(new Uint8Array([]));
+    });
+
+    it('matches the data length to the parameter data length', () => {
+      const result = parseRdmPacket(GET_DEVICE_INFO_RESPONSE);
+      const packet = expectSuccess(result);
+      expect(packet.parameterData.value.length).toBe(
+        packet.parameterDataLength.value
+      );
+
+      const setResult = parseRdmPacket(SET_START_ADDRESS);
+      const setPacket = expectSuccess(setResult);
+      expect(setPacket.parameterData.value.length).toBe(
+        setPacket.parameterDataLength.value
+      );
+    });
+
+    it('parses the checksum', () => {
+      const commandResult = parseRdmPacket(GET_DEVICE_INFO);
+      const commandPacket = expectSuccess(commandResult);
+      expect(commandPacket.checksum.value).toBe(0x043d);
+      expect(commandPacket.checksum.startByte).toBe(24);
+      expect(commandPacket.checksum.endByte).toBe(25);
+      expect(commandPacket.checksum.rawBytes).toEqual(
+        new Uint8Array([0x04, 0x3d])
+      );
+
+      const responseResult = parseRdmPacket(GET_DEVICE_INFO_RESPONSE);
+      const responsePacket = expectSuccess(responseResult);
+      expect(responsePacket.checksum.value).toBe(0x04cf);
+      expect(responsePacket.checksum.startByte).toBe(43);
+      expect(responsePacket.checksum.endByte).toBe(44);
+      expect(responsePacket.checksum.rawBytes).toEqual(
+        new Uint8Array([0x04, 0xcf])
+      );
+    });
+
+    it('calculates the expected checksum', () => {
+      const result = parseRdmPacket(GET_DEVICE_INFO);
+      const packet = expectSuccess(result);
+      expect(packet.expectedChecksum).toBe(0x043d);
+    });
+
+    it('validates the checksum', () => {
+      const result = parseRdmPacket(GET_DEVICE_INFO);
+      const packet = expectSuccess(result);
+      expect(packet.validChecksum).toBe(true);
+
+      const invalidResult = parseRdmPacket(INVALID_CHECKSUM_START_ADDRESS);
+      const invalidPacket = expectSuccess(invalidResult);
+      expect(invalidPacket.validChecksum).toBe(false);
     });
   });
 });
