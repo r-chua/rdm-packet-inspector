@@ -8,23 +8,26 @@ import type {
   RdmField,
 } from './types';
 
-/** Example RDM packet for getting device info */
+// Example RDM packet for getting device info
 const GET_DEVICE_INFO =
-  'cc 01 18 01 04 98 76 54 32 01 04 12 34 56 78 25 01 00 00 00 20 00 60 ' +
-  '00 04 3d';
+  'cc 01 18 01 04 98 76 54 32 01 04 12 34 56 78 25 ' +
+  '01 00 00 00 20 00 60 00 04 3d';
 
-/** Example RDM response packet for getting device info */
+// Example RDM response packet for getting device info
 const GET_DEVICE_INFO_RESPONSE =
-  'cc 01 2b 01 04 98 76 54 32 01 04 12 34 56 78 25 00 00 00 00 21 00 60 ' +
-  '13 01 00 00 2d 00 04 00 2d 00 01 00 08 00 02 00 01 00 00 01 04 cf';
+  'cc 01 2b 01 04 12 34 56 78 01 04 98 76 54 32 25 ' +
+  '00 00 00 00 21 00 60 13 01 00 00 2d 00 04 00 2d ' +
+  '00 01 00 08 00 02 00 01 00 00 01 04 cf';
 
+// Example RDM SET command to set the DMX start address to 311
 const SET_START_ADDRESS =
-  'cc 01 1a 01 04 98 76 54 32 01 04 12 34 56 78 26 01 00 00 00 20 00 f0 ' +
-  '02 01 37 05 0a';
+  'cc 01 1a 01 04 98 76 54 32 01 04 12 34 56 78 26 ' +
+  '01 00 00 00 20 00 f0 02 01 37 05 0a';
 
+// Example RDM SET command with an invalid checksum
 const INVALID_CHECKSUM_START_ADDRESS =
-  'cc 01 1a 01 04 98 76 54 32 01 04 12 34 56 78 26 01 00 00 00 20 00 f0 ' +
-  '02 01 37 05 ff';
+  'cc 01 1a 01 04 98 76 54 32 01 04 12 34 56 78 26 ' +
+  '01 00 00 00 20 00 f0 02 01 37 05 ff';
 
 const expectSuccess = (result: ParseResult): RdmPacket => {
   expect(result.success).toBe(true);
