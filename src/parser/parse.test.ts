@@ -19,6 +19,11 @@ const GET_DEVICE_INFO_RESPONSE =
   '00 00 00 00 21 00 60 13 01 00 00 2d 00 04 00 2d ' +
   '00 01 00 08 00 02 00 01 00 00 01 04 cf';
 
+// Example for delayed response with an estimated wait time of 5 seconds
+const GET_DEVICE_INFO_ACK_TIMER_RESPONSE =
+  'cc 01 1a 01 04 12 34 56 78 01 04 98 76 54 32 25 ' +
+  '01 00 00 00 21 00 60 02 00 32 04 74';
+
 // Example RDM SET command to set the DMX start address to 311
 const SET_START_ADDRESS =
   'cc 01 1a 01 04 98 76 54 32 01 04 12 34 56 78 26 ' +
@@ -28,6 +33,36 @@ const SET_START_ADDRESS =
 const INVALID_CHECKSUM_START_ADDRESS =
   'cc 01 1a 01 04 98 76 54 32 01 04 12 34 56 78 26 ' +
   '01 00 00 00 20 00 f0 02 01 37 05 ff';
+
+// Example NACK response with reason code of "Hardware Fault"
+const NACK_REASON_HARDWARE_FAULT_RESPONSE =
+  'cc 01 1a 01 04 12 34 56 78 01 04 98 76 54 32 25 ' +
+  '02 00 00 00 21 00 66 02 00 02 04 4b';
+
+const INVALID_NACK_REASON_RESPONSE =
+  'cc 01 1a 01 04 12 34 56 78 01 04 98 76 54 32 25 ' +
+  '02 00 00 00 21 00 66 02 00 ff 05 48';
+
+// Example ACK_OVERFLOW response mocking a fixture with a large amount
+// of proxied devices. Packet data is packed with 38 UIDs, which is the maximum
+// that can fit in a single RDM packet.
+const ACK_OVERFLOW_RESPONSE =
+  'cc 01 fc 01 04 12 34 56 78 01 04 98 76 54 32 27 ' +
+  '03 00 00 00 21 00 10 e4 01 00 11 11 11 11 02 00 ' +
+  '22 22 22 22 03 00 33 33 33 33 04 00 44 44 44 44 ' +
+  '05 00 55 55 55 55 06 00 66 66 66 66 07 00 77 77 ' +
+  '77 77 08 00 88 88 88 88 09 00 99 99 99 99 0a 00 ' +
+  'aa aa aa aa 0b 00 bb bb bb bb 0c 00 cc cc cc cc ' +
+  '0d 00 dd dd dd dd 0e 00 ee ee ee ee 0f 00 ff ff ' +
+  'ff ff 10 00 00 00 00 00 11 00 11 11 11 11 12 00 ' +
+  '22 22 22 22 13 00 33 33 33 33 14 00 44 44 44 44 ' +
+  '15 00 55 55 55 55 16 00 66 66 66 66 17 00 77 77 ' +
+  '77 77 18 00 88 88 88 88 19 00 99 99 99 99 1a 00 ' +
+  'aa aa aa aa 1b 00 bb bb bb bb 1c 00 cc cc cc cc ' +
+  '1d 00 dd dd dd dd 1e 00 ee ee ee ee 1f 00 ff ff ' +
+  'ff ff 20 00 00 00 00 00 21 00 11 11 11 11 22 00 ' +
+  '22 22 22 22 23 00 33 33 33 33 24 00 44 44 44 44 ' +
+  '25 00 55 55 55 55 26 00 66 66 66 66 4d f3';
 
 const expectSuccess = (result: ParseResult): RdmPacket => {
   expect(result.success).toBe(true);
@@ -269,6 +304,66 @@ describe('parseRdmPacket', () => {
       const invalidResult = parseRdmPacket(INVALID_CHECKSUM_START_ADDRESS);
       const invalidPacket = expectSuccess(invalidResult);
       expect(invalidPacket.validChecksum).toBe(false);
+    });
+  });
+
+  describe('response details', () => {
+    it('parses ACK with no details', () => {
+      const result = parseRdmPacket(GET_DEVICE_INFO_RESPONSE);
+      const packet = expectSuccess(result);
+      const response = expectResponse(packet);
+      expect(response.responseDetail.type).toBe('ack');
+    });
+
+    it('parses ACK_TIMER estimated time', () => {
+      const result = parseRdmPacket(GET_DEVICE_INFO_ACK_TIMER_RESPONSE);
+      const packet = expectSuccess(result);
+      const response = expectResponse(packet);
+      expect(response.responseDetail.type).toBe('ackTimer');
+      if (response.responseDetail.type !== 'ackTimer') {
+        throw new Error(
+          `Expected ACK_TIMER response detail but got ` +
+            response.responseDetail.type
+        );
+      }
+      expect(response.responseDetail.estimatedWaitMs).toBe(5000);
+    });
+
+    it('parses NACK reason', () => {
+      const result = parseRdmPacket(NACK_REASON_HARDWARE_FAULT_RESPONSE);
+      const packet = expectSuccess(result);
+      const response = expectResponse(packet);
+      expect(response.responseDetail.type).toBe('nack');
+      if (response.responseDetail.type !== 'nack') {
+        throw new Error(
+          `Expected NACK response detail but got ` +
+            response.responseDetail.type
+        );
+      }
+      expect(response.responseDetail.reason.code).toBe(0x02);
+      expect(response.responseDetail.reason.name).toBe('HARDWARE_FAULT');
+
+      const invalidReasonResult = parseRdmPacket(INVALID_NACK_REASON_RESPONSE);
+      const invalidReasonPacket = expectSuccess(invalidReasonResult);
+      const invalidReasonResponse = expectResponse(invalidReasonPacket);
+      expect(invalidReasonResponse.responseDetail.type).toBe('nack');
+      if (invalidReasonResponse.responseDetail.type !== 'nack') {
+        throw new Error(
+          `Expected NACK response detail but got ` +
+            invalidReasonResponse.responseDetail.type
+        );
+      }
+      expect(invalidReasonResponse.responseDetail.reason.code).toBe(0xff);
+      expect(invalidReasonResponse.responseDetail.reason.name).toBe(
+        'UNKNOWN_REASON'
+      );
+    });
+
+    it('parses ACK_OVERFLOW with no details', () => {
+      const result = parseRdmPacket(ACK_OVERFLOW_RESPONSE);
+      const packet = expectSuccess(result);
+      const response = expectResponse(packet);
+      expect(response.responseDetail.type).toBe('ackOverflow');
     });
   });
 });

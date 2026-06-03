@@ -1,4 +1,5 @@
 import type { CommandClass } from './data/command-classes';
+import type { NackReason } from './data/nack-reasons';
 import type { ParameterId } from './data/pids';
 import type { RdmResponseType } from './data/response-types';
 
@@ -52,9 +53,22 @@ export type RdmCommandPacket = RdmPacketBase & {
   portId: RdmField<number>;
 };
 
+/**
+ * Contains details about the response based on the response type.
+ *
+ * ACK and ACK_OVERFLOW types do not have additional details, while ACK_TIMER
+ * includes the estimated wait time, and NACK includes the reason for rejection.
+ */
+type ResponseDetail =
+  | { type: 'ack' }
+  | { type: 'ackTimer'; estimatedWaitMs: number }
+  | { type: 'nack'; reason: NackReason }
+  | { type: 'ackOverflow' };
+
 export type RdmResponsePacket = RdmPacketBase & {
   direction: 'response';
   responseType: RdmField<RdmResponseType>;
+  responseDetail: ResponseDetail;
 };
 
 /**
