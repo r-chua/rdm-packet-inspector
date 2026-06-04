@@ -1,4 +1,5 @@
 import type { CommandClass } from './data/command-classes';
+import type { NackReason } from './data/nack-reasons';
 import type { ParameterId } from './data/pids';
 import type { RdmResponseType } from './data/response-types';
 
@@ -25,7 +26,7 @@ export type RdmField<T> = {
  * extended by specific command and response packet types to include additional
  * fields relevant to their direction.
  */
-type RdmPacketBase = {
+export type RdmPacketBase = {
   startCode: RdmField<number>;
   subStartCode: RdmField<number>;
   messageLength: RdmField<number>;
@@ -38,7 +39,7 @@ type RdmPacketBase = {
   parameterId: RdmField<ParameterId>;
   parameterDataLength: RdmField<number>;
   /** The raw parameter data bytes, which are interpreted based on the PID */
-  parameterData: RdmField<Uint8Array>;
+  parameterData: RdmField<Uint8Array> | null;
   /** The checksum value extracted from the packet */
   checksum: RdmField<number>;
   /** The calculated checksum based on the packet data */
@@ -47,14 +48,28 @@ type RdmPacketBase = {
   validChecksum: boolean;
 };
 
-type RdmCommandPacket = RdmPacketBase & {
+export type RdmCommandPacket = RdmPacketBase & {
   direction: 'command';
   portId: RdmField<number>;
 };
 
-type RdmResponsePacket = RdmPacketBase & {
+/**
+ * Contains details about the response based on the response type.
+ *
+ * ACK and ACK_OVERFLOW types do not have additional details, while ACK_TIMER
+ * includes the estimated wait time, and NACK includes the reason for rejection.
+ */
+export type ResponseDetail =
+  | { type: 'ack' }
+  | { type: 'ackTimer'; estimatedWaitMs: number }
+  | { type: 'nack'; reason: NackReason }
+  | { type: 'ackOverflow' }
+  | { type: 'unknown'; rawValue: number };
+
+export type RdmResponsePacket = RdmPacketBase & {
   direction: 'response';
   responseType: RdmField<RdmResponseType>;
+  responseDetail: ResponseDetail;
 };
 
 /**
