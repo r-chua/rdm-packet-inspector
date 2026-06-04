@@ -19,6 +19,7 @@ export type RdmField<T> = {
   /** Inclusive end byte index */
   endByte: number;
   description?: string;
+  warning?: string;
 };
 
 /**
