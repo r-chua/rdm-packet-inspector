@@ -329,7 +329,7 @@ describe('parseRdmPacket', () => {
       expect(response.responseDetail.estimatedWaitMs).toBe(5000);
     });
 
-    it('parses NACK reason', () => {
+    it('parses valid NACK reason', () => {
       const result = parseRdmPacket(NACK_REASON_HARDWARE_FAULT_RESPONSE);
       const packet = expectSuccess(result);
       const response = expectResponse(packet);
@@ -342,7 +342,9 @@ describe('parseRdmPacket', () => {
       }
       expect(response.responseDetail.reason.code).toBe(0x02);
       expect(response.responseDetail.reason.name).toBe('HARDWARE_FAULT');
+    });
 
+    it('parses invalid NACK reason', () => {
       const invalidReasonResult = parseRdmPacket(INVALID_NACK_REASON_RESPONSE);
       const invalidReasonPacket = expectSuccess(invalidReasonResult);
       const invalidReasonResponse = expectResponse(invalidReasonPacket);
@@ -354,9 +356,7 @@ describe('parseRdmPacket', () => {
         );
       }
       expect(invalidReasonResponse.responseDetail.reason.code).toBe(0xff);
-      expect(invalidReasonResponse.responseDetail.reason.name).toBe(
-        'UNKNOWN_REASON'
-      );
+      expect(invalidReasonResponse.responseDetail.reason.name).toBe('UNKNOWN');
     });
 
     it('parses ACK_OVERFLOW with no details', () => {
