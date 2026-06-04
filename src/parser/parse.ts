@@ -1,8 +1,14 @@
 import { lookupCommandClass } from './data/command-classes';
+import { lookupNackReason } from './data/nack-reasons';
 import { lookupPid } from './data/pids';
 import { lookupResponseType } from './data/response-types';
 import { normalizeHex } from './normalize';
-import type { ParseResult, RdmField, RdmPacketBase } from './types';
+import type {
+  ParseResult,
+  RdmField,
+  RdmPacketBase,
+  ResponseDetail,
+} from './types';
 
 /**
  * Reads a field from the given byte array starting at the specified offset and
@@ -146,6 +152,44 @@ const isResponse = (commandClassCode: number): boolean => {
   );
 };
 
+const interpretResponseDetail = (
+  responseType: number,
+  parameterData: Uint8Array | null
+): ResponseDetail => {
+  switch (responseType) {
+    case 0x00: // ACK
+      return { type: 'ack' };
+    case 0x01: // ACK_TIMER
+      if (!parameterData || parameterData.length !== 2) {
+        throw new Error(
+          `Invalid parameter data for ACK_TIMER response: expected 2 bytes ` +
+            `but got ${parameterData ? parameterData.length : 'null'}`
+        );
+      }
+      // Packet contains estimated time in 100ms units, so we convert it to ms
+      // for easier interpretation
+      return {
+        type: 'ackTimer',
+        estimatedWaitMs: transformUint16(parameterData) * 100,
+      };
+    case 0x02: // NACK
+      if (!parameterData || parameterData.length !== 2) {
+        throw new Error(
+          `Invalid parameter data for NACK response: expected 2 bytes but ` +
+            `got ${parameterData ? parameterData.length : 'null'}`
+        );
+      }
+      return {
+        type: 'nack',
+        reason: lookupNackReason(transformUint16(parameterData)),
+      };
+    case 0x03: // ACK_OVERFLOW
+      return { type: 'ackOverflow' };
+    default:
+      return { type: 'unknown', rawValue: responseType };
+  }
+};
+
 /**
  * Parses a hexadecimal string representing an RDM GET or SET command or
  * response packet and returns a structured representation of all fields.
@@ -287,10 +331,15 @@ export const parseRdmPacket = (packet: string): ParseResult => {
         endByte: portIdOrResponseType.endByte,
         rawBytes: portIdOrResponseType.rawBytes,
       };
+      const responseDetail = interpretResponseDetail(
+        responseType.value.code,
+        parameterData?.rawBytes || null
+      );
       const packet = {
         ...packetBase,
         direction: 'response' as const,
         responseType,
+        responseDetail,
       };
       return { success: true, packet };
     } else {

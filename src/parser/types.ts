@@ -59,11 +59,12 @@ export type RdmCommandPacket = RdmPacketBase & {
  * ACK and ACK_OVERFLOW types do not have additional details, while ACK_TIMER
  * includes the estimated wait time, and NACK includes the reason for rejection.
  */
-type ResponseDetail =
+export type ResponseDetail =
   | { type: 'ack' }
   | { type: 'ackTimer'; estimatedWaitMs: number }
   | { type: 'nack'; reason: NackReason }
-  | { type: 'ackOverflow' };
+  | { type: 'ackOverflow' }
+  | { type: 'unknown'; rawValue: number };
 
 export type RdmResponsePacket = RdmPacketBase & {
   direction: 'response';
