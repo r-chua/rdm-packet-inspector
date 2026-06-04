@@ -27,7 +27,7 @@ const GET_DEVICE_INFO_ACK_TIMER_RESPONSE =
 // Example RDM SET command to set the DMX start address to 311
 const SET_START_ADDRESS =
   'cc 01 1a 01 04 98 76 54 32 01 04 12 34 56 78 26 ' +
-  '01 00 00 00 20 00 f0 02 01 37 05 0a';
+  '01 00 00 00 30 00 f0 02 01 37 05 1a';
 
 // Example RDM SET command with an invalid checksum
 const INVALID_CHECKSUM_START_ADDRESS =
