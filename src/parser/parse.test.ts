@@ -6,6 +6,7 @@ import type {
   RdmCommandPacket,
   RdmResponsePacket,
   RdmField,
+  ParseError,
 } from './types';
 
 // Example RDM packet for getting device info
@@ -84,6 +85,14 @@ const expectSuccess = (result: ParseResult): RdmPacket => {
     );
   }
   return result.packet;
+};
+
+const expectParseError = (result: ParseResult): ParseError => {
+  expect(result.success).toBe(false);
+  if (result.success) {
+    throw new Error('Expected parse error but got successful parse');
+  }
+  return result.error;
 };
 
 const expectCommand = (packet: RdmPacket): RdmCommandPacket => {
@@ -414,6 +423,48 @@ describe('parseRdmPacket', () => {
       const result = parseRdmPacket(DISCOVERY_MUTE_RESPONSE);
       const packet = expectSuccess(result);
       expect(packet.direction).toBe('response');
+    });
+  });
+
+  describe('parse error handling', () => {
+    it('catches invalid start code', () => {
+      const invalidStartCodePacket =
+        'cd 01 18 01 04 98 76 54 32 01 04 12 34 56 78 25 ' +
+        '01 00 00 00 20 00 60 00 04 3d';
+      const result = parseRdmPacket(invalidStartCodePacket);
+      const error = expectParseError(result);
+      expect(error.byteOffset).toBe(0);
+      expect(error.message).toMatch(/start code: expected/i);
+    });
+
+    it('catches invalid sub start code', () => {
+      const invalidSubStartCodePacket =
+        'cc 02 18 01 04 98 76 54 32 01 04 12 34 56 78 25 ' +
+        '01 00 00 00 20 00 60 00 04 3d';
+      const result = parseRdmPacket(invalidSubStartCodePacket);
+      const error = expectParseError(result);
+      expect(error.byteOffset).toBe(1);
+      expect(error.message).toMatch(/sub start code: expected/i);
+    });
+
+    it('catches invalid message length', () => {
+      const invalidMessageLengthPacket =
+        'cc 01 ff 01 04 98 76 54 32 01 04 12 34 56 78 25 ' +
+        '01 00 00 00 20 00 60 00 04 3d';
+      const result = parseRdmPacket(invalidMessageLengthPacket);
+      const error = expectParseError(result);
+      expect(error.byteOffset).toBe(2);
+      expect(error.message).toMatch(/message length/i);
+    });
+
+    it('catches unknown command class', () => {
+      const unknownCommandClassPacket =
+        'cc 01 18 01 04 98 76 54 32 01 04 12 34 56 78 25 ' +
+        '01 00 00 00 25 ff ff 00 04 3d';
+      const result = parseRdmPacket(unknownCommandClassPacket);
+      const error = expectParseError(result);
+      expect(error.byteOffset).toBe(20);
+      expect(error.message).toMatch(/command class/i);
     });
   });
 });
