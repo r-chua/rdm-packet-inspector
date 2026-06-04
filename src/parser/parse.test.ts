@@ -466,5 +466,17 @@ describe('parseRdmPacket', () => {
       expect(error.byteOffset).toBe(20);
       expect(error.message).toMatch(/command class/i);
     });
+
+    it('catches truncated packets', () => {
+      const singleByteResult = parseRdmPacket('cc');
+      const singleByteError = expectParseError(singleByteResult);
+      expect(singleByteError.byteOffset).toBe(1);
+      expect(singleByteError.message).toMatch(/beyond end/i);
+
+      const dualByteResult = parseRdmPacket('cc 01');
+      const dualByteError = expectParseError(dualByteResult);
+      expect(dualByteError.byteOffset).toBe(2);
+      expect(dualByteError.message).toMatch(/beyond end/i);
+    });
   });
 });
