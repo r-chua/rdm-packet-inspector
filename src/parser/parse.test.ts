@@ -29,6 +29,10 @@ const SET_START_ADDRESS =
   'cc 01 1a 01 04 98 76 54 32 01 04 12 34 56 78 26 ' +
   '01 00 00 00 30 00 f0 02 01 37 05 1a';
 
+const SET_START_ADDRESS_RESPONSE =
+  'cc 01 18 01 04 12 34 56 78 01 04 98 76 54 32 26 ' +
+  '00 00 00 00 31 00 f0 00 04 de';
+
 // Example RDM SET command with an invalid checksum
 const INVALID_CHECKSUM_START_ADDRESS =
   'cc 01 1a 01 04 98 76 54 32 01 04 12 34 56 78 26 ' +
@@ -42,6 +46,14 @@ const NACK_REASON_HARDWARE_FAULT_RESPONSE =
 const INVALID_NACK_REASON_RESPONSE =
   'cc 01 1a 01 04 12 34 56 78 01 04 98 76 54 32 25 ' +
   '02 00 00 00 21 00 66 02 00 ff 05 48';
+
+const DISCOVERY_MUTE_REQUEST =
+  'cc 01 18 01 04 98 76 54 32 01 04 12 34 56 78 38 ' +
+  '01 00 00 00 10 00 02 00 03 e2';
+
+const DISCOVERY_MUTE_RESPONSE =
+  'cc 01 1a 01 04 12 34 56 78 01 04 98 76 54 32 38 ' +
+  '00 00 00 00 11 00 02 02 00 00 03 e6';
 
 // Example ACK_OVERFLOW response mocking a fixture with a large amount
 // of proxied devices. Packet data is packed with 38 UIDs, which is the maximum
@@ -364,6 +376,44 @@ describe('parseRdmPacket', () => {
       const packet = expectSuccess(result);
       const response = expectResponse(packet);
       expect(response.responseDetail.type).toBe('ackOverflow');
+    });
+  });
+
+  describe('distinguishes command vs response packets', () => {
+    it('parses a GET command packet', () => {
+      const result = parseRdmPacket(GET_DEVICE_INFO);
+      const packet = expectSuccess(result);
+      expect(packet.direction).toBe('command');
+    });
+
+    it('parses a GET response packet', () => {
+      const result = parseRdmPacket(GET_DEVICE_INFO_RESPONSE);
+      const packet = expectSuccess(result);
+      expect(packet.direction).toBe('response');
+    });
+
+    it('parses a SET command packet', () => {
+      const result = parseRdmPacket(SET_START_ADDRESS);
+      const packet = expectSuccess(result);
+      expect(packet.direction).toBe('command');
+    });
+
+    it('parses a SET response packet', () => {
+      const result = parseRdmPacket(SET_START_ADDRESS_RESPONSE);
+      const packet = expectSuccess(result);
+      expect(packet.direction).toBe('response');
+    });
+
+    it('parses a discovery command packet', () => {
+      const result = parseRdmPacket(DISCOVERY_MUTE_REQUEST);
+      const packet = expectSuccess(result);
+      expect(packet.direction).toBe('command');
+    });
+
+    it('parses a discovery response packet', () => {
+      const result = parseRdmPacket(DISCOVERY_MUTE_RESPONSE);
+      const packet = expectSuccess(result);
+      expect(packet.direction).toBe('response');
     });
   });
 });
