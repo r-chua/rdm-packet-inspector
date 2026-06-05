@@ -271,6 +271,11 @@ export const parseRdmPacket = (packet: string): ParseResult => {
     const commandClass = reader.read(1, (bytes) =>
       lookupCommandClass(bytes[0])
     );
+    if (commandClass.value.name === 'UNKNOWN_COMMAND_CLASS') {
+      commandClass.warning =
+        `Unknown command class code: ` +
+        `0x${commandClass.value.code.toString(16)}`;
+    }
 
     const parameterId = reader.read(2, (bytes) =>
       lookupPid(transformUint16(bytes))
@@ -368,12 +373,11 @@ export const parseRdmPacket = (packet: string): ParseResult => {
       return { success: true, packet };
     } else {
       return {
-        success: false,
-        error: {
-          byteOffset: commandClass.startByte,
-          message:
-            `Invalid command class for determining packet direction: ` +
-            `0x${commandClass.value.code.toString(16)}`,
+        success: true,
+        packet: {
+          ...packetBase,
+          direction: 'unknown' as const,
+          portIdOrResponseType,
         },
       };
     }

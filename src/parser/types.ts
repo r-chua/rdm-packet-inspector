@@ -73,10 +73,16 @@ export type RdmResponsePacket = RdmPacketBase & {
   responseDetail: ResponseDetail;
 };
 
+export type RdmUnknownPacket = RdmPacketBase & {
+  direction: 'unknown';
+  portIdOrResponseType: RdmField<number>;
+};
+
 /**
- * Represents a parsed RDM packet, which can be either a command or a response.
+ * Represents a parsed RDM packet, which can be either a command, a response,
+ * or an unknown packet.
  */
-export type RdmPacket = RdmCommandPacket | RdmResponsePacket;
+export type RdmPacket = RdmCommandPacket | RdmResponsePacket | RdmUnknownPacket;
 
 /**
  * Represents an error that occurred during parsing of an RDM packet, including
