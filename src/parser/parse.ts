@@ -325,15 +325,27 @@ export const parseRdmPacket = (packet: string): ParseResult => {
         endByte: portIdOrResponseType.endByte,
         rawBytes: portIdOrResponseType.rawBytes,
       };
+
       if (responseType.value.name === 'UNKNOWN_RESPONSE_TYPE') {
         responseType.warning =
           `Unknown response type code: ` +
           `0x${responseType.value.code.toString(16)}`;
       }
+
       const responseDetail = interpretResponseDetail(
         responseType.value.code,
         parameterData?.rawBytes || null
       );
+
+      if (
+        responseDetail.type === 'nack' &&
+        responseDetail.reason.name === 'UNKNOWN'
+      ) {
+        responseType.warning =
+          `Unknown NACK reason code in response: ` +
+          `0x${parameterData ? parameterData.toString() : 'null'}`;
+      }
+
       const packet = {
         ...packetBase,
         direction: 'response' as const,
