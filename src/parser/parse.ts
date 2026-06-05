@@ -280,6 +280,9 @@ export const parseRdmPacket = (packet: string): ParseResult => {
     const parameterId = reader.read(2, (bytes) =>
       lookupPid(transformUint16(bytes))
     );
+    if (parameterId.value.name === 'UNKNOWN_PID') {
+      parameterId.warning = `Unknown PID: 0x${parameterId.value.pid.toString(16)}`;
+    }
 
     const parameterDataLength = reader.read(1, (bytes) => bytes[0]);
 
