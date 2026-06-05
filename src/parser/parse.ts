@@ -308,6 +308,14 @@ export const parseRdmPacket = (packet: string): ParseResult => {
       }, 0);
     const validChecksum = checksum.value === expectedChecksum;
 
+    if (!validChecksum) {
+      checksum.warning = `Checksum mismatch: expected 0x${expectedChecksum
+        .toString(16)
+        .padStart(4, '0')} but got 0x${checksum.value
+        .toString(16)
+        .padStart(4, '0')}`;
+    }
+
     const packetBase: RdmPacketBase = {
       startCode,
       subStartCode,
