@@ -584,5 +584,11 @@ describe('parseRdmPacket', () => {
       expect(dualByteError.byteOffset).toBe(2);
       expect(dualByteError.message).toMatch(/beyond end/i);
     });
+
+    it('rejects empty inputs', () => {
+      const result = parseRdmPacket('');
+      const error = expectParseError(result);
+      expect(error.message).toMatch(/empty input/i);
+    });
   });
 });
