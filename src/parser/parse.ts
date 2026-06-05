@@ -223,28 +223,16 @@ export const parseRdmPacket = (packet: string): ParseResult => {
   try {
     const startCode = reader.read(1, (bytes) => bytes[0]);
     if (startCode.value !== 0xcc) {
-      return {
-        success: false,
-        error: {
-          byteOffset: startCode.startByte,
-          message:
-            `Invalid start code: expected 0xCC but got ` +
-            `0x${startCode.value.toString(16)}`,
-        },
-      };
+      startCode.warning =
+        `Invalid start code: expected 0xCC but got ` +
+        `0x${startCode.value.toString(16)}`;
     }
 
     const subStartCode = reader.read(1, (bytes) => bytes[0]);
     if (subStartCode.value !== 0x01) {
-      return {
-        success: false,
-        error: {
-          byteOffset: subStartCode.startByte,
-          message:
-            `Invalid sub start code: expected 0x01 but got ` +
-            `0x${subStartCode.value.toString(16)}`,
-        },
-      };
+      subStartCode.warning =
+        `Invalid sub start code: expected 0x01 but got ` +
+        `0x${subStartCode.value.toString(16)}`;
     }
 
     const messageLength = reader.read(1, (bytes) => bytes[0]);
