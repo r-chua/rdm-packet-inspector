@@ -208,9 +208,18 @@ const interpretResponseDetail = (
  *
  */
 export const parseRdmPacket = (packet: string): ParseResult => {
-  let normalizedPacket;
+  let normalizedPacket: Uint8Array;
   try {
     normalizedPacket = normalizeHex(packet);
+    if (normalizedPacket.length === 0) {
+      return {
+        success: false,
+        error: {
+          byteOffset: -1,
+          message: 'Empty input: no data to parse',
+        },
+      };
+    }
   } catch (error) {
     return {
       success: false,
