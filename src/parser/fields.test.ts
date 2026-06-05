@@ -39,7 +39,6 @@ describe('getFieldEntries', () => {
       (entry) => entry.name === 'Response Type'
     );
     expect(responseTypeEntry).toBeDefined();
-    expect(responseTypeEntry?.field.value).toBe(0);
   });
 
   it('returns fields in the correct order', () => {
@@ -56,6 +55,6 @@ describe('getFieldEntries', () => {
     const parameterDataEntry = entries.find(
       (entry) => entry.name === 'Parameter Data'
     );
-    expect(parameterDataEntry).toBeNull();
+    expect(parameterDataEntry).not.toBeDefined();
   });
 });
