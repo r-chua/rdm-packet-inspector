@@ -102,4 +102,4 @@ export type ParseError = {
  */
 export type ParseResult =
   | { success: true; packet: RdmPacket; rawBytes: Uint8Array }
-  | { success: false; error: ParseError; rawBytes: Uint8Array };
+  | { success: false; error: ParseError; rawBytes: Uint8Array | null };
