@@ -374,15 +374,6 @@ export const parseRdmPacket = (packet: string): ParseResult => {
         parameterData?.rawBytes || null
       );
 
-      if (
-        responseDetail.type === 'nack' &&
-        responseDetail.reason.name === 'UNKNOWN'
-      ) {
-        responseType.warning =
-          `Unknown NACK reason code in response: ` +
-          `0x${parameterData ? parameterData.toString() : 'null'}`;
-      }
-
       const packet = {
         ...packetBase,
         direction: 'response' as const,

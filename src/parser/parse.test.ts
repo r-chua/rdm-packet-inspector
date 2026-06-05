@@ -502,13 +502,6 @@ describe('parseRdmPacket', () => {
       expect(response.responseType.warning).toMatch(/response type/i);
     });
 
-    it('warns on unknown NACK reason', () => {
-      const result = parseRdmPacket(INVALID_NACK_REASON_RESPONSE);
-      const packet = expectSuccess(result);
-      const response = expectResponse(packet);
-      expect(response.responseType.warning).toMatch(/nack reason/i);
-    });
-
     it('warns on invalid message count', () => {
       const invalidMessageCountPacket =
         'cc 01 18 01 04 98 76 54 32 01 04 12 34 56 78 25 ' +
