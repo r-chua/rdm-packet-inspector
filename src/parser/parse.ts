@@ -237,16 +237,14 @@ export const parseRdmPacket = (packet: string): ParseResult => {
 
     const messageLength = reader.read(1, (bytes) => bytes[0]);
     // Length doesn't include the checksum
-    if (messageLength.value !== normalizedPacket.length - 2) {
-      return {
-        success: false,
-        error: {
-          byteOffset: messageLength.startByte,
-          message:
-            `Message length mismatch: expected ${messageLength.value} bytes ` +
-            `but got ${normalizedPacket.length - 2} bytes`,
-        },
-      };
+    if (messageLength.value < 24) {
+      messageLength.warning =
+        `Invalid message length: minimum length is 24, but got ` +
+        `${messageLength.value}`;
+    } else if (messageLength.value !== normalizedPacket.length - 2) {
+      messageLength.warning =
+        `Mismatched message length: expected ${messageLength.value} bytes ` +
+        `but got ${normalizedPacket.length - 2} bytes`;
     }
 
     const destinationUid = reader.read(6, transformUid);
