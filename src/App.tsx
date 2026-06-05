@@ -1,7 +1,9 @@
+import { PacketInspector } from './components/PacketInspector';
+
 export function App() {
   return (
     <main>
-      <h1>Hello World</h1>
+      <PacketInspector />
     </main>
   );
 }
