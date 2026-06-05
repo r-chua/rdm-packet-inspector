@@ -1,7 +1,10 @@
 import { lookupCommandClass } from './data/command-classes';
 import { lookupNackReason } from './data/nack-reasons';
 import { lookupPid } from './data/pids';
-import { lookupResponseType } from './data/response-types';
+import {
+  lookupResponseType,
+  type RdmResponseType,
+} from './data/response-types';
 import { normalizeHex } from './normalize';
 import type {
   ParseResult,
@@ -133,7 +136,7 @@ const transformUint16 = (bytes: Uint8Array): number => {
         `${bytes.length} bytes`
     );
   }
-  return (bytes[0] << 8) + bytes[1];
+  return (bytes[0] << 8) | bytes[1];
 };
 
 const isCommand = (commandClassCode: number): boolean => {
@@ -205,9 +208,18 @@ const interpretResponseDetail = (
  *
  */
 export const parseRdmPacket = (packet: string): ParseResult => {
-  let normalizedPacket;
+  let normalizedPacket: Uint8Array;
   try {
     normalizedPacket = normalizeHex(packet);
+    if (normalizedPacket.length === 0) {
+      return {
+        success: false,
+        error: {
+          byteOffset: -1,
+          message: 'Empty input: no data to parse',
+        },
+      };
+    }
   } catch (error) {
     return {
       success: false,
@@ -223,42 +235,28 @@ export const parseRdmPacket = (packet: string): ParseResult => {
   try {
     const startCode = reader.read(1, (bytes) => bytes[0]);
     if (startCode.value !== 0xcc) {
-      return {
-        success: false,
-        error: {
-          byteOffset: startCode.startByte,
-          message:
-            `Invalid start code: expected 0xCC but got ` +
-            `0x${startCode.value.toString(16)}`,
-        },
-      };
+      startCode.warning =
+        `Invalid start code: expected 0xCC but got ` +
+        `0x${startCode.value.toString(16)}`;
     }
 
     const subStartCode = reader.read(1, (bytes) => bytes[0]);
     if (subStartCode.value !== 0x01) {
-      return {
-        success: false,
-        error: {
-          byteOffset: subStartCode.startByte,
-          message:
-            `Invalid sub start code: expected 0x01 but got ` +
-            `0x${subStartCode.value.toString(16)}`,
-        },
-      };
+      subStartCode.warning =
+        `Invalid sub start code: expected 0x01 but got ` +
+        `0x${subStartCode.value.toString(16)}`;
     }
 
     const messageLength = reader.read(1, (bytes) => bytes[0]);
     // Length doesn't include the checksum
-    if (messageLength.value !== normalizedPacket.length - 2) {
-      return {
-        success: false,
-        error: {
-          byteOffset: messageLength.startByte,
-          message:
-            `Message length mismatch: expected ${messageLength.value} bytes ` +
-            `but got ${normalizedPacket.length - 2} bytes`,
-        },
-      };
+    if (messageLength.value < 24) {
+      messageLength.warning =
+        `Invalid message length: minimum length is 24, but got ` +
+        `${messageLength.value}`;
+    } else if (messageLength.value !== normalizedPacket.length - 2) {
+      messageLength.warning =
+        `Mismatched message length: expected ${messageLength.value} bytes ` +
+        `but got ${normalizedPacket.length - 2} bytes`;
     }
 
     const destinationUid = reader.read(6, transformUid);
@@ -273,20 +271,42 @@ export const parseRdmPacket = (packet: string): ParseResult => {
 
     const subDevice = reader.read(2, transformUint16);
 
+    if (subDevice.value > 512 && subDevice.value !== 0xffff) {
+      subDevice.warning =
+        `Sub device value out of range: expected 0-512 or 0xFFFF for ` +
+        `broadcast, but got ${subDevice.value}`;
+    }
+
     const commandClass = reader.read(1, (bytes) =>
       lookupCommandClass(bytes[0])
     );
+    if (commandClass.value.name === 'UNKNOWN_COMMAND_CLASS') {
+      commandClass.warning =
+        `Unknown command class code: ` +
+        `0x${commandClass.value.code.toString(16)}`;
+    }
 
     const parameterId = reader.read(2, (bytes) =>
       lookupPid(transformUint16(bytes))
     );
+    if (parameterId.value.name === 'UNKNOWN_PID') {
+      parameterId.warning = `Unknown PID: 0x${parameterId.value.pid.toString(16)}`;
+    }
 
     const parameterDataLength = reader.read(1, (bytes) => bytes[0]);
 
+    if (parameterDataLength.value !== messageLength.value - 24) {
+      parameterDataLength.warning =
+        `Mismatched parameter data length: expected ` +
+        `${parameterDataLength.value} bytes but message length implies ` +
+        `${messageLength.value - 24} bytes.`;
+    }
+
+    // Total length - header (24 bytes) - checksum (2 bytes)
+    const calculatedPDL = normalizedPacket.length - 24 - 2;
+
     const parameterData =
-      parameterDataLength.value > 0
-        ? reader.read(parameterDataLength.value, (bytes) => bytes)
-        : null;
+      calculatedPDL > 0 ? reader.read(calculatedPDL, (bytes) => bytes) : null;
 
     const checksum = reader.read(2, transformUint16);
 
@@ -296,6 +316,14 @@ export const parseRdmPacket = (packet: string): ParseResult => {
         return (sum + byte) & 0xffff; // Keep it to 16 bits
       }, 0);
     const validChecksum = checksum.value === expectedChecksum;
+
+    if (!validChecksum) {
+      checksum.warning = `Checksum mismatch: expected 0x${expectedChecksum
+        .toString(16)
+        .padStart(4, '0')} but got 0x${checksum.value
+        .toString(16)
+        .padStart(4, '0')}`;
+    }
 
     const packetBase: RdmPacketBase = {
       startCode,
@@ -317,6 +345,18 @@ export const parseRdmPacket = (packet: string): ParseResult => {
 
     if (isCommand(commandClass.value.code)) {
       // Command packet
+      if (portIdOrResponseType.value === 0x00) {
+        portIdOrResponseType.warning =
+          `Invalid port ID of 0x00 in command packet; ` +
+          `port ID must be between 0x01 and 0xFF`;
+      }
+
+      if (packetBase.messageCount.value !== 0x00) {
+        packetBase.messageCount.warning =
+          `Non-zero message count in command packet: expected 0x00 ` +
+          `but got 0x${packetBase.messageCount.value.toString(16)}`;
+      }
+
       const packet = {
         ...packetBase,
         direction: 'command' as const,
@@ -325,16 +365,24 @@ export const parseRdmPacket = (packet: string): ParseResult => {
       return { success: true, packet };
     } else if (isResponse(commandClass.value.code)) {
       // Response packet
-      const responseType = {
+      const responseType: RdmField<RdmResponseType> = {
         value: lookupResponseType(portIdOrResponseType.value),
         startByte: portIdOrResponseType.startByte,
         endByte: portIdOrResponseType.endByte,
         rawBytes: portIdOrResponseType.rawBytes,
       };
+
+      if (responseType.value.name === 'UNKNOWN_RESPONSE_TYPE') {
+        responseType.warning =
+          `Unknown response type code: ` +
+          `0x${responseType.value.code.toString(16)}`;
+      }
+
       const responseDetail = interpretResponseDetail(
         responseType.value.code,
         parameterData?.rawBytes || null
       );
+
       const packet = {
         ...packetBase,
         direction: 'response' as const,
@@ -344,12 +392,11 @@ export const parseRdmPacket = (packet: string): ParseResult => {
       return { success: true, packet };
     } else {
       return {
-        success: false,
-        error: {
-          byteOffset: commandClass.startByte,
-          message:
-            `Invalid command class for determining packet direction: ` +
-            `0x${commandClass.value.code.toString(16)}`,
+        success: true,
+        packet: {
+          ...packetBase,
+          direction: 'unknown' as const,
+          portIdOrResponseType,
         },
       };
     }

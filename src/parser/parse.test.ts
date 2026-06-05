@@ -426,47 +426,153 @@ describe('parseRdmPacket', () => {
     });
   });
 
-  describe('parse error handling', () => {
-    it('catches invalid start code', () => {
+  describe('parse warning handling', () => {
+    it('warns on invalid start code', () => {
       const invalidStartCodePacket =
         'cd 01 18 01 04 98 76 54 32 01 04 12 34 56 78 25 ' +
-        '01 00 00 00 20 00 60 00 04 3d';
+        '01 00 00 00 20 00 60 00 04 3e';
       const result = parseRdmPacket(invalidStartCodePacket);
-      const error = expectParseError(result);
-      expect(error.byteOffset).toBe(0);
-      expect(error.message).toMatch(/start code: expected/i);
+      const packet = expectSuccess(result);
+      expect(packet.startCode.value).toBe(0xcd);
+      expect(packet.startCode.warning).toMatch(/start code/i);
     });
 
-    it('catches invalid sub start code', () => {
+    it('warns on invalid sub start code', () => {
       const invalidSubStartCodePacket =
         'cc 02 18 01 04 98 76 54 32 01 04 12 34 56 78 25 ' +
-        '01 00 00 00 20 00 60 00 04 3d';
+        '01 00 00 00 20 00 60 00 04 3e';
       const result = parseRdmPacket(invalidSubStartCodePacket);
-      const error = expectParseError(result);
-      expect(error.byteOffset).toBe(1);
-      expect(error.message).toMatch(/sub start code: expected/i);
+      const packet = expectSuccess(result);
+      expect(packet.subStartCode.value).toBe(0x02);
+      expect(packet.subStartCode.warning).toMatch(/sub start code/i);
     });
 
-    it('catches invalid message length', () => {
+    it('warns on invalid message length', () => {
       const invalidMessageLengthPacket =
-        'cc 01 ff 01 04 98 76 54 32 01 04 12 34 56 78 25 ' +
-        '01 00 00 00 20 00 60 00 04 3d';
+        'cc 01 05 01 04 98 76 54 32 01 04 12 34 56 78 25 ' +
+        '01 00 00 00 20 00 60 00 04 2a';
       const result = parseRdmPacket(invalidMessageLengthPacket);
-      const error = expectParseError(result);
-      expect(error.byteOffset).toBe(2);
-      expect(error.message).toMatch(/message length/i);
+      const packet = expectSuccess(result);
+      expect(packet.messageLength.value).toBe(0x05);
+      expect(packet.messageLength.warning).toMatch(/invalid message length/i);
     });
 
-    it('catches unknown command class', () => {
+    it('warns on mismatched message length', () => {
+      const lowerMessageLengthPacket =
+        'cc 01 18 01 04 98 76 54 32 01 04 12 34 56 78 26 ' +
+        '01 00 00 00 30 00 f0 02 01 37 05 18';
+      const lowerResult = parseRdmPacket(lowerMessageLengthPacket);
+      const lowerPacket = expectSuccess(lowerResult);
+      expect(lowerPacket.messageLength.value).toBe(0x18);
+      expect(lowerPacket.messageLength.warning).toMatch(
+        /mismatched message length/i
+      );
+
+      const higherMessageLengthPacket =
+        'cc 01 1b 01 04 98 76 54 32 01 04 12 34 56 78 26 ' +
+        '01 00 00 00 30 00 f0 02 01 37 05 1b';
+      const higherResult = parseRdmPacket(higherMessageLengthPacket);
+      const higherPacket = expectSuccess(higherResult);
+      expect(higherPacket.messageLength.value).toBe(0x1b);
+      expect(higherPacket.messageLength.warning).toMatch(
+        /mismatched message length/i
+      );
+    });
+
+    it('warns on invalid port ID', () => {
+      const invalidPortIdPacket =
+        'cc 01 18 01 04 98 76 54 32 01 04 12 34 56 78 25 ' +
+        '00 00 00 00 20 00 60 00 04 3c';
+      const result = parseRdmPacket(invalidPortIdPacket);
+      const packet = expectSuccess(result);
+      const command = expectCommand(packet);
+      expect(command.portId.value).toBe(0x00);
+      expect(command.portId.warning).toMatch(/port id/i);
+    });
+
+    it('warns on unknown response type', () => {
+      const invalidResponseTypePacket =
+        'cc 01 2b 01 04 12 34 56 78 01 04 98 76 54 32 25 ' +
+        '13 00 00 00 21 00 60 13 01 00 00 2d 00 04 00 2d ' +
+        '00 01 00 08 00 02 00 01 00 00 01 04 e2';
+      const result = parseRdmPacket(invalidResponseTypePacket);
+      const packet = expectSuccess(result);
+      const response = expectResponse(packet);
+      expect(response.responseType.value.code).toBe(0x13);
+      expect(response.responseType.warning).toMatch(/response type/i);
+    });
+
+    it('warns on invalid message count', () => {
+      const invalidMessageCountPacket =
+        'cc 01 18 01 04 98 76 54 32 01 04 12 34 56 78 25 ' +
+        '01 01 00 00 20 00 60 00 04 3e';
+      const result = parseRdmPacket(invalidMessageCountPacket);
+      const packet = expectSuccess(result);
+      expect(packet.messageCount.value).toBe(0x01);
+      expect(packet.messageCount.warning).toMatch(/message count/i);
+    });
+
+    it('warns on invalid sub device', () => {
+      const invalidSubDevicePacket =
+        'cc 01 18 01 04 98 76 54 32 01 04 12 34 56 78 25 ' +
+        '01 00 02 01 20 00 60 00 04 40';
+      const result = parseRdmPacket(invalidSubDevicePacket);
+      const packet = expectSuccess(result);
+      expect(packet.subDevice.value).toBe(0x0201);
+      expect(packet.subDevice.warning).toMatch(/sub device/i);
+    });
+
+    it('warns on unknown command class', () => {
       const unknownCommandClassPacket =
         'cc 01 18 01 04 98 76 54 32 01 04 12 34 56 78 25 ' +
-        '01 00 00 00 25 ff ff 00 04 3d';
+        '01 00 00 00 25 00 60 00 04 42';
       const result = parseRdmPacket(unknownCommandClassPacket);
-      const error = expectParseError(result);
-      expect(error.byteOffset).toBe(20);
-      expect(error.message).toMatch(/command class/i);
+      const packet = expectSuccess(result);
+      expect(packet.commandClass.value.code).toBe(0x25);
+      expect(packet.commandClass.warning).toMatch(/command class/i);
     });
 
+    it('warns on unknown PID', () => {
+      const unknownPidPacket =
+        'cc 01 18 01 04 98 76 54 32 01 04 12 34 56 78 25 ' +
+        '01 00 00 00 20 00 07 00 03 e4';
+      const result = parseRdmPacket(unknownPidPacket);
+      const packet = expectSuccess(result);
+      expect(packet.parameterId.value.pid).toBe(0x0007);
+      expect(packet.parameterId.warning).toMatch(/unknown pid/i);
+    });
+
+    it('warns on parameter data length mismatch', () => {
+      const lowerDataLengthPacket =
+        'cc 01 1a 01 04 98 76 54 32 01 04 12 34 56 78 26 ' +
+        '01 00 00 00 30 00 f0 00 01 37 05 18';
+      const lowerResult = parseRdmPacket(lowerDataLengthPacket);
+      const lowerPacket = expectSuccess(lowerResult);
+      expect(lowerPacket.parameterDataLength.value).toBe(0x00);
+      expect(lowerPacket.parameterDataLength.warning).toMatch(
+        /parameter data length/i
+      );
+
+      const higherDataLengthPacket =
+        'cc 01 1a 01 04 98 76 54 32 01 04 12 34 56 78 26 ' +
+        '01 00 00 00 30 00 f0 03 01 37 05 20';
+      const higherResult = parseRdmPacket(higherDataLengthPacket);
+      const higherPacket = expectSuccess(higherResult);
+      expect(higherPacket.parameterDataLength.value).toBe(0x03);
+      expect(higherPacket.parameterDataLength.warning).toMatch(
+        /parameter data length/i
+      );
+    });
+
+    it('warns on checksum mismatch', () => {
+      const result = parseRdmPacket(INVALID_CHECKSUM_START_ADDRESS);
+      const packet = expectSuccess(result);
+      expect(packet.validChecksum).toBe(false);
+      expect(packet.checksum.warning).toMatch(/checksum mismatch/i);
+    });
+  });
+
+  describe('parse error handling', () => {
     it('catches truncated packets', () => {
       const singleByteResult = parseRdmPacket('cc');
       const singleByteError = expectParseError(singleByteResult);
@@ -477,6 +583,12 @@ describe('parseRdmPacket', () => {
       const dualByteError = expectParseError(dualByteResult);
       expect(dualByteError.byteOffset).toBe(2);
       expect(dualByteError.message).toMatch(/beyond end/i);
+    });
+
+    it('rejects empty inputs', () => {
+      const result = parseRdmPacket('');
+      const error = expectParseError(result);
+      expect(error.message).toMatch(/empty input/i);
     });
   });
 });
