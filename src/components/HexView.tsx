@@ -1,3 +1,3 @@
 export function HexView() {
-  return <div>Hex View</div>;
+  return <div className="p-4">Hex View</div>;
 }

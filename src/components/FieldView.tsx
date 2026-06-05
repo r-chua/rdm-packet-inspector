@@ -1,3 +1,3 @@
 export function FieldView() {
-  return <div>Field View</div>;
+  return <div className="p-4">Field View</div>;
 }

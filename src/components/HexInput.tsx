@@ -1,3 +1,3 @@
 export function HexInput() {
-  return <div>Hex Input</div>;
+  return <div className="p-4">Hex Input</div>;
 }
