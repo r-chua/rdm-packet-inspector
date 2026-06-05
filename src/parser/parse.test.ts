@@ -591,4 +591,29 @@ describe('parseRdmPacket', () => {
       expect(error.message).toMatch(/empty input/i);
     });
   });
+
+  describe('parse result structure', () => {
+    it('includes raw bytes in successful parse', () => {
+      const result = parseRdmPacket(GET_DEVICE_INFO);
+      expect(result.rawBytes).not.toBeNull();
+      if (result.rawBytes === null) {
+        throw new Error('Expected raw bytes to be present in successful parse');
+      }
+      expect(result.rawBytes.length).toEqual(26);
+    });
+
+    it('includes raw bytes in failed parse', () => {
+      const result = parseRdmPacket('cc 01 18 01 04 98');
+      expect(result.rawBytes).not.toBeNull();
+      if (result.rawBytes === null) {
+        throw new Error('Expected raw bytes to be present in failed parse');
+      }
+      expect(result.rawBytes.length).toEqual(6);
+    });
+
+    it('includes null raw bytes when input is empty', () => {
+      const result = parseRdmPacket('');
+      expect(result.rawBytes).toBeNull();
+    });
+  });
 });

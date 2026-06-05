@@ -218,6 +218,7 @@ export const parseRdmPacket = (packet: string): ParseResult => {
           byteOffset: -1,
           message: 'Empty input: no data to parse',
         },
+        rawBytes: null,
       };
     }
   } catch (error) {
@@ -227,6 +228,7 @@ export const parseRdmPacket = (packet: string): ParseResult => {
         byteOffset: -1,
         message: (error as Error).message,
       },
+      rawBytes: null,
     };
   }
 
@@ -362,7 +364,7 @@ export const parseRdmPacket = (packet: string): ParseResult => {
         direction: 'command' as const,
         portId: portIdOrResponseType,
       };
-      return { success: true, packet };
+      return { success: true, packet, rawBytes: normalizedPacket };
     } else if (isResponse(commandClass.value.code)) {
       // Response packet
       const responseType: RdmField<RdmResponseType> = {
@@ -389,7 +391,7 @@ export const parseRdmPacket = (packet: string): ParseResult => {
         responseType,
         responseDetail,
       };
-      return { success: true, packet };
+      return { success: true, packet, rawBytes: normalizedPacket };
     } else {
       return {
         success: true,
@@ -398,6 +400,7 @@ export const parseRdmPacket = (packet: string): ParseResult => {
           direction: 'unknown' as const,
           portIdOrResponseType,
         },
+        rawBytes: normalizedPacket,
       };
     }
   } catch (error) {
@@ -407,6 +410,7 @@ export const parseRdmPacket = (packet: string): ParseResult => {
         byteOffset: reader.currentOffset(),
         message: (error as Error).message,
       },
+      rawBytes: normalizedPacket,
     };
   }
 };
