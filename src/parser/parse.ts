@@ -286,10 +286,18 @@ export const parseRdmPacket = (packet: string): ParseResult => {
 
     const parameterDataLength = reader.read(1, (bytes) => bytes[0]);
 
+    if (parameterDataLength.value !== messageLength.value - 24) {
+      parameterDataLength.warning =
+        `Mismatched parameter data length: expected ` +
+        `${parameterDataLength.value} bytes but message length implies ` +
+        `${messageLength.value - 24} bytes.`;
+    }
+
+    // Total length - header (24 bytes) - checksum (2 bytes)
+    const calculatedPDL = normalizedPacket.length - 24 - 2;
+
     const parameterData =
-      parameterDataLength.value > 0
-        ? reader.read(parameterDataLength.value, (bytes) => bytes)
-        : null;
+      calculatedPDL > 0 ? reader.read(calculatedPDL, (bytes) => bytes) : null;
 
     const checksum = reader.read(2, transformUint16);
 
