@@ -1,7 +1,10 @@
 import { lookupCommandClass } from './data/command-classes';
 import { lookupNackReason } from './data/nack-reasons';
 import { lookupPid } from './data/pids';
-import { lookupResponseType } from './data/response-types';
+import {
+  lookupResponseType,
+  type RdmResponseType,
+} from './data/response-types';
 import { normalizeHex } from './normalize';
 import type {
   ParseResult,
@@ -302,6 +305,11 @@ export const parseRdmPacket = (packet: string): ParseResult => {
     };
 
     if (isCommand(commandClass.value.code)) {
+      if (portIdOrResponseType.value === 0x00) {
+        portIdOrResponseType.warning =
+          `Invalid port ID of 0x00 in command packet; ` +
+          `port ID must be between 0x01 and 0xFF`;
+      }
       // Command packet
       const packet = {
         ...packetBase,
@@ -311,12 +319,17 @@ export const parseRdmPacket = (packet: string): ParseResult => {
       return { success: true, packet };
     } else if (isResponse(commandClass.value.code)) {
       // Response packet
-      const responseType = {
+      const responseType: RdmField<RdmResponseType> = {
         value: lookupResponseType(portIdOrResponseType.value),
         startByte: portIdOrResponseType.startByte,
         endByte: portIdOrResponseType.endByte,
         rawBytes: portIdOrResponseType.rawBytes,
       };
+      if (responseType.value.name === 'UNKNOWN_RESPONSE_TYPE') {
+        responseType.warning =
+          `Unknown response type code: ` +
+          `0x${responseType.value.code.toString(16)}`;
+      }
       const responseDetail = interpretResponseDetail(
         responseType.value.code,
         parameterData?.rawBytes || null
