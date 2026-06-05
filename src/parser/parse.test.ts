@@ -522,7 +522,7 @@ describe('parseRdmPacket', () => {
     it('warns on invalid sub device', () => {
       const invalidSubDevicePacket =
         'cc 01 18 01 04 98 76 54 32 01 04 12 34 56 78 25 ' +
-        '01 02 01 00 20 00 60 00 04 40';
+        '01 00 02 01 20 00 60 00 04 40';
       const result = parseRdmPacket(invalidSubDevicePacket);
       const packet = expectSuccess(result);
       expect(packet.subDevice.value).toBe(0x0201);

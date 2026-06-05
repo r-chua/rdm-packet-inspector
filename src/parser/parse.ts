@@ -136,7 +136,7 @@ const transformUint16 = (bytes: Uint8Array): number => {
         `${bytes.length} bytes`
     );
   }
-  return (bytes[0] << 8) + bytes[1];
+  return (bytes[0] << 8) | bytes[1];
 };
 
 const isCommand = (commandClassCode: number): boolean => {
@@ -261,6 +261,12 @@ export const parseRdmPacket = (packet: string): ParseResult => {
     const messageCount = reader.read(1, (bytes) => bytes[0]);
 
     const subDevice = reader.read(2, transformUint16);
+
+    if (subDevice.value > 512 && subDevice.value !== 0xffff) {
+      subDevice.warning =
+        `Sub device value out of range: expected 0-512 or 0xFFFF for ` +
+        `broadcast, but got ${subDevice.value}`;
+    }
 
     const commandClass = reader.read(1, (bytes) =>
       lookupCommandClass(bytes[0])
