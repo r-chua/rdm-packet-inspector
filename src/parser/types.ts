@@ -101,5 +101,5 @@ export type ParseError = {
  * successful parse with a valid packet or a failed parse with an error.
  */
 export type ParseResult =
-  | { success: true; packet: RdmPacket }
-  | { success: false; error: ParseError };
+  | { success: true; packet: RdmPacket; rawBytes: Uint8Array }
+  | { success: false; error: ParseError; rawBytes: Uint8Array };
