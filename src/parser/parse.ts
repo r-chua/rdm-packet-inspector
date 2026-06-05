@@ -305,12 +305,19 @@ export const parseRdmPacket = (packet: string): ParseResult => {
     };
 
     if (isCommand(commandClass.value.code)) {
+      // Command packet
       if (portIdOrResponseType.value === 0x00) {
         portIdOrResponseType.warning =
           `Invalid port ID of 0x00 in command packet; ` +
           `port ID must be between 0x01 and 0xFF`;
       }
-      // Command packet
+
+      if (packetBase.messageCount.value !== 0x00) {
+        packetBase.messageCount.warning =
+          `Non-zero message count in command packet: expected 0x00 ` +
+          `but got 0x${packetBase.messageCount.value.toString(16)}`;
+      }
+
       const packet = {
         ...packetBase,
         direction: 'command' as const,
