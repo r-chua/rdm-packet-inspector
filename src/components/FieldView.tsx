@@ -1,6 +1,11 @@
 import type { FieldEntry } from '../parser/fields';
+import type { RdmPacket } from '../parser/types';
 
-export function FieldView() {
+type FieldViewProps = {
+  packet: RdmPacket | null;
+};
+
+export function FieldView({ packet }: FieldViewProps) {
   const placeholderFields: FieldEntry[] = [
     {
       name: 'Start Code',

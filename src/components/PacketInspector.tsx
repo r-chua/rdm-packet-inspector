@@ -1,8 +1,14 @@
+import React from 'react';
 import { FieldView } from './FieldView.tsx';
 import { HexInput } from './HexInput.tsx';
 import { HexView } from './HexView.tsx';
+import type { ParseResult } from '../parser/types.ts';
 
 export function PacketInspector() {
+  const [parseResult, setParseResult] = React.useState<ParseResult | null>(
+    null
+  );
+
   return (
     <div className="flex flex-col h-screen">
       <div className="bg-gray-900 text-white">
@@ -16,10 +22,15 @@ export function PacketInspector() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1 min-h-0">
           <div className="overflow-auto bg-green-200 border rounded-lg">
-            <HexView />
+            <HexView
+              rawBytes={parseResult?.rawBytes || null}
+              packet={parseResult?.success ? parseResult.packet : null}
+            />
           </div>
           <div className="overflow-auto bg-amber-200 border rounded-lg">
-            <FieldView />
+            <FieldView
+              packet={parseResult?.success ? parseResult.packet : null}
+            />
           </div>
         </div>
       </div>
