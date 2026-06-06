@@ -1,11 +1,17 @@
+import React from 'react';
 import { cn } from '../lib/utils';
 
-export function HexView() {
-  const placeholderData = new Uint8Array([
-    0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0a, 0x0b, 0x0c,
-    0x0d, 0x0e, 0x0f, 0x10, 0x11, 0x12, 0x13,
-    // ... more bytes as needed
-  ]);
+type HexViewProps = {
+  rawBytes: Uint8Array | null;
+};
+
+export function HexView({ rawBytes }: HexViewProps) {
+  const dataToDisplay = React.useMemo(() => {
+    if (rawBytes) {
+      return generateTableRowData(rawBytes);
+    }
+    return generateTableRowData(new Uint8Array([]));
+  }, [rawBytes]);
 
   function generateTableRowData(buffer: Uint8Array): number[][] {
     const rows: number[][] = [];
@@ -14,8 +20,6 @@ export function HexView() {
     }
     return rows;
   }
-
-  const rowData = generateTableRowData(placeholderData);
 
   return (
     <section className="p-4">
@@ -64,7 +68,7 @@ export function HexView() {
           </tr>
         </thead>
         <tbody>
-          {rowData.map((row, rowIndex) => (
+          {dataToDisplay.map((row, rowIndex) => (
             <tr key={rowIndex}>
               <th
                 scope="row"

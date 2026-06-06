@@ -87,6 +87,31 @@ test('normalizeHex handles mixed separators with 0x prefixes', () => {
   expect(normalizeHex(input)).toEqual(EXPECTED_CC_01_18);
 });
 
+test('normalizeHex handles single quotes', () => {
+  const input = "CC '01' 18";
+  expect(normalizeHex(input)).toEqual(EXPECTED_CC_01_18);
+});
+
+test('normalizeHex handles double quotes', () => {
+  const input = 'CC "01" 18';
+  expect(normalizeHex(input)).toEqual(EXPECTED_CC_01_18);
+});
+
+test('normalizeHex handles plus signs', () => {
+  const input = 'CC+01+18';
+  expect(normalizeHex(input)).toEqual(EXPECTED_CC_01_18);
+});
+
+test('normalizeHex handles colons', () => {
+  const input = 'CC:01:18';
+  expect(normalizeHex(input)).toEqual(EXPECTED_CC_01_18);
+});
+
+test('normalizeHex handles semicolons', () => {
+  const input = 'CC;01;18';
+  expect(normalizeHex(input)).toEqual(EXPECTED_CC_01_18);
+});
+
 test('normalizeHex throws an error for non-hex characters', () => {
   expect(() => normalizeHex('GG 01 18')).toThrow(HEX_ERROR_REGEX);
   expect(() => normalizeHex('CC 0G 18')).toThrow(HEX_ERROR_REGEX);

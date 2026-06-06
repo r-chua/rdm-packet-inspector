@@ -18,7 +18,7 @@ export const normalizeHex = (input: string): Uint8Array => {
     .trim()
     .toLowerCase() // Normalize to lowercase
     .replace(/0x/g, '') // Remove '0x' prefixes
-    .replace(/[\s,]+/g, ''); // Remove all whitespace and commas
+    .replace(/[\s,'"+:;]+/g, ''); // Remove all whitespace, commas, and characters
 
   if (cleaned.length % 2 !== 0) {
     throw new Error(
