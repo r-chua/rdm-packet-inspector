@@ -30,7 +30,7 @@ describe('getFieldEntries', () => {
     const entries = getFieldEntries(commandPacket);
     const portIdEntry = entries.find((entry) => entry.name === 'Port ID');
     expect(portIdEntry).toBeDefined();
-    expect(portIdEntry?.field.value).toBe(1);
+    expect(portIdEntry?.displayValue).toBe('1');
   });
 
   it('includes responseType for response packets', () => {
@@ -44,8 +44,8 @@ describe('getFieldEntries', () => {
   it('returns fields in the correct order', () => {
     const entries = getFieldEntries(responsePacket);
     for (let i = 1; i < entries.length; i++) {
-      expect(entries[i].field.startByte).toBeGreaterThanOrEqual(
-        entries[i - 1].field.startByte
+      expect(entries[i].startByte).toBeGreaterThanOrEqual(
+        entries[i - 1].startByte
       );
     }
   });

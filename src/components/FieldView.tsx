@@ -14,26 +14,11 @@ export function FieldView({ packet }: FieldViewProps) {
     return [];
   }, [packet]);
 
-  function renderValue(value: unknown): string {
-    if (value instanceof Uint8Array) {
-      return Array.from(value)
-        .map((byte) => byte.toString(16).toUpperCase().padStart(2, '0'))
-        .join(' ');
-    }
-    if (typeof value === 'number') {
-      return `0x${value.toString(16).toUpperCase()}`;
-    }
-    if (typeof value === 'string') {
-      return value;
-    }
-    return 'Placeholder';
-  }
-
   function renderFieldEntry(entry: FieldEntry) {
     return (
       <div key={entry.name}>
         <dt>{entry.name}</dt>
-        <dd>{renderValue(entry.field.value)}</dd>
+        <dd>{entry.displayValue}</dd>
       </div>
     );
   }
