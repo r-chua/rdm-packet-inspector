@@ -1,4 +1,5 @@
-import type { FieldEntry } from '../parser/fields';
+import React from 'react';
+import { getFieldEntries, type FieldEntry } from '../parser/fields';
 import type { RdmPacket } from '../parser/types';
 
 type FieldViewProps = {
@@ -6,35 +7,12 @@ type FieldViewProps = {
 };
 
 export function FieldView({ packet }: FieldViewProps) {
-  const placeholderFields: FieldEntry[] = [
-    {
-      name: 'Start Code',
-      field: {
-        value: 0xcc,
-        rawBytes: new Uint8Array([0xcc]),
-        startByte: 0,
-        endByte: 0,
-      },
-    },
-    {
-      name: 'Sub Start Code',
-      field: {
-        value: 0x01,
-        rawBytes: new Uint8Array([0x01]),
-        startByte: 1,
-        endByte: 1,
-      },
-    },
-    {
-      name: 'Message Length',
-      field: {
-        value: 24,
-        rawBytes: new Uint8Array([0x18]),
-        startByte: 2,
-        endByte: 2,
-      },
-    },
-  ];
+  const packetFields: FieldEntry[] = React.useMemo(() => {
+    if (packet) {
+      return getFieldEntries(packet);
+    }
+    return [];
+  }, [packet]);
 
   function renderValue(value: unknown): string {
     if (value instanceof Uint8Array) {
@@ -64,7 +42,7 @@ export function FieldView({ packet }: FieldViewProps) {
     <section className="p-4">
       <h2 className="text-lg font-medium text-gray-900 mb-2">Field View</h2>
 
-      <dl>{placeholderFields.map((entry) => renderFieldEntry(entry))}</dl>
+      <dl>{packetFields.map((entry) => renderFieldEntry(entry))}</dl>
     </section>
   );
 }
