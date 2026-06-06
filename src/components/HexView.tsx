@@ -1,13 +1,11 @@
 import React from 'react';
 import { cn } from '../lib/utils';
-import type { RdmPacket } from '../parser/types';
 
 type HexViewProps = {
   rawBytes: Uint8Array | null;
-  packet: RdmPacket | null;
 };
 
-export function HexView({ rawBytes, packet }: HexViewProps) {
+export function HexView({ rawBytes }: HexViewProps) {
   const dataToDisplay = React.useMemo(() => {
     if (rawBytes) {
       return generateTableRowData(rawBytes);
