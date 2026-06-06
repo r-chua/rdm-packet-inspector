@@ -1,3 +1,4 @@
+import React from 'react';
 import { cn } from '../lib/utils';
 
 type HexInputProps = {
@@ -5,6 +6,13 @@ type HexInputProps = {
 };
 
 export function HexInput({ onParse }: HexInputProps) {
+  const textareaRef = React.useRef<HTMLTextAreaElement>(null);
+
+  const handleSubmit = () => {
+    const hexInput = textareaRef.current?.value || '';
+    onParse(hexInput);
+  };
+
   return (
     <section className="p-4">
       <h2 className="text-lg font-medium text-gray-900 mb-2">Hex Input</h2>
@@ -16,6 +24,7 @@ export function HexInput({ onParse }: HexInputProps) {
           Packet Data
         </label>
         <textarea
+          ref={textareaRef}
           id="hex-input"
           className={cn(
             'mt-1 block w-full rounded-md',
@@ -31,12 +40,7 @@ export function HexInput({ onParse }: HexInputProps) {
         <div>
           <button
             type="button"
-            onClick={() => {
-              const hexInput = (
-                document.getElementById('hex-input') as HTMLTextAreaElement
-              ).value;
-              onParse(hexInput);
-            }}
+            onClick={handleSubmit}
             className={cn(
               'mt-2 px-4 py-2 rounded-md shadow-sm',
               'bg-indigo-500 text-white',
