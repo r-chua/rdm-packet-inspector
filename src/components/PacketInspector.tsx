@@ -3,11 +3,16 @@ import { FieldView } from './FieldView.tsx';
 import { HexInput } from './HexInput.tsx';
 import { HexView } from './HexView.tsx';
 import type { ParseResult } from '../parser/types.ts';
+import { parseRdmPacket } from '../parser/parse.ts';
 
 export function PacketInspector() {
   const [parseResult, setParseResult] = React.useState<ParseResult | null>(
     null
   );
+
+  const handleParse = (hexString: string) => {
+    setParseResult(parseRdmPacket(hexString));
+  };
 
   return (
     <div className="flex flex-col h-screen">
@@ -17,7 +22,7 @@ export function PacketInspector() {
 
       <div className="flex flex-col flex-1 min-h-0 p-4 gap-4">
         <div className="bg-blue-200 border rounded-lg">
-          <HexInput />
+          <HexInput onParse={handleParse} />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1 min-h-0">

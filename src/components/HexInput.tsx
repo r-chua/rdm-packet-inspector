@@ -1,6 +1,10 @@
 import { cn } from '../lib/utils';
 
-export function HexInput() {
+type HexInputProps = {
+  onParse: (hexString: string) => void;
+};
+
+export function HexInput({ onParse }: HexInputProps) {
   return (
     <section className="p-4">
       <h2 className="text-lg font-medium text-gray-900 mb-2">Hex Input</h2>
@@ -26,6 +30,13 @@ export function HexInput() {
 
         <div>
           <button
+            type="button"
+            onClick={() => {
+              const hexInput = (
+                document.getElementById('hex-input') as HTMLTextAreaElement
+              ).value;
+              onParse(hexInput);
+            }}
             className={cn(
               'mt-2 px-4 py-2 rounded-md shadow-sm',
               'bg-indigo-500 text-white',
