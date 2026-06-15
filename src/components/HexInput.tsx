@@ -13,6 +13,13 @@ export function HexInput({ onParse }: HexInputProps) {
     onParse(hexInput);
   };
 
+  const handleClear = () => {
+    if (textareaRef.current) {
+      textareaRef.current.value = '';
+    }
+    onParse(''); // Clear the parsed data as well
+  };
+
   return (
     <section className="p-4">
       <h2 className="text-lg font-medium text-gray-900 mb-2">Hex Input</h2>
@@ -49,6 +56,19 @@ export function HexInput({ onParse }: HexInputProps) {
             )}
           >
             Submit
+          </button>
+
+          <button
+            type="button"
+            onClick={handleClear}
+            className={cn(
+              'mt-2 ml-6 px-4 py-2 rounded-md shadow-sm',
+              'bg-red-500 text-white',
+              'hover:bg-red-600',
+              'focus:ring-2 focus:ring-offset-2 focus:ring-red-500'
+            )}
+          >
+            Reset
           </button>
         </div>
       </form>
