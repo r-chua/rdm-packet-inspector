@@ -6,17 +6,14 @@ type HexInputProps = {
 };
 
 export function HexInput({ onParse }: HexInputProps) {
-  const textareaRef = React.useRef<HTMLTextAreaElement>(null);
+  const [textAreaValue, setTextAreaValue] = React.useState('');
 
   const handleSubmit = () => {
-    const hexInput = textareaRef.current?.value || '';
-    onParse(hexInput);
+    onParse(textAreaValue);
   };
 
   const handleClear = () => {
-    if (textareaRef.current) {
-      textareaRef.current.value = '';
-    }
+    setTextAreaValue('');
     onParse(''); // Clear the parsed data as well
   };
 
@@ -31,7 +28,6 @@ export function HexInput({ onParse }: HexInputProps) {
           Packet Data
         </label>
         <textarea
-          ref={textareaRef}
           id="hex-input"
           className={cn(
             'mt-1 block w-full rounded-md',
@@ -42,6 +38,8 @@ export function HexInput({ onParse }: HexInputProps) {
           spellCheck={false}
           autoComplete="off"
           placeholder="Enter hex data here..."
+          value={textAreaValue}
+          onChange={(e) => setTextAreaValue(e.target.value)}
         />
 
         <div>
