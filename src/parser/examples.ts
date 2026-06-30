@@ -31,11 +31,16 @@ export const INVALID_CHECKSUM_START_ADDRESS =
 // Example NACK response with reason code of "Hardware Fault"
 export const NACK_REASON_HARDWARE_FAULT_RESPONSE =
   'cc 01 1a 01 04 12 34 56 78 01 04 98 76 54 32 25 ' +
-  '02 00 00 00 21 00 66 02 00 02 04 4b';
+  '02 00 00 00 21 00 60 02 00 02 04 45';
 
 export const INVALID_NACK_REASON_RESPONSE =
   'cc 01 1a 01 04 12 34 56 78 01 04 98 76 54 32 25 ' +
   '02 00 00 00 21 00 66 02 00 ff 05 48';
+
+export const DISCOVERY_UNIQUE_REQUEST =
+  'cc 01 24 ff ff ff ff ff ff 01 02 03 04 05 06 01 ' +
+  '01 00 00 00 10 00 01 0c 00 00 00 00 00 00 ff ff ' +
+  'ff ff ff ff 0d 19';
 
 export const DISCOVERY_MUTE_REQUEST =
   'cc 01 18 01 04 98 76 54 32 01 04 12 34 56 78 38 ' +
