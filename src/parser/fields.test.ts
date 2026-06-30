@@ -67,4 +67,67 @@ describe('getFieldEntries', () => {
     expect(messageCountEntry).toBeDefined();
     expect(messageCountEntry?.warning).not.toBeDefined();
   });
+
+  describe('subfields', () => {
+    it('adds estimated wait time for ACK_TIMER responses', () => {
+      const packet = parseOrThrow(examples.GET_DEVICE_INFO_ACK_TIMER_RESPONSE);
+      const entries = getFieldEntries(packet);
+      const pdEntry = entries.find((entry) => entry.name === 'Parameter Data');
+      expect(pdEntry).toBeDefined();
+      expect(pdEntry?.subFields).toBeDefined();
+      const subFields = pdEntry?.subFields || [];
+      const estimatedWaitEntry = subFields.find(
+        (entry) => entry.name === 'Estimated Wait Time'
+      );
+      expect(estimatedWaitEntry).toBeDefined();
+      expect(estimatedWaitEntry?.startByte).toBe(24);
+      expect(estimatedWaitEntry?.endByte).toBe(25);
+      expect(estimatedWaitEntry?.displayValue).toBe('5000 ms');
+    });
+
+    it('adds reason for NACK responses', () => {
+      const packet = parseOrThrow(examples.NACK_REASON_HARDWARE_FAULT_RESPONSE);
+      const entries = getFieldEntries(packet);
+      const pdEntry = entries.find((entry) => entry.name === 'Parameter Data');
+      expect(pdEntry).toBeDefined();
+      expect(pdEntry?.subFields).toBeDefined();
+      const subFields = pdEntry?.subFields || [];
+      const reasonEntry = subFields.find(
+        (entry) => entry.name === 'NACK Reason'
+      );
+      expect(reasonEntry).toBeDefined();
+      expect(reasonEntry?.startByte).toBe(24);
+      expect(reasonEntry?.endByte).toBe(25);
+      expect(reasonEntry?.displayValue).toBe('Hardware Fault');
+      expect(reasonEntry?.warning).not.toBeDefined();
+    });
+
+    it('handles unknown NACK reason codes', () => {
+      const packet = parseOrThrow(examples.INVALID_NACK_REASON_RESPONSE);
+      const entries = getFieldEntries(packet);
+      const pdEntry = entries.find((entry) => entry.name === 'Parameter Data');
+      expect(pdEntry).toBeDefined();
+      expect(pdEntry?.subFields).toBeDefined();
+      const subFields = pdEntry?.subFields || [];
+      const reasonEntry = subFields.find(
+        (entry) => entry.name === 'NACK Reason'
+      );
+      expect(reasonEntry).toBeDefined();
+      expect(reasonEntry?.startByte).toBe(24);
+      expect(reasonEntry?.endByte).toBe(25);
+      expect(reasonEntry?.displayValue).toBe('Unknown (0xFF)');
+      expect(reasonEntry?.warning).toBeDefined();
+    });
+
+    it('handles unknown response types', () => {
+      const packet = parseOrThrow(examples.INVALID_RESPONSE_TYPE_RESPONSE);
+      const entries = getFieldEntries(packet);
+      const responseTypeEntry = entries.find(
+        (entry) => entry.name === 'Response Type'
+      );
+      expect(responseTypeEntry).toBeDefined();
+      expect(responseTypeEntry?.displayValue).toBe('Unknown (0xFF)');
+      expect(responseTypeEntry?.warning).toBeDefined();
+    });
+  });
 });

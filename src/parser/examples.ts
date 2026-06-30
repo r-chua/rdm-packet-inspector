@@ -71,3 +71,8 @@ export const ACK_OVERFLOW_RESPONSE =
 export const GET_DEVICE_INFO_WITH_MESSAGE_COUNT =
   'cc 01 18 01 04 98 76 54 32 01 04 12 34 56 78 25 ' +
   '01 01 00 00 20 00 60 00 04 3e';
+
+// ACK_TIMER response with incorrect response type
+export const INVALID_RESPONSE_TYPE_RESPONSE =
+  'cc 01 1a 01 04 12 34 56 78 01 04 98 76 54 32 25 ' +
+  'ac 00 00 00 21 00 60 02 00 32 05 1f';
