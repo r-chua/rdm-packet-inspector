@@ -2,22 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { getFieldEntries } from './fields';
 import type { RdmPacket } from './types';
 import { parseRdmPacket } from './parse';
-
-// Example RDM packet for getting device info
-const GET_DEVICE_INFO =
-  'cc 01 18 01 04 98 76 54 32 01 04 12 34 56 78 25 ' +
-  '01 00 00 00 20 00 60 00 04 3d';
-
-// Example RDM response packet for getting device info
-const GET_DEVICE_INFO_RESPONSE =
-  'cc 01 2b 01 04 12 34 56 78 01 04 98 76 54 32 25 ' +
-  '00 00 00 00 21 00 60 13 01 00 00 2d 00 04 00 2d ' +
-  '00 01 00 08 00 02 00 01 00 00 01 04 cf';
-
-// Example RDM packet for getting device info
-const GET_DEVICE_INFO_WITH_MESSAGE_COUNT =
-  'cc 01 18 01 04 98 76 54 32 01 04 12 34 56 78 25 ' +
-  '01 01 00 00 20 00 60 00 04 3e';
+import * as examples from './examples';
 
 function parseOrThrow(hexString: string): RdmPacket {
   const result = parseRdmPacket(hexString);
@@ -27,8 +12,8 @@ function parseOrThrow(hexString: string): RdmPacket {
   return result.packet;
 }
 
-const commandPacket = parseOrThrow(GET_DEVICE_INFO);
-const responsePacket = parseOrThrow(GET_DEVICE_INFO_RESPONSE);
+const commandPacket = parseOrThrow(examples.GET_DEVICE_INFO);
+const responsePacket = parseOrThrow(examples.GET_DEVICE_INFO_RESPONSE);
 
 describe('getFieldEntries', () => {
   it('includes portId for command packets', () => {
@@ -65,7 +50,7 @@ describe('getFieldEntries', () => {
 
   it('includes field warnings', () => {
     const entries = getFieldEntries(
-      parseOrThrow(GET_DEVICE_INFO_WITH_MESSAGE_COUNT)
+      parseOrThrow(examples.GET_DEVICE_INFO_WITH_MESSAGE_COUNT)
     );
     const messageCountEntry = entries.find(
       (entry) => entry.name === 'Message Count'
