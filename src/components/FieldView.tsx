@@ -1,13 +1,28 @@
+import { cn } from '../lib/utils';
 import { type FieldEntry } from '../parser/fields';
 
 type FieldViewProps = {
   fieldEntries: FieldEntry[] | null;
+  highlightedField: FieldEntry | null;
+  onHighlight: (field: FieldEntry | null) => void;
 };
 
-export function FieldView({ fieldEntries }: FieldViewProps) {
+export function FieldView({
+  fieldEntries,
+  highlightedField,
+  onHighlight,
+}: FieldViewProps) {
   function renderEntryDetails(entry: FieldEntry) {
     return (
-      <>
+      <div
+        key={entry.name}
+        onMouseEnter={() => onHighlight(entry)}
+        onMouseLeave={() => onHighlight(null)}
+        className={cn(
+          entry === highlightedField ? 'bg-yellow-100' : '',
+          'p-2 rounded-md'
+        )}
+      >
         <div className="flex justify-between items-baseline">
           <dt className="text-sm font-medium text-gray-500">{entry.name}</dt>
           <span className="text-xs text-gray-400 font-mono">
@@ -22,7 +37,7 @@ export function FieldView({ fieldEntries }: FieldViewProps) {
         {entry.warning && (
           <p className="text-xs text-amber-600 mt-1">{entry.warning}</p>
         )}
-      </>
+      </div>
     );
   }
 
