@@ -31,9 +31,11 @@ export function PacketInspector() {
 
         {parseResult && !parseResult.success && (
           <div className="bg-red-200 border rounded-lg p-4">
-            <p className="text-red-800 font-bold">Parse Error:</p>
-            <p>Byte Offset: {parseResult.error.byteOffset}</p>
-            <p>Message: {parseResult.error.message}</p>
+            <p className="text-red-800 font-bold">Error:</p>
+            <p className="italic">{parseResult.error.message}</p>
+            {parseResult.error.byteOffset !== -1 && (
+              <p>Byte Index: {parseResult.error.byteOffset}</p>
+            )}
           </div>
         )}
 
