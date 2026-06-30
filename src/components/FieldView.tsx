@@ -14,9 +14,9 @@ export function FieldView({ packet }: FieldViewProps) {
     return [];
   }, [packet]);
 
-  function renderFieldEntry(entry: FieldEntry) {
+  function renderEntryDetails(entry: FieldEntry) {
     return (
-      <div key={entry.name} className="py-2 px-3">
+      <>
         <div className="flex justify-between items-baseline">
           <dt className="text-sm font-medium text-gray-500">{entry.name}</dt>
           <span className="text-xs text-gray-400 font-mono">
@@ -30,6 +30,23 @@ export function FieldView({ packet }: FieldViewProps) {
         </dd>
         {entry.warning && (
           <p className="text-xs text-amber-600 mt-1">{entry.warning}</p>
+        )}
+      </>
+    );
+  }
+
+  function renderFieldEntry(entry: FieldEntry) {
+    return (
+      <div key={entry.name} className="py-2 px-3">
+        {renderEntryDetails(entry)}
+        {entry.subFields && entry.subFields.length > 0 && (
+          <dl>
+            {entry.subFields.map((sub, index) => (
+              <div key={`${sub.name}-${index}`} className="ml-4">
+                {renderEntryDetails(sub)}
+              </div>
+            ))}
+          </dl>
         )}
       </div>
     );
