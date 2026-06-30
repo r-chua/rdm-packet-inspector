@@ -16,11 +16,21 @@ export function FieldView({ packet }: FieldViewProps) {
 
   function renderFieldEntry(entry: FieldEntry) {
     return (
-      <div key={entry.name} className="flex justify-between py-2 px-3">
-        <dt className="text-sm font-medium text-gray-500">{entry.name}</dt>
-        <dd className="text-sm font-mono text-gray-900">
+      <div key={entry.name} className="py-2 px-3">
+        <div className="flex justify-between items-baseline">
+          <dt className="text-sm font-medium text-gray-500">{entry.name}</dt>
+          <span className="text-xs text-gray-400 font-mono">
+            {entry.startByte === entry.endByte
+              ? `byte ${entry.startByte}`
+              : `bytes ${entry.startByte}–${entry.endByte}`}
+          </span>
+        </div>
+        <dd className="text-sm font-mono text-gray-900 mt-0.5">
           {entry.displayValue}
         </dd>
+        {entry.warning && (
+          <p className="text-xs text-amber-600 mt-1">{entry.warning}</p>
+        )}
       </div>
     );
   }
