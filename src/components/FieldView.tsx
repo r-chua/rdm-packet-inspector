@@ -1,19 +1,10 @@
-import React from 'react';
-import { getFieldEntries, type FieldEntry } from '../parser/fields';
-import type { RdmPacket } from '../parser/types';
+import { type FieldEntry } from '../parser/fields';
 
 type FieldViewProps = {
-  packet: RdmPacket | null;
+  fieldEntries: FieldEntry[] | null;
 };
 
-export function FieldView({ packet }: FieldViewProps) {
-  const packetFields: FieldEntry[] = React.useMemo(() => {
-    if (packet) {
-      return getFieldEntries(packet);
-    }
-    return [];
-  }, [packet]);
-
+export function FieldView({ fieldEntries }: FieldViewProps) {
   function renderEntryDetails(entry: FieldEntry) {
     return (
       <>
@@ -57,7 +48,7 @@ export function FieldView({ packet }: FieldViewProps) {
       <h2 className="text-lg font-medium text-gray-900 mb-2">Field View</h2>
 
       <dl className="divide-y divide-gray-200">
-        {packetFields.map((entry) => renderFieldEntry(entry))}
+        {fieldEntries?.map((entry) => renderFieldEntry(entry))}
       </dl>
     </section>
   );

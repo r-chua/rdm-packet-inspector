@@ -1,8 +1,10 @@
 import React from 'react';
 import { cn } from '../lib/utils';
+import type { FieldEntry } from '../parser/fields';
 
 type HexViewProps = {
   rawBytes: Uint8Array | null;
+  fieldEntries: FieldEntry[] | null;
 };
 
 export function HexView({ rawBytes }: HexViewProps) {
