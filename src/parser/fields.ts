@@ -6,6 +6,7 @@ export type FieldEntry = {
   displayValue: string;
   startByte: number;
   endByte: number;
+  warning?: string;
 };
 
 export const getFieldEntries = (packet: RdmPacket): FieldEntry[] => {

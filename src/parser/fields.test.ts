@@ -14,6 +14,11 @@ const GET_DEVICE_INFO_RESPONSE =
   '00 00 00 00 21 00 60 13 01 00 00 2d 00 04 00 2d ' +
   '00 01 00 08 00 02 00 01 00 00 01 04 cf';
 
+// Example RDM packet for getting device info
+const GET_DEVICE_INFO_WITH_MESSAGE_COUNT =
+  'cc 01 18 01 04 98 76 54 32 01 04 12 34 56 78 25 ' +
+  '01 01 00 00 20 00 60 00 04 3e';
+
 function parseOrThrow(hexString: string): RdmPacket {
   const result = parseRdmPacket(hexString);
   if (!result.success) {
@@ -56,5 +61,25 @@ describe('getFieldEntries', () => {
       (entry) => entry.name === 'Parameter Data'
     );
     expect(parameterDataEntry).not.toBeDefined();
+  });
+
+  it('includes field warnings', () => {
+    const entries = getFieldEntries(
+      parseOrThrow(GET_DEVICE_INFO_WITH_MESSAGE_COUNT)
+    );
+    const messageCountEntry = entries.find(
+      (entry) => entry.name === 'Message Count'
+    );
+    expect(messageCountEntry).toBeDefined();
+    expect(messageCountEntry?.warning).toBeDefined();
+  });
+
+  it('omits warnings for valid fields', () => {
+    const entries = getFieldEntries(commandPacket);
+    const messageCountEntry = entries.find(
+      (entry) => entry.name === 'Message Count'
+    );
+    expect(messageCountEntry).toBeDefined();
+    expect(messageCountEntry?.warning).not.toBeDefined();
   });
 });
