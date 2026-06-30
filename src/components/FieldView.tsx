@@ -14,11 +14,40 @@ export function FieldView({ packet }: FieldViewProps) {
     return [];
   }, [packet]);
 
+  function renderEntryDetails(entry: FieldEntry) {
+    return (
+      <>
+        <div className="flex justify-between items-baseline">
+          <dt className="text-sm font-medium text-gray-500">{entry.name}</dt>
+          <span className="text-xs text-gray-400 font-mono">
+            {entry.startByte === entry.endByte
+              ? `byte ${entry.startByte}`
+              : `bytes ${entry.startByte}–${entry.endByte}`}
+          </span>
+        </div>
+        <dd className="text-sm font-mono text-gray-900 mt-0.5">
+          {entry.displayValue}
+        </dd>
+        {entry.warning && (
+          <p className="text-xs text-amber-600 mt-1">{entry.warning}</p>
+        )}
+      </>
+    );
+  }
+
   function renderFieldEntry(entry: FieldEntry) {
     return (
-      <div key={entry.name}>
-        <dt>{entry.name}</dt>
-        <dd>{entry.displayValue}</dd>
+      <div key={entry.name} className="py-2 px-3">
+        {renderEntryDetails(entry)}
+        {entry.subFields && entry.subFields.length > 0 && (
+          <dl>
+            {entry.subFields.map((sub, index) => (
+              <div key={`${sub.name}-${index}`} className="ml-4">
+                {renderEntryDetails(sub)}
+              </div>
+            ))}
+          </dl>
+        )}
       </div>
     );
   }
@@ -27,7 +56,9 @@ export function FieldView({ packet }: FieldViewProps) {
     <section className="p-4">
       <h2 className="text-lg font-medium text-gray-900 mb-2">Field View</h2>
 
-      <dl>{packetFields.map((entry) => renderFieldEntry(entry))}</dl>
+      <dl className="divide-y divide-gray-200">
+        {packetFields.map((entry) => renderFieldEntry(entry))}
+      </dl>
     </section>
   );
 }

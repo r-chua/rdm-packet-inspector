@@ -2,17 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { getFieldEntries } from './fields';
 import type { RdmPacket } from './types';
 import { parseRdmPacket } from './parse';
-
-// Example RDM packet for getting device info
-const GET_DEVICE_INFO =
-  'cc 01 18 01 04 98 76 54 32 01 04 12 34 56 78 25 ' +
-  '01 00 00 00 20 00 60 00 04 3d';
-
-// Example RDM response packet for getting device info
-const GET_DEVICE_INFO_RESPONSE =
-  'cc 01 2b 01 04 12 34 56 78 01 04 98 76 54 32 25 ' +
-  '00 00 00 00 21 00 60 13 01 00 00 2d 00 04 00 2d ' +
-  '00 01 00 08 00 02 00 01 00 00 01 04 cf';
+import * as examples from './examples';
 
 function parseOrThrow(hexString: string): RdmPacket {
   const result = parseRdmPacket(hexString);
@@ -22,8 +12,8 @@ function parseOrThrow(hexString: string): RdmPacket {
   return result.packet;
 }
 
-const commandPacket = parseOrThrow(GET_DEVICE_INFO);
-const responsePacket = parseOrThrow(GET_DEVICE_INFO_RESPONSE);
+const commandPacket = parseOrThrow(examples.GET_DEVICE_INFO);
+const responsePacket = parseOrThrow(examples.GET_DEVICE_INFO_RESPONSE);
 
 describe('getFieldEntries', () => {
   it('includes portId for command packets', () => {
@@ -56,5 +46,88 @@ describe('getFieldEntries', () => {
       (entry) => entry.name === 'Parameter Data'
     );
     expect(parameterDataEntry).not.toBeDefined();
+  });
+
+  it('includes field warnings', () => {
+    const entries = getFieldEntries(
+      parseOrThrow(examples.GET_DEVICE_INFO_WITH_MESSAGE_COUNT)
+    );
+    const messageCountEntry = entries.find(
+      (entry) => entry.name === 'Message Count'
+    );
+    expect(messageCountEntry).toBeDefined();
+    expect(messageCountEntry?.warning).toBeDefined();
+  });
+
+  it('omits warnings for valid fields', () => {
+    const entries = getFieldEntries(commandPacket);
+    const messageCountEntry = entries.find(
+      (entry) => entry.name === 'Message Count'
+    );
+    expect(messageCountEntry).toBeDefined();
+    expect(messageCountEntry?.warning).not.toBeDefined();
+  });
+
+  describe('subfields', () => {
+    it('adds estimated wait time for ACK_TIMER responses', () => {
+      const packet = parseOrThrow(examples.GET_DEVICE_INFO_ACK_TIMER_RESPONSE);
+      const entries = getFieldEntries(packet);
+      const pdEntry = entries.find((entry) => entry.name === 'Parameter Data');
+      expect(pdEntry).toBeDefined();
+      expect(pdEntry?.subFields).toBeDefined();
+      const subFields = pdEntry?.subFields || [];
+      const estimatedWaitEntry = subFields.find(
+        (entry) => entry.name === 'Estimated Wait Time'
+      );
+      expect(estimatedWaitEntry).toBeDefined();
+      expect(estimatedWaitEntry?.startByte).toBe(24);
+      expect(estimatedWaitEntry?.endByte).toBe(25);
+      expect(estimatedWaitEntry?.displayValue).toBe('5000 ms');
+    });
+
+    it('adds reason for NACK responses', () => {
+      const packet = parseOrThrow(examples.NACK_REASON_HARDWARE_FAULT_RESPONSE);
+      const entries = getFieldEntries(packet);
+      const pdEntry = entries.find((entry) => entry.name === 'Parameter Data');
+      expect(pdEntry).toBeDefined();
+      expect(pdEntry?.subFields).toBeDefined();
+      const subFields = pdEntry?.subFields || [];
+      const reasonEntry = subFields.find(
+        (entry) => entry.name === 'NACK Reason'
+      );
+      expect(reasonEntry).toBeDefined();
+      expect(reasonEntry?.startByte).toBe(24);
+      expect(reasonEntry?.endByte).toBe(25);
+      expect(reasonEntry?.displayValue).toMatch(/hardware/i);
+      expect(reasonEntry?.warning).not.toBeDefined();
+    });
+
+    it('handles unknown NACK reason codes', () => {
+      const packet = parseOrThrow(examples.INVALID_NACK_REASON_RESPONSE);
+      const entries = getFieldEntries(packet);
+      const pdEntry = entries.find((entry) => entry.name === 'Parameter Data');
+      expect(pdEntry).toBeDefined();
+      expect(pdEntry?.subFields).toBeDefined();
+      const subFields = pdEntry?.subFields || [];
+      const reasonEntry = subFields.find(
+        (entry) => entry.name === 'NACK Reason'
+      );
+      expect(reasonEntry).toBeDefined();
+      expect(reasonEntry?.startByte).toBe(24);
+      expect(reasonEntry?.endByte).toBe(25);
+      expect(reasonEntry?.displayValue).toMatch(/unknown/i);
+      expect(reasonEntry?.warning).toBeDefined();
+    });
+
+    it('handles unknown response types', () => {
+      const packet = parseOrThrow(examples.INVALID_RESPONSE_TYPE_RESPONSE);
+      const entries = getFieldEntries(packet);
+      const responseTypeEntry = entries.find(
+        (entry) => entry.name === 'Response Type'
+      );
+      expect(responseTypeEntry).toBeDefined();
+      expect(responseTypeEntry?.displayValue).toMatch(/unknown/i);
+      expect(responseTypeEntry?.warning).toBeDefined();
+    });
   });
 });

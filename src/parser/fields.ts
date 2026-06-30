@@ -6,6 +6,8 @@ export type FieldEntry = {
   displayValue: string;
   startByte: number;
   endByte: number;
+  warning?: string;
+  subFields?: FieldEntry[];
 };
 
 export const getFieldEntries = (packet: RdmPacket): FieldEntry[] => {
@@ -15,18 +17,21 @@ export const getFieldEntries = (packet: RdmPacket): FieldEntry[] => {
       displayValue: toString8Bit(packet.startCode.value),
       startByte: packet.startCode.startByte,
       endByte: packet.startCode.endByte,
+      warning: packet.startCode.warning,
     },
     {
       name: 'Sub Start Code',
       displayValue: toString8Bit(packet.subStartCode.value),
       startByte: packet.subStartCode.startByte,
       endByte: packet.subStartCode.endByte,
+      warning: packet.subStartCode.warning,
     },
     {
       name: 'Message Length',
       displayValue: packet.messageLength.value.toString(),
       startByte: packet.messageLength.startByte,
       endByte: packet.messageLength.endByte,
+      warning: packet.messageLength.warning,
     },
     {
       name: 'Destination UID',
@@ -54,6 +59,7 @@ export const getFieldEntries = (packet: RdmPacket): FieldEntry[] => {
       displayValue: packet.portId.value.toString(),
       startByte: packet.portId.startByte,
       endByte: packet.portId.endByte,
+      warning: packet.portId.warning,
     });
   } else if (packet.direction === 'response') {
     fields.push({
@@ -61,6 +67,7 @@ export const getFieldEntries = (packet: RdmPacket): FieldEntry[] => {
       displayValue: packet.responseType.value.name,
       startByte: packet.responseType.startByte,
       endByte: packet.responseType.endByte,
+      warning: packet.responseType.warning,
     });
   } else {
     fields.push({
@@ -68,6 +75,7 @@ export const getFieldEntries = (packet: RdmPacket): FieldEntry[] => {
       displayValue: packet.portIdOrResponseType.value.toString(),
       startByte: packet.portIdOrResponseType.startByte,
       endByte: packet.portIdOrResponseType.endByte,
+      warning: packet.portIdOrResponseType.warning,
     });
   }
 
@@ -77,6 +85,7 @@ export const getFieldEntries = (packet: RdmPacket): FieldEntry[] => {
       displayValue: packet.messageCount.value.toString(),
       startByte: packet.messageCount.startByte,
       endByte: packet.messageCount.endByte,
+      warning: packet.messageCount.warning,
     },
     {
       name: 'Sub Device',
@@ -85,34 +94,74 @@ export const getFieldEntries = (packet: RdmPacket): FieldEntry[] => {
         `(${toString16Bit(packet.subDevice.value)})`,
       startByte: packet.subDevice.startByte,
       endByte: packet.subDevice.endByte,
+      warning: packet.subDevice.warning,
     },
     {
       name: 'Command Class',
       displayValue: packet.commandClass.value.name,
       startByte: packet.commandClass.startByte,
       endByte: packet.commandClass.endByte,
+      warning: packet.commandClass.warning,
     },
     {
       name: 'Parameter ID (PID)',
       displayValue: packet.parameterId.value.name,
       startByte: packet.parameterId.startByte,
       endByte: packet.parameterId.endByte,
+      warning: packet.parameterId.warning,
     },
     {
       name: 'Parameter Data Length',
       displayValue: packet.parameterDataLength.value.toString(),
       startByte: packet.parameterDataLength.startByte,
       endByte: packet.parameterDataLength.endByte,
+      warning: packet.parameterDataLength.warning,
     }
   );
 
   if (packet.parameterData !== null) {
-    fields.push({
+    const parameterDataEntry: FieldEntry = {
       name: 'Parameter Data',
       displayValue: packet.parameterData.value.toString(),
       startByte: packet.parameterData.startByte,
       endByte: packet.parameterData.endByte,
-    });
+    };
+
+    if (packet.direction === 'response') {
+      if (packet.responseDetail.type === 'ackTimer') {
+        parameterDataEntry.subFields = [
+          {
+            name: 'Estimated Wait Time',
+            displayValue:
+              packet.responseDetail.estimatedWaitMs.toString() + ' ms',
+            startByte: packet.parameterData.startByte,
+            endByte: packet.parameterData.endByte,
+          },
+        ];
+      } else if (packet.responseDetail.type === 'nack') {
+        parameterDataEntry.subFields = [
+          {
+            name: 'NACK Reason',
+            displayValue: packet.responseDetail.reason.name,
+            startByte: packet.parameterData.startByte,
+            endByte: packet.parameterData.endByte,
+            warning:
+              packet.responseDetail.reason.name === 'UNKNOWN'
+                ? `Unknown NACK reason code: 0x${packet.responseDetail.reason.code
+                    .toString(16)
+                    .padStart(4, '0')
+                    .toUpperCase()}`
+                : undefined,
+          },
+        ];
+      } else if (packet.responseDetail.type === 'unknown') {
+        parameterDataEntry.warning =
+          'Unknown response detail value: ' +
+          `${packet.responseDetail.rawValue}`;
+      }
+    }
+
+    fields.push(parameterDataEntry);
   }
 
   fields.push({
@@ -120,6 +169,7 @@ export const getFieldEntries = (packet: RdmPacket): FieldEntry[] => {
     displayValue: toString16Bit(packet.checksum.value),
     startByte: packet.checksum.startByte,
     endByte: packet.checksum.endByte,
+    warning: packet.checksum.warning,
   });
 
   return fields;

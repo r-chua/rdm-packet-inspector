@@ -1,5 +1,6 @@
 import React from 'react';
 import { cn } from '../lib/utils';
+import * as examples from '../parser/examples';
 
 type HexInputProps = {
   onParse: (hexString: string) => void;
@@ -8,9 +9,15 @@ type HexInputProps = {
 const EXAMPLE_PACKETS = [
   {
     label: 'Discover Unique',
-    value:
-      'cc 01 24 ff ff ff ff ff ff 01 02 03 04 05 06 01 00 00 00 00 10 ' +
-      '00 01 0c 00 00 00 00 00 00 ff ff ff ff ff ff 0d 17',
+    value: examples.DISCOVERY_UNIQUE_REQUEST,
+  },
+  {
+    label: 'ACK Timer Response',
+    value: examples.GET_DEVICE_INFO_ACK_TIMER_RESPONSE,
+  },
+  {
+    label: 'Nack Reason: Hardware Fault',
+    value: examples.NACK_REASON_HARDWARE_FAULT_RESPONSE,
   },
 ];
 
