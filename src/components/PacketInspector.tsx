@@ -11,7 +11,11 @@ export function PacketInspector() {
   );
 
   const handleParse = (hexString: string) => {
-    setParseResult(parseRdmPacket(hexString));
+    if (hexString.trim() === '') {
+      setParseResult(null);
+    } else {
+      setParseResult(parseRdmPacket(hexString));
+    }
   };
 
   return (
@@ -25,16 +29,13 @@ export function PacketInspector() {
           <HexInput onParse={handleParse} />
         </div>
 
-        {parseResult &&
-          !parseResult.success &&
-          parseResult.rawBytes &&
-          parseResult.rawBytes?.length > 0 && (
-            <div className="bg-red-200 border rounded-lg p-4">
-              <p className="text-red-800 font-bold">Parse Error:</p>
-              <p>Byte Offset: {parseResult.error.byteOffset}</p>
-              <p>Message: {parseResult.error.message}</p>
-            </div>
-          )}
+        {parseResult && !parseResult.success && (
+          <div className="bg-red-200 border rounded-lg p-4">
+            <p className="text-red-800 font-bold">Parse Error:</p>
+            <p>Byte Offset: {parseResult.error.byteOffset}</p>
+            <p>Message: {parseResult.error.message}</p>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1 min-h-0">
           <div className="overflow-auto bg-green-200 border rounded-lg">
