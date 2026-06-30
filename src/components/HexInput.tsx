@@ -9,7 +9,7 @@ const EXAMPLE_PACKETS = [
   {
     label: 'Discover Unique',
     value:
-      'cc 01 24 ff ff ff ff ff ff 01 02 03 04 05 06 01 00 00 00 00 10 ' +
+      'cc 01 24 ff ff ff ff ff ff 01 02 03 04 05 06 01 01 00 00 00 10 ' +
       '00 01 0c 00 00 00 00 00 00 ff ff ff ff ff ff 0d 17',
   },
 ];
