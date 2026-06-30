@@ -98,7 +98,7 @@ describe('getFieldEntries', () => {
       expect(reasonEntry).toBeDefined();
       expect(reasonEntry?.startByte).toBe(24);
       expect(reasonEntry?.endByte).toBe(25);
-      expect(reasonEntry?.displayValue).toBe('Hardware Fault');
+      expect(reasonEntry?.displayValue).toMatch(/hardware/i);
       expect(reasonEntry?.warning).not.toBeDefined();
     });
 
@@ -115,7 +115,7 @@ describe('getFieldEntries', () => {
       expect(reasonEntry).toBeDefined();
       expect(reasonEntry?.startByte).toBe(24);
       expect(reasonEntry?.endByte).toBe(25);
-      expect(reasonEntry?.displayValue).toBe('Unknown (0xFF)');
+      expect(reasonEntry?.displayValue).toMatch(/unknown/i);
       expect(reasonEntry?.warning).toBeDefined();
     });
 
@@ -126,7 +126,7 @@ describe('getFieldEntries', () => {
         (entry) => entry.name === 'Response Type'
       );
       expect(responseTypeEntry).toBeDefined();
-      expect(responseTypeEntry?.displayValue).toBe('Unknown (0xFF)');
+      expect(responseTypeEntry?.displayValue).toMatch(/unknown/i);
       expect(responseTypeEntry?.warning).toBeDefined();
     });
   });

@@ -120,12 +120,48 @@ export const getFieldEntries = (packet: RdmPacket): FieldEntry[] => {
   );
 
   if (packet.parameterData !== null) {
-    fields.push({
+    const parameterDataEntry: FieldEntry = {
       name: 'Parameter Data',
       displayValue: packet.parameterData.value.toString(),
       startByte: packet.parameterData.startByte,
       endByte: packet.parameterData.endByte,
-    });
+    };
+
+    if (packet.direction === 'response') {
+      if (packet.responseDetail.type === 'ackTimer') {
+        parameterDataEntry.subFields = [
+          {
+            name: 'Estimated Wait Time',
+            displayValue:
+              packet.responseDetail.estimatedWaitMs.toString() + ' ms',
+            startByte: packet.parameterData.startByte,
+            endByte: packet.parameterData.endByte,
+          },
+        ];
+      } else if (packet.responseDetail.type === 'nack') {
+        parameterDataEntry.subFields = [
+          {
+            name: 'NACK Reason',
+            displayValue: packet.responseDetail.reason.name,
+            startByte: packet.parameterData.startByte,
+            endByte: packet.parameterData.endByte,
+            warning:
+              packet.responseDetail.reason.name === 'UNKNOWN'
+                ? `Unknown NACK reason code: 0x${packet.responseDetail.reason.code
+                    .toString(16)
+                    .padStart(4, '0')
+                    .toUpperCase()}`
+                : undefined,
+          },
+        ];
+      } else if (packet.responseDetail.type === 'unknown') {
+        parameterDataEntry.warning =
+          'Unknown response detail value: ' +
+          `${packet.responseDetail.rawValue}`;
+      }
+    }
+
+    fields.push(parameterDataEntry);
   }
 
   fields.push({
