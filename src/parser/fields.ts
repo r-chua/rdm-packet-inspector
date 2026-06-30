@@ -16,18 +16,21 @@ export const getFieldEntries = (packet: RdmPacket): FieldEntry[] => {
       displayValue: toString8Bit(packet.startCode.value),
       startByte: packet.startCode.startByte,
       endByte: packet.startCode.endByte,
+      warning: packet.startCode.warning,
     },
     {
       name: 'Sub Start Code',
       displayValue: toString8Bit(packet.subStartCode.value),
       startByte: packet.subStartCode.startByte,
       endByte: packet.subStartCode.endByte,
+      warning: packet.subStartCode.warning,
     },
     {
       name: 'Message Length',
       displayValue: packet.messageLength.value.toString(),
       startByte: packet.messageLength.startByte,
       endByte: packet.messageLength.endByte,
+      warning: packet.messageLength.warning,
     },
     {
       name: 'Destination UID',
@@ -55,6 +58,7 @@ export const getFieldEntries = (packet: RdmPacket): FieldEntry[] => {
       displayValue: packet.portId.value.toString(),
       startByte: packet.portId.startByte,
       endByte: packet.portId.endByte,
+      warning: packet.portId.warning,
     });
   } else if (packet.direction === 'response') {
     fields.push({
@@ -62,6 +66,7 @@ export const getFieldEntries = (packet: RdmPacket): FieldEntry[] => {
       displayValue: packet.responseType.value.name,
       startByte: packet.responseType.startByte,
       endByte: packet.responseType.endByte,
+      warning: packet.responseType.warning,
     });
   } else {
     fields.push({
@@ -69,6 +74,7 @@ export const getFieldEntries = (packet: RdmPacket): FieldEntry[] => {
       displayValue: packet.portIdOrResponseType.value.toString(),
       startByte: packet.portIdOrResponseType.startByte,
       endByte: packet.portIdOrResponseType.endByte,
+      warning: packet.portIdOrResponseType.warning,
     });
   }
 
@@ -78,6 +84,7 @@ export const getFieldEntries = (packet: RdmPacket): FieldEntry[] => {
       displayValue: packet.messageCount.value.toString(),
       startByte: packet.messageCount.startByte,
       endByte: packet.messageCount.endByte,
+      warning: packet.messageCount.warning,
     },
     {
       name: 'Sub Device',
@@ -86,24 +93,28 @@ export const getFieldEntries = (packet: RdmPacket): FieldEntry[] => {
         `(${toString16Bit(packet.subDevice.value)})`,
       startByte: packet.subDevice.startByte,
       endByte: packet.subDevice.endByte,
+      warning: packet.subDevice.warning,
     },
     {
       name: 'Command Class',
       displayValue: packet.commandClass.value.name,
       startByte: packet.commandClass.startByte,
       endByte: packet.commandClass.endByte,
+      warning: packet.commandClass.warning,
     },
     {
       name: 'Parameter ID (PID)',
       displayValue: packet.parameterId.value.name,
       startByte: packet.parameterId.startByte,
       endByte: packet.parameterId.endByte,
+      warning: packet.parameterId.warning,
     },
     {
       name: 'Parameter Data Length',
       displayValue: packet.parameterDataLength.value.toString(),
       startByte: packet.parameterDataLength.startByte,
       endByte: packet.parameterDataLength.endByte,
+      warning: packet.parameterDataLength.warning,
     }
   );
 
@@ -121,6 +132,7 @@ export const getFieldEntries = (packet: RdmPacket): FieldEntry[] => {
     displayValue: toString16Bit(packet.checksum.value),
     startByte: packet.checksum.startByte,
     endByte: packet.checksum.endByte,
+    warning: packet.checksum.warning,
   });
 
   return fields;
