@@ -361,7 +361,74 @@ describe('PacketInspector', () => {
       }
     });
 
-    it.todo('selects bytes when clicking a field');
+    it('selects bytes when clicking a field', async () => {
+      render(<PacketInspector />);
+
+      const inputElement = screen.getByRole('textbox', {
+        name: /packet data/i,
+      });
+      const user = userEvent.setup();
+
+      await user.click(inputElement);
+      await user.paste(examplePackets.GET_DEVICE_INFO);
+
+      const submitButton = screen.getByRole('button', { name: /submit/i });
+      await user.click(submitButton);
+
+      // Click on the Destination UID field
+      const targetField = screen.getByText('Destination UID');
+      await user.click(targetField);
+
+      // The corresponding field should be selected
+      const selectedField = screen
+        .getByText('Destination UID')
+        .closest('[data-selected]');
+      expect(selectedField).toHaveAttribute('data-selected', 'true');
+
+      // Other fields should not be selected
+      const otherField = screen.getByText('Source UID');
+      expect(otherField.closest('[data-selected]')).toHaveAttribute(
+        'data-selected',
+        'false'
+      );
+
+      // This field's cells should be selected
+      // Destination UID field corresponds to bytes 3-8 (0-indexed)
+      for (let i = 3; i < 9; i++) {
+        const cell = screen.getAllByRole('cell')[i];
+        expect(cell).toHaveAttribute('data-selected', 'true');
+      }
+
+      // Neighboring cells should not be selected
+      const previousCell = screen.getAllByRole('cell')[2];
+      const nextCell = screen.getAllByRole('cell')[9];
+      expect(previousCell).toHaveAttribute('data-selected', 'false');
+      expect(nextCell).toHaveAttribute('data-selected', 'false');
+
+      // Click on the Sub Start Code field to change the selected field
+      const subStartCodeField = screen.getByText('Sub Start Code');
+      await user.click(subStartCodeField);
+
+      // The new field should be selected
+      const newSelectedField = screen
+        .getByText('Sub Start Code')
+        .closest('[data-selected]');
+      expect(newSelectedField).toHaveAttribute('data-selected', 'true');
+      expect(screen.getAllByRole('cell')[1]).toHaveAttribute(
+        'data-selected',
+        'true'
+      );
+
+      // The previous field should be deselected
+      expect(selectedField).toHaveAttribute('data-selected', 'false');
+
+      // The previous field's cells should be deselected
+      for (let i = 3; i < 9; i++) {
+        const cell = screen.getAllByRole('cell')[i];
+        expect(cell).toHaveAttribute('data-selected', 'false');
+      }
+    });
+
     it.todo('navigate byte table with keyboard');
     it.todo('navigate field list with keyboard');
     it.todo('selects field with keyboard');
