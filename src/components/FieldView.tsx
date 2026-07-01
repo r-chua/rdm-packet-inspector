@@ -35,9 +35,7 @@ export function FieldView({
   React.useEffect(() => {
     if (!selectedField) return;
     const fieldElement = fieldRefs.current.get(selectedField);
-    fieldElement?.scrollIntoView({
-      behavior: scrollBehavior(),
-    });
+    fieldElement?.scrollIntoView(scrollBehavior());
   }, [selectedField]);
 
   React.useEffect(() => {

@@ -58,9 +58,7 @@ export function HexView({
     if (!selectedField) return;
     const firstByteIndex = selectedField.startByte;
     const cell = cellRefs.current.get(firstByteIndex);
-    cell?.scrollIntoView({
-      behavior: scrollBehavior(),
-    });
+    cell?.scrollIntoView(scrollBehavior());
   }, [selectedField]);
 
   React.useEffect(() => {
