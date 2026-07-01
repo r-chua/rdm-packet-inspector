@@ -117,9 +117,61 @@ describe('PacketInspector', () => {
     expect(screen.getByText('DISCOVERY_COMMAND')).toBeInTheDocument();
   });
 
-  it.todo('clears parse on reset button press', async () => {});
+  it('clears parse on reset button press', async () => {
+    render(<PacketInspector />);
 
-  it.todo('clears error on reset button press', async () => {});
+    const inputElement = screen.getByRole('textbox', { name: /packet data/i });
+    const user = userEvent.setup();
+
+    await user.click(inputElement);
+    await user.paste(examplePackets.GET_DEVICE_INFO);
+
+    const submitButton = screen.getByRole('button', { name: /submit/i });
+    await user.click(submitButton);
+
+    // Hex view and field view should be populated
+    expect(screen.getByText('DEVICE_INFO')).toBeInTheDocument();
+    expect(screen.getByText('GET_COMMAND')).toBeInTheDocument();
+
+    // Now click the reset button
+    const resetButton = screen.getByRole('button', { name: /reset/i });
+    await user.click(resetButton);
+
+    // Input should be cleared
+    expect(inputElement).toHaveValue('');
+
+    // Hex view and field view should be cleared
+    expect(screen.queryAllByRole('cell')).toHaveLength(0);
+    expect(screen.queryAllByRole('term')).toHaveLength(0);
+  });
+
+  it('clears error on reset button press', async () => {
+    render(<PacketInspector />);
+
+    const inputElement = screen.getByRole('textbox', { name: /packet data/i });
+    const user = userEvent.setup();
+
+    await user.click(inputElement);
+    await user.paste('o1 at gg qu');
+
+    const submitButton = screen.getByRole('button', { name: /submit/i });
+    await user.click(submitButton);
+
+    // Error message should be displayed
+    expect(screen.getByText('Error:')).toBeInTheDocument();
+    expect(screen.getByText(/invalid hex/i)).toBeInTheDocument();
+
+    // Now click the reset button
+    const resetButton = screen.getByRole('button', { name: /reset/i });
+    await user.click(resetButton);
+
+    // Input should be cleared
+    expect(inputElement).toHaveValue('');
+
+    // Error message should be cleared
+    expect(screen.queryByText('Error:')).not.toBeInTheDocument();
+    expect(screen.queryByText(/invalid hex/i)).not.toBeInTheDocument();
+  });
 
   it.todo('empty input clears without error', async () => {});
 });
