@@ -203,7 +203,53 @@ describe('PacketInspector', () => {
   });
 
   describe('interaction', () => {
-    it.todo('highlights field when hovering a byte');
+    it('highlights field when hovering a byte', async () => {
+      render(<PacketInspector />);
+
+      const inputElement = screen.getByRole('textbox', {
+        name: /packet data/i,
+      });
+      const user = userEvent.setup();
+
+      await user.click(inputElement);
+      await user.paste(examplePackets.GET_DEVICE_INFO);
+
+      const submitButton = screen.getByRole('button', { name: /submit/i });
+      await user.click(submitButton);
+
+      // Hover over the first byte cell
+      const targetCell = screen.getAllByRole('cell')[4];
+      await user.hover(targetCell);
+      expect(targetCell).toHaveAttribute('data-highlighted', 'true');
+
+      // Other cells in the same field should also be highlighted
+      const neighboringCell = screen.getAllByRole('cell')[5];
+      expect(neighboringCell).toHaveAttribute('data-highlighted', 'true');
+
+      // The corresponding field should be highlighted
+      const highlightedField = screen
+        .getByText('Destination UID')
+        .closest('[data-highlighted]');
+      expect(highlightedField).toHaveAttribute('data-highlighted', 'true');
+
+      // Only one field should be highlighted
+      expect(
+        screen
+          .queryAllByRole('term')
+          .filter(
+            (term) =>
+              term
+                .closest('[data-highlighted]')
+                ?.getAttribute('data-highlighted') === 'true'
+          )
+      ).toHaveLength(1);
+
+      // Unhover the first byte cell
+      await user.unhover(targetCell);
+      expect(targetCell).toHaveAttribute('data-highlighted', 'false');
+      expect(highlightedField).toHaveAttribute('data-highlighted', 'false');
+    });
+
     it.todo('highlights bytes when hovering a field');
     it.todo('selects field when clicking a byte');
     it.todo('selects bytes when clicking a field');
