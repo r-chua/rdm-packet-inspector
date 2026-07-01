@@ -66,7 +66,31 @@ describe('PacketInspector', () => {
     expect(screen.queryAllByRole('term')).toHaveLength(0);
   });
 
-  it.todo('clears error on valid input after an error', async () => {});
+  it('clears error on valid input after an error', async () => {
+    render(<PacketInspector />);
+
+    const inputElement = screen.getByRole('textbox', { name: /packet data/i });
+    const user = userEvent.setup();
+
+    await user.click(inputElement);
+    await user.paste('o1 at gg qu');
+
+    const submitButton = screen.getByRole('button', { name: /submit/i });
+    await user.click(submitButton);
+
+    // Error message should be displayed
+    expect(screen.getByText('Error:')).toBeInTheDocument();
+    expect(screen.getByText(/invalid hex/i)).toBeInTheDocument();
+
+    // Now enter valid input
+    await user.clear(inputElement);
+    await user.paste(examplePackets.GET_DEVICE_INFO);
+    await user.click(submitButton);
+
+    // Error message should be cleared
+    expect(screen.queryByText('Error:')).not.toBeInTheDocument();
+    expect(screen.queryByText(/invalid hex/i)).not.toBeInTheDocument();
+  });
 
   it('populates and parses from the example dropdown', async () => {
     render(<PacketInspector />);
@@ -96,4 +120,6 @@ describe('PacketInspector', () => {
   it.todo('clears parse on reset button press', async () => {});
 
   it.todo('clears error on reset button press', async () => {});
+
+  it.todo('empty input clears without error', async () => {});
 });
