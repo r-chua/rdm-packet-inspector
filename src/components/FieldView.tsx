@@ -17,7 +17,10 @@ export function FieldView({
     return (
       <div
         key={`${entry.name}-${index}`}
-        onMouseEnter={() => onHighlight(entry)}
+        onMouseOver={(e) => {
+          e.stopPropagation();
+          onHighlight(entry);
+        }}
         onMouseLeave={() => onHighlight(null)}
         data-highlighted={entry === highlightedField}
         className={cn(HIGHLIGHT_CLASS, 'py-2 px-3 rounded-md')}
