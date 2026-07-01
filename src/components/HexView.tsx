@@ -5,7 +5,7 @@ import {
   SELECTED_EDGE_SHADOW_L,
   SELECTED_EDGE_SHADOW_R,
 } from '../lib/styles';
-import { cn } from '../lib/utils';
+import { cn, scrollBehavior } from '../lib/utils';
 import type { FieldEntry } from '../parser/fields';
 
 type HexViewProps = {
@@ -46,11 +46,7 @@ export function HexView({
     const firstByteIndex = selectedField.startByte;
     const cell = cellRefs.current.get(firstByteIndex);
     cell?.scrollIntoView({
-      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
-        ? 'auto'
-        : 'smooth',
-      block: 'nearest',
-      inline: 'nearest',
+      behavior: scrollBehavior(),
     });
   }, [selectedField]);
 

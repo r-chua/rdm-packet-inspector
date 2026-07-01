@@ -1,6 +1,6 @@
 import React from 'react';
 import { HIGHLIGHT_CLASS, SELECTED_CLASS } from '../lib/styles';
-import { cn } from '../lib/utils';
+import { cn, scrollBehavior } from '../lib/utils';
 import { type FieldEntry } from '../parser/fields';
 
 type FieldViewProps = {
@@ -24,11 +24,7 @@ export function FieldView({
     if (!selectedField) return;
     const fieldElement = fieldRefs.current.get(selectedField);
     fieldElement?.scrollIntoView({
-      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
-        ? 'auto'
-        : 'smooth',
-      block: 'nearest',
-      inline: 'nearest',
+      behavior: scrollBehavior(),
     });
   }, [selectedField]);
 
