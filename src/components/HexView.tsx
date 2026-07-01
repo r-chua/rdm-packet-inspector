@@ -1,5 +1,5 @@
 import React from 'react';
-import { HIGHLIGHT_CLASS } from '../lib/styles';
+import { HIGHLIGHT_CLASS, SELECTED_CLASS } from '../lib/styles';
 import { cn } from '../lib/utils';
 import type { FieldEntry } from '../parser/fields';
 
@@ -8,6 +8,8 @@ type HexViewProps = {
   fieldEntries: FieldEntry[] | null;
   highlightedField: FieldEntry | null;
   onHighlight: (field: FieldEntry | null) => void;
+  selectedField: FieldEntry | null;
+  onSelect: (field: FieldEntry | null) => void;
 };
 
 export function HexView({
@@ -15,6 +17,8 @@ export function HexView({
   fieldEntries,
   highlightedField,
   onHighlight,
+  selectedField,
+  onSelect,
 }: HexViewProps) {
   const BYTES_PER_ROW = 16;
 
@@ -126,12 +130,23 @@ export function HexView({
                       }
                     }}
                     onMouseLeave={() => onHighlight(null)}
+                    onClick={() => {
+                      if (fieldEntries) {
+                        const field = fieldForByteIndex(
+                          byteIndex,
+                          fieldEntries
+                        );
+                        onSelect(field);
+                      }
+                    }}
                     data-highlighted={isByteInField(
                       byteIndex,
                       highlightedField
                     )}
+                    data-selected={isByteInField(byteIndex, selectedField)}
                     className={cn(
                       HIGHLIGHT_CLASS,
+                      SELECTED_CLASS,
                       'border border-gray-300 px-2 py-1 text-center'
                     )}
                   >

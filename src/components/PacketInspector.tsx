@@ -59,6 +59,8 @@ export function PacketInspector() {
               fieldEntries={fieldEntries}
               highlightedField={highlightedField}
               onHighlight={setHighlightedField}
+              selectedField={selectedField}
+              onSelect={setSelectedField}
             />
           </div>
           <div className="overflow-auto bg-amber-200 border rounded-lg">
