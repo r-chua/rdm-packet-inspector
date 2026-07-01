@@ -1,6 +1,12 @@
 import React from 'react';
-import { HIGHLIGHT_CLASS } from '../lib/styles';
-import { cn } from '../lib/utils';
+import {
+  HIGHLIGHT_CLASS,
+  SELECTED_EDGE_SHADOW_Y,
+  SELECTED_EDGE_SHADOW_L,
+  SELECTED_EDGE_SHADOW_R,
+  FOCUSED_CLASS,
+} from '../lib/styles';
+import { cn, scrollBehavior } from '../lib/utils';
 import type { FieldEntry } from '../parser/fields';
 
 type HexViewProps = {
@@ -8,6 +14,22 @@ type HexViewProps = {
   fieldEntries: FieldEntry[] | null;
   highlightedField: FieldEntry | null;
   onHighlight: (field: FieldEntry | null) => void;
+  selectedField: FieldEntry | null;
+  onSelect: (field: FieldEntry | null) => void;
+};
+
+const BYTES_PER_ROW = 16;
+
+type SelectedByteBorders = {
+  left: boolean;
+  right: boolean;
+  y: boolean;
+};
+
+const EDGE_SHADOW: Record<keyof SelectedByteBorders, string> = {
+  left: SELECTED_EDGE_SHADOW_L,
+  right: SELECTED_EDGE_SHADOW_R,
+  y: SELECTED_EDGE_SHADOW_Y,
 };
 
 export function HexView({
@@ -15,8 +37,34 @@ export function HexView({
   fieldEntries,
   highlightedField,
   onHighlight,
+  selectedField,
+  onSelect,
 }: HexViewProps) {
-  const BYTES_PER_ROW = 16;
+  const [prevRawBytes, setPrevRawBytes] = React.useState<Uint8Array | null>(
+    null
+  );
+  const [focusedByteIndex, setFocusedByteIndex] = React.useState<number | null>(
+    null
+  );
+
+  const cellRefs = React.useRef<Map<number, HTMLTableCellElement>>(new Map());
+
+  if (rawBytes !== prevRawBytes) {
+    setPrevRawBytes(rawBytes);
+    setFocusedByteIndex(null);
+  }
+
+  React.useEffect(() => {
+    if (!selectedField) return;
+    const firstByteIndex = selectedField.startByte;
+    const cell = cellRefs.current.get(firstByteIndex);
+    cell?.scrollIntoView(scrollBehavior());
+  }, [selectedField]);
+
+  React.useEffect(() => {
+    if (focusedByteIndex === null) return;
+    cellRefs.current.get(focusedByteIndex)?.focus();
+  }, [focusedByteIndex]);
 
   const isByteInField = (
     byteIndex: number,
@@ -36,6 +84,23 @@ export function HexView({
       }
     }
     return null;
+  };
+
+  const getSelectedByteBorders = (
+    byteIndex: number,
+    field: FieldEntry | null,
+    colIndex: number
+  ): SelectedByteBorders => {
+    if (!field) return { left: false, right: false, y: false };
+    return {
+      left:
+        byteIndex === field.startByte ||
+        (isByteInField(byteIndex, field) && colIndex === 0),
+      right:
+        byteIndex === field.endByte ||
+        (isByteInField(byteIndex, field) && colIndex === BYTES_PER_ROW - 1),
+      y: isByteInField(byteIndex, field),
+    };
   };
 
   const dataToDisplay = React.useMemo(() => {
@@ -62,13 +127,61 @@ export function HexView({
         Hex View
       </h2>
       <table
+        tabIndex={focusedByteIndex === null ? 0 : -1}
         className={cn(
           'table-auto ',
           'border-collapse border border-gray-300',
           'center text-sm font-mono',
-          'mx-auto'
+          'mx-auto',
+          FOCUSED_CLASS
         )}
         aria-labelledby="hex-view-title"
+        onKeyDown={(e) => {
+          switch (e.key) {
+            case 'ArrowRight':
+              e.preventDefault(); // Prevent scrolling
+              setFocusedByteIndex((prev) => {
+                if (prev === null) return 0;
+                const next = prev + 1;
+                return next < (rawBytes?.length || 0) ? next : prev;
+              });
+              break;
+            case 'ArrowLeft':
+              e.preventDefault(); // Prevent scrolling
+              setFocusedByteIndex((prev) => {
+                if (prev === null) return 0;
+                const next = prev - 1;
+                return next >= 0 ? next : prev;
+              });
+              break;
+            case 'ArrowDown':
+              e.preventDefault(); // Prevent scrolling
+              setFocusedByteIndex((prev) => {
+                if (prev === null) return 0;
+                const next = prev + BYTES_PER_ROW;
+                return next < (rawBytes?.length || 0) ? next : prev;
+              });
+              break;
+            case 'ArrowUp':
+              e.preventDefault(); // Prevent scrolling
+              setFocusedByteIndex((prev) => {
+                if (prev === null) return 0;
+                const next = prev - BYTES_PER_ROW;
+                return next >= 0 ? next : prev;
+              });
+              break;
+            case 'Enter':
+            case ' ':
+              e.preventDefault();
+              if (focusedByteIndex !== null && fieldEntries) {
+                const field = fieldForByteIndex(focusedByteIndex, fieldEntries);
+                onSelect(field);
+              }
+              break;
+            default:
+              break;
+          }
+        }}
       >
         <thead>
           <tr className="italic">
@@ -113,9 +226,26 @@ export function HexView({
               </th>
               {row.map((byte, colIndex) => {
                 const byteIndex = rowIndex * BYTES_PER_ROW + colIndex;
+                const selectedBorders = getSelectedByteBorders(
+                  byteIndex,
+                  selectedField,
+                  colIndex
+                );
+                const selectedShadows = Object.entries(selectedBorders)
+                  .filter(([, isActive]) => isActive)
+                  .map(
+                    ([side]) => EDGE_SHADOW[side as keyof SelectedByteBorders]
+                  )
+                  .join(', ');
+
                 return (
                   <td
                     key={colIndex}
+                    ref={(el) => {
+                      if (el) cellRefs.current.set(byteIndex, el);
+                      else cellRefs.current.delete(byteIndex);
+                    }}
+                    tabIndex={byteIndex === focusedByteIndex ? 0 : -1}
                     onMouseEnter={() => {
                       if (fieldEntries) {
                         const field = fieldForByteIndex(
@@ -126,14 +256,27 @@ export function HexView({
                       }
                     }}
                     onMouseLeave={() => onHighlight(null)}
+                    onClick={() => {
+                      if (fieldEntries) {
+                        const field = fieldForByteIndex(
+                          byteIndex,
+                          fieldEntries
+                        );
+                        onSelect(field);
+                      }
+                      setFocusedByteIndex(byteIndex);
+                    }}
                     data-highlighted={isByteInField(
                       byteIndex,
                       highlightedField
                     )}
+                    data-selected={isByteInField(byteIndex, selectedField)}
                     className={cn(
-                      HIGHLIGHT_CLASS,
-                      'border border-gray-300 px-2 py-1 text-center'
+                      'border border-gray-300 px-2 py-1 text-center',
+                      FOCUSED_CLASS,
+                      HIGHLIGHT_CLASS
                     )}
+                    style={{ boxShadow: selectedShadows }}
                   >
                     {byte.toString(16).toUpperCase().padStart(2, '0')}
                   </td>

@@ -12,6 +12,9 @@ export function PacketInspector() {
   );
   const [highlightedField, setHighlightedField] =
     React.useState<FieldEntry | null>(null);
+  const [selectedField, setSelectedField] = React.useState<FieldEntry | null>(
+    null
+  );
 
   const fieldEntries = React.useMemo(() => {
     if (parseResult?.success) {
@@ -21,6 +24,8 @@ export function PacketInspector() {
   }, [parseResult]);
 
   const handleParse = (hexString: string) => {
+    setHighlightedField(null);
+    setSelectedField(null);
     if (hexString.trim() === '') {
       setParseResult(null);
     } else {
@@ -56,6 +61,8 @@ export function PacketInspector() {
               fieldEntries={fieldEntries}
               highlightedField={highlightedField}
               onHighlight={setHighlightedField}
+              selectedField={selectedField}
+              onSelect={setSelectedField}
             />
           </div>
           <div className="overflow-auto bg-amber-200 border rounded-lg">
@@ -63,6 +70,8 @@ export function PacketInspector() {
               fieldEntries={fieldEntries}
               highlightedField={highlightedField}
               onHighlight={setHighlightedField}
+              selectedField={selectedField}
+              onSelect={setSelectedField}
             />
           </div>
         </div>
