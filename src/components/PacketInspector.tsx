@@ -24,6 +24,8 @@ export function PacketInspector() {
   }, [parseResult]);
 
   const handleParse = (hexString: string) => {
+    setHighlightedField(null);
+    setSelectedField(null);
     if (hexString.trim() === '') {
       setParseResult(null);
     } else {
