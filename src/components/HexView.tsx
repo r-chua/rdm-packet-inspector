@@ -39,7 +39,19 @@ export function HexView({
   selectedField,
   onSelect,
 }: HexViewProps) {
+  const [prevRawBytes, setPrevRawBytes] = React.useState<Uint8Array | null>(
+    null
+  );
+  const [focusedByteIndex, setFocusedByteIndex] = React.useState<number | null>(
+    null
+  );
+
   const cellRefs = React.useRef<Map<number, HTMLTableCellElement>>(new Map());
+
+  if (rawBytes !== prevRawBytes) {
+    setPrevRawBytes(rawBytes);
+    setFocusedByteIndex(null);
+  }
 
   React.useEffect(() => {
     if (!selectedField) return;
@@ -49,6 +61,11 @@ export function HexView({
       behavior: scrollBehavior(),
     });
   }, [selectedField]);
+
+  React.useEffect(() => {
+    if (focusedByteIndex === null) return;
+    cellRefs.current.get(focusedByteIndex)?.focus();
+  }, [focusedByteIndex]);
 
   const isByteInField = (
     byteIndex: number,
@@ -111,6 +128,7 @@ export function HexView({
         Hex View
       </h2>
       <table
+        tabIndex={focusedByteIndex === null ? 0 : -1}
         className={cn(
           'table-auto ',
           'border-collapse border border-gray-300',
@@ -118,6 +136,44 @@ export function HexView({
           'mx-auto'
         )}
         aria-labelledby="hex-view-title"
+        onKeyDown={(e) => {
+          switch (e.key) {
+            case 'ArrowRight':
+              e.preventDefault(); // Prevent scrolling
+              setFocusedByteIndex((prev) => {
+                if (prev === null) return 0;
+                const next = prev + 1;
+                return next < (rawBytes?.length || 0) ? next : prev;
+              });
+              break;
+            case 'ArrowLeft':
+              e.preventDefault(); // Prevent scrolling
+              setFocusedByteIndex((prev) => {
+                if (prev === null) return 0;
+                const next = prev - 1;
+                return next >= 0 ? next : prev;
+              });
+              break;
+            case 'ArrowDown':
+              e.preventDefault(); // Prevent scrolling
+              setFocusedByteIndex((prev) => {
+                if (prev === null) return 0;
+                const next = prev + BYTES_PER_ROW;
+                return next < (rawBytes?.length || 0) ? next : prev;
+              });
+              break;
+            case 'ArrowUp':
+              e.preventDefault(); // Prevent scrolling
+              setFocusedByteIndex((prev) => {
+                if (prev === null) return 0;
+                const next = prev - BYTES_PER_ROW;
+                return next >= 0 ? next : prev;
+              });
+              break;
+            default:
+              break;
+          }
+        }}
       >
         <thead>
           <tr className="italic">
@@ -181,6 +237,7 @@ export function HexView({
                       if (el) cellRefs.current.set(byteIndex, el);
                       else cellRefs.current.delete(byteIndex);
                     }}
+                    tabIndex={byteIndex === focusedByteIndex ? 0 : -1}
                     onMouseEnter={() => {
                       if (fieldEntries) {
                         const field = fieldForByteIndex(
@@ -199,6 +256,7 @@ export function HexView({
                         );
                         onSelect(field);
                       }
+                      setFocusedByteIndex(byteIndex);
                     }}
                     data-highlighted={isByteInField(
                       byteIndex,
