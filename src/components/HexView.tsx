@@ -170,6 +170,14 @@ export function HexView({
                 return next >= 0 ? next : prev;
               });
               break;
+            case 'Enter':
+            case 'Space':
+              e.preventDefault();
+              if (focusedByteIndex !== null && fieldEntries) {
+                const field = fieldForByteIndex(focusedByteIndex, fieldEntries);
+                onSelect(field);
+              }
+              break;
             default:
               break;
           }
