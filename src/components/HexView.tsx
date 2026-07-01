@@ -17,6 +17,8 @@ type HexViewProps = {
   onSelect: (field: FieldEntry | null) => void;
 };
 
+const BYTES_PER_ROW = 16;
+
 type SelectedByteBorders = {
   left: boolean;
   right: boolean;
@@ -37,7 +39,20 @@ export function HexView({
   selectedField,
   onSelect,
 }: HexViewProps) {
-  const BYTES_PER_ROW = 16;
+  const cellRefs = React.useRef<Map<number, HTMLTableCellElement>>(new Map());
+
+  React.useEffect(() => {
+    if (!selectedField) return;
+    const firstByteIndex = selectedField.startByte;
+    const cell = cellRefs.current.get(firstByteIndex);
+    cell?.scrollIntoView({
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        ? 'auto'
+        : 'smooth',
+      block: 'nearest',
+      inline: 'nearest',
+    });
+  }, [selectedField]);
 
   const isByteInField = (
     byteIndex: number,
@@ -166,6 +181,10 @@ export function HexView({
                 return (
                   <td
                     key={colIndex}
+                    ref={(el) => {
+                      if (el) cellRefs.current.set(byteIndex, el);
+                      else cellRefs.current.delete(byteIndex);
+                    }}
                     onMouseEnter={() => {
                       if (fieldEntries) {
                         const field = fieldForByteIndex(
