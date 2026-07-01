@@ -18,12 +18,20 @@ export function HexView({
 }: HexViewProps) {
   const BYTES_PER_ROW = 16;
 
+  const isByteInField = (
+    byteIndex: number,
+    field: FieldEntry | null
+  ): boolean => {
+    if (!field) return false;
+    return byteIndex >= field.startByte && byteIndex <= field.endByte;
+  };
+
   const fieldForByteIndex = (
     byteIndex: number,
     entries: FieldEntry[]
   ): FieldEntry | null => {
     for (const entry of entries) {
-      if (byteIndex >= entry.startByte && byteIndex <= entry.endByte) {
+      if (isByteInField(byteIndex, entry)) {
         return entry;
       }
     }
@@ -118,11 +126,10 @@ export function HexView({
                       }
                     }}
                     onMouseLeave={() => onHighlight(null)}
-                    data-highlighted={
-                      highlightedField &&
-                      byteIndex >= highlightedField.startByte &&
-                      byteIndex <= highlightedField.endByte
-                    }
+                    data-highlighted={isByteInField(
+                      byteIndex,
+                      highlightedField
+                    )}
                     className={cn(
                       HIGHLIGHT_CLASS,
                       'border border-gray-300 px-2 py-1 text-center'
