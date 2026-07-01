@@ -45,7 +45,26 @@ describe('PacketInspector', () => {
     expect(screen.getByText('GET_COMMAND')).toBeInTheDocument();
   });
 
-  it('displays error on invalid input', () => {});
+  it('displays error on invalid input', async () => {
+    render(<PacketInspector />);
+
+    const inputElement = screen.getByRole('textbox', { name: /packet data/i });
+    const user = userEvent.setup();
+
+    await user.click(inputElement);
+    await user.paste('o1 at gg qu');
+
+    const submitButton = screen.getByRole('button', { name: /submit/i });
+    await user.click(submitButton);
+
+    // Error message should be displayed
+    expect(screen.getByText('Error:')).toBeInTheDocument();
+    expect(screen.getByText(/invalid hex/i)).toBeInTheDocument();
+
+    // No hex view or field view should be displayed
+    expect(screen.queryAllByRole('cell')).toHaveLength(0);
+    expect(screen.queryAllByRole('term')).toHaveLength(0);
+  });
 
   it('populates and parses from the example dropdown', () => {});
 });
