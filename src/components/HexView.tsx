@@ -1,11 +1,43 @@
 import React from 'react';
+import { HIGHLIGHT_CLASS } from '../lib/styles';
 import { cn } from '../lib/utils';
+import type { FieldEntry } from '../parser/fields';
 
 type HexViewProps = {
   rawBytes: Uint8Array | null;
+  fieldEntries: FieldEntry[] | null;
+  highlightedField: FieldEntry | null;
+  onHighlight: (field: FieldEntry | null) => void;
 };
 
-export function HexView({ rawBytes }: HexViewProps) {
+export function HexView({
+  rawBytes,
+  fieldEntries,
+  highlightedField,
+  onHighlight,
+}: HexViewProps) {
+  const BYTES_PER_ROW = 16;
+
+  const isByteInField = (
+    byteIndex: number,
+    field: FieldEntry | null
+  ): boolean => {
+    if (!field) return false;
+    return byteIndex >= field.startByte && byteIndex <= field.endByte;
+  };
+
+  const fieldForByteIndex = (
+    byteIndex: number,
+    entries: FieldEntry[]
+  ): FieldEntry | null => {
+    for (const entry of entries) {
+      if (isByteInField(byteIndex, entry)) {
+        return entry;
+      }
+    }
+    return null;
+  };
+
   const dataToDisplay = React.useMemo(() => {
     if (rawBytes) {
       return generateTableRowData(rawBytes);
@@ -15,8 +47,8 @@ export function HexView({ rawBytes }: HexViewProps) {
 
   function generateTableRowData(buffer: Uint8Array): number[][] {
     const rows: number[][] = [];
-    for (let i = 0; i < buffer.length; i += 16) {
-      rows.push(Array.from(buffer.slice(i, i + 16)));
+    for (let i = 0; i < buffer.length; i += BYTES_PER_ROW) {
+      rows.push(Array.from(buffer.slice(i, i + BYTES_PER_ROW)));
     }
     return rows;
   }
@@ -74,16 +106,39 @@ export function HexView({ rawBytes }: HexViewProps) {
                 scope="row"
                 className="border border-gray-300 px-2 py-1 text-center"
               >
-                {(rowIndex * 16).toString(16).toUpperCase().padStart(4, '0')}
+                {(rowIndex * BYTES_PER_ROW)
+                  .toString(16)
+                  .toUpperCase()
+                  .padStart(4, '0')}
               </th>
-              {row.map((byte, colIndex) => (
-                <td
-                  key={colIndex}
-                  className="border border-gray-300 px-2 py-1 text-center"
-                >
-                  {byte.toString(16).toUpperCase().padStart(2, '0')}
-                </td>
-              ))}
+              {row.map((byte, colIndex) => {
+                const byteIndex = rowIndex * BYTES_PER_ROW + colIndex;
+                return (
+                  <td
+                    key={colIndex}
+                    onMouseEnter={() => {
+                      if (fieldEntries) {
+                        const field = fieldForByteIndex(
+                          byteIndex,
+                          fieldEntries
+                        );
+                        onHighlight(field);
+                      }
+                    }}
+                    onMouseLeave={() => onHighlight(null)}
+                    data-highlighted={isByteInField(
+                      byteIndex,
+                      highlightedField
+                    )}
+                    className={cn(
+                      HIGHLIGHT_CLASS,
+                      'border border-gray-300 px-2 py-1 text-center'
+                    )}
+                  >
+                    {byte.toString(16).toUpperCase().padStart(2, '0')}
+                  </td>
+                );
+              })}
             </tr>
           ))}
         </tbody>

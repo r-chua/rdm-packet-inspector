@@ -4,11 +4,21 @@ import { HexInput } from './HexInput.tsx';
 import { HexView } from './HexView.tsx';
 import type { ParseResult } from '../parser/types.ts';
 import { parseRdmPacket } from '../parser/parse.ts';
+import { getFieldEntries, type FieldEntry } from '../parser/fields.ts';
 
 export function PacketInspector() {
   const [parseResult, setParseResult] = React.useState<ParseResult | null>(
     null
   );
+  const [highlightedField, setHighlightedField] =
+    React.useState<FieldEntry | null>(null);
+
+  const fieldEntries = React.useMemo(() => {
+    if (parseResult?.success) {
+      return parseResult.packet ? getFieldEntries(parseResult.packet) : null;
+    }
+    return null;
+  }, [parseResult]);
 
   const handleParse = (hexString: string) => {
     if (hexString.trim() === '') {
@@ -41,11 +51,18 @@ export function PacketInspector() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1 min-h-0">
           <div className="overflow-auto bg-green-200 border rounded-lg">
-            <HexView rawBytes={parseResult?.rawBytes || null} />
+            <HexView
+              rawBytes={parseResult?.rawBytes || null}
+              fieldEntries={fieldEntries}
+              highlightedField={highlightedField}
+              onHighlight={setHighlightedField}
+            />
           </div>
           <div className="overflow-auto bg-amber-200 border rounded-lg">
             <FieldView
-              packet={parseResult?.success ? parseResult.packet : null}
+              fieldEntries={fieldEntries}
+              highlightedField={highlightedField}
+              onHighlight={setHighlightedField}
             />
           </div>
         </div>
