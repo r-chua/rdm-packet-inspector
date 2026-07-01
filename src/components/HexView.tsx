@@ -1,9 +1,9 @@
 import React from 'react';
 import {
   HIGHLIGHT_CLASS,
-  SELECTED_BORDER_L_CLASS,
-  SELECTED_BORDER_R_CLASS,
-  SELECTED_BORDER_Y_CLASS,
+  SELECTED_EDGE_SHADOW_Y,
+  SELECTED_EDGE_SHADOW_L,
+  SELECTED_EDGE_SHADOW_R,
 } from '../lib/styles';
 import { cn } from '../lib/utils';
 import type { FieldEntry } from '../parser/fields';
@@ -21,6 +21,12 @@ type SelectedByteBorders = {
   left: boolean;
   right: boolean;
   y: boolean;
+};
+
+const EDGE_SHADOW: Record<keyof SelectedByteBorders, string> = {
+  left: SELECTED_EDGE_SHADOW_L,
+  right: SELECTED_EDGE_SHADOW_R,
+  y: SELECTED_EDGE_SHADOW_Y,
 };
 
 export function HexView({
@@ -150,11 +156,13 @@ export function HexView({
                   selectedField,
                   colIndex
                 );
-                const borderClasses = cn(
-                  selectedBorders.left ? SELECTED_BORDER_L_CLASS : '',
-                  selectedBorders.right ? SELECTED_BORDER_R_CLASS : '',
-                  selectedBorders.y ? SELECTED_BORDER_Y_CLASS : ''
-                );
+                const selectedShadows = Object.entries(selectedBorders)
+                  .filter(([, isActive]) => isActive)
+                  .map(
+                    ([side]) => EDGE_SHADOW[side as keyof SelectedByteBorders]
+                  )
+                  .join(', ');
+
                 return (
                   <td
                     key={colIndex}
@@ -184,9 +192,9 @@ export function HexView({
                     data-selected={isByteInField(byteIndex, selectedField)}
                     className={cn(
                       'border border-gray-300 px-2 py-1 text-center',
-                      HIGHLIGHT_CLASS,
-                      borderClasses
+                      HIGHLIGHT_CLASS
                     )}
+                    style={{ boxShadow: selectedShadows }}
                   >
                     {byte.toString(16).toUpperCase().padStart(2, '0')}
                   </td>
