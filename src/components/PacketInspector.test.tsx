@@ -201,4 +201,17 @@ describe('PacketInspector', () => {
     expect(screen.queryAllByRole('cell')).toHaveLength(0);
     expect(screen.queryAllByRole('term')).toHaveLength(0);
   });
+
+  describe('interaction', () => {
+    it.todo('highlights field when hovering a byte');
+    it.todo('highlights bytes when hovering a field');
+    it.todo('selects field when clicking a byte');
+    it.todo('selects bytes when clicking a field');
+    it.todo('navigate byte table with keyboard');
+    it.todo('navigate field list with keyboard');
+    it.todo('selects field with keyboard');
+    it.todo('syncs keyboard cursor to clicked cell');
+    it.todo('clears selection on reset');
+    it.todo('clears selection on new parse');
+  });
 });
