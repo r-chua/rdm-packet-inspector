@@ -12,6 +12,9 @@ export function PacketInspector() {
   );
   const [highlightedField, setHighlightedField] =
     React.useState<FieldEntry | null>(null);
+  const [selectedField, setSelectedField] = React.useState<FieldEntry | null>(
+    null
+  );
 
   const fieldEntries = React.useMemo(() => {
     if (parseResult?.success) {
@@ -63,6 +66,8 @@ export function PacketInspector() {
               fieldEntries={fieldEntries}
               highlightedField={highlightedField}
               onHighlight={setHighlightedField}
+              selectedField={selectedField}
+              onSelect={setSelectedField}
             />
           </div>
         </div>

@@ -6,12 +6,16 @@ type FieldViewProps = {
   fieldEntries: FieldEntry[] | null;
   highlightedField: FieldEntry | null;
   onHighlight: (field: FieldEntry | null) => void;
+  selectedField: FieldEntry | null;
+  onSelect: (field: FieldEntry | null) => void;
 };
 
 export function FieldView({
   fieldEntries,
   highlightedField,
   onHighlight,
+  selectedField,
+  onSelect,
 }: FieldViewProps) {
   function renderFieldEntry(entry: FieldEntry, index: number) {
     return (
