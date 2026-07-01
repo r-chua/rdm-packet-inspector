@@ -173,5 +173,32 @@ describe('PacketInspector', () => {
     expect(screen.queryByText(/invalid hex/i)).not.toBeInTheDocument();
   });
 
-  it.todo('empty input clears without error', async () => {});
+  it('empty input clears without error', async () => {
+    render(<PacketInspector />);
+
+    const inputElement = screen.getByRole('textbox', { name: /packet data/i });
+    const user = userEvent.setup();
+
+    await user.click(inputElement);
+    await user.paste(examplePackets.GET_DEVICE_INFO);
+
+    const submitButton = screen.getByRole('button', { name: /submit/i });
+    await user.click(submitButton);
+
+    // Hex view and field view should be populated
+    expect(screen.getByText('DEVICE_INFO')).toBeInTheDocument();
+    expect(screen.getByText('GET_COMMAND')).toBeInTheDocument();
+
+    // Now clear the input
+    await user.clear(inputElement);
+    await user.type(inputElement, '   '); // Enter whitespace
+    await user.click(submitButton);
+
+    // No error message should be displayed
+    expect(screen.queryByText('Error:')).not.toBeInTheDocument();
+
+    // Hex view and field view should be cleared
+    expect(screen.queryAllByRole('cell')).toHaveLength(0);
+    expect(screen.queryAllByRole('term')).toHaveLength(0);
+  });
 });
