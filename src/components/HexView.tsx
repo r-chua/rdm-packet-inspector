@@ -1,5 +1,10 @@
 import React from 'react';
-import { HIGHLIGHT_CLASS, SELECTED_CLASS } from '../lib/styles';
+import {
+  HIGHLIGHT_CLASS,
+  SELECTED_BORDER_L_CLASS,
+  SELECTED_BORDER_R_CLASS,
+  SELECTED_BORDER_Y_CLASS,
+} from '../lib/styles';
 import { cn } from '../lib/utils';
 import type { FieldEntry } from '../parser/fields';
 
@@ -10,6 +15,12 @@ type HexViewProps = {
   onHighlight: (field: FieldEntry | null) => void;
   selectedField: FieldEntry | null;
   onSelect: (field: FieldEntry | null) => void;
+};
+
+type SelectedByteBorders = {
+  left: boolean;
+  right: boolean;
+  y: boolean;
 };
 
 export function HexView({
@@ -40,6 +51,23 @@ export function HexView({
       }
     }
     return null;
+  };
+
+  const getSelectedByteBorders = (
+    byteIndex: number,
+    field: FieldEntry | null,
+    colIndex: number
+  ): SelectedByteBorders => {
+    if (!field) return { left: false, right: false, y: false };
+    return {
+      left:
+        byteIndex === field.startByte ||
+        (isByteInField(byteIndex, field) && colIndex === 0),
+      right:
+        byteIndex === field.endByte ||
+        (isByteInField(byteIndex, field) && colIndex === BYTES_PER_ROW - 1),
+      y: isByteInField(byteIndex, field),
+    };
   };
 
   const dataToDisplay = React.useMemo(() => {
@@ -117,6 +145,16 @@ export function HexView({
               </th>
               {row.map((byte, colIndex) => {
                 const byteIndex = rowIndex * BYTES_PER_ROW + colIndex;
+                const selectedBorders = getSelectedByteBorders(
+                  byteIndex,
+                  selectedField,
+                  colIndex
+                );
+                const borderClasses = cn(
+                  selectedBorders.left ? SELECTED_BORDER_L_CLASS : '',
+                  selectedBorders.right ? SELECTED_BORDER_R_CLASS : '',
+                  selectedBorders.y ? SELECTED_BORDER_Y_CLASS : ''
+                );
                 return (
                   <td
                     key={colIndex}
@@ -145,9 +183,9 @@ export function HexView({
                     )}
                     data-selected={isByteInField(byteIndex, selectedField)}
                     className={cn(
+                      'border border-gray-300 px-2 py-1 text-center',
                       HIGHLIGHT_CLASS,
-                      SELECTED_CLASS,
-                      'border border-gray-300 px-2 py-1 text-center'
+                      borderClasses
                     )}
                   >
                     {byte.toString(16).toUpperCase().padStart(2, '0')}
