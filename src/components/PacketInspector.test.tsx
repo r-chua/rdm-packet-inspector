@@ -250,7 +250,54 @@ describe('PacketInspector', () => {
       expect(highlightedField).toHaveAttribute('data-highlighted', 'false');
     });
 
-    it.todo('highlights bytes when hovering a field');
+    it('highlights bytes when hovering a field', async () => {
+      render(<PacketInspector />);
+
+      const inputElement = screen.getByRole('textbox', {
+        name: /packet data/i,
+      });
+      const user = userEvent.setup();
+
+      await user.click(inputElement);
+      await user.paste(examplePackets.GET_DEVICE_INFO);
+
+      const submitButton = screen.getByRole('button', { name: /submit/i });
+      await user.click(submitButton);
+
+      // Hover over the first field
+      const targetField = screen.getByText('Destination UID');
+      await user.hover(targetField);
+      expect(targetField.closest('[data-highlighted]')).toHaveAttribute(
+        'data-highlighted',
+        'true'
+      );
+
+      // Other bytes in the same field should be highlighted
+      // Destination UID field corresponds to bytes 3-8 (0-indexed)
+      for (let i = 3; i < 9; i++) {
+        const cell = screen.getAllByRole('cell')[i];
+        expect(cell).toHaveAttribute('data-highlighted', 'true');
+      }
+
+      // Other bytes should not be highlighted
+      const priorCell = screen.getAllByRole('cell')[2];
+      const followingCell = screen.getAllByRole('cell')[9];
+      expect(priorCell).toHaveAttribute('data-highlighted', 'false');
+      expect(followingCell).toHaveAttribute('data-highlighted', 'false');
+
+      // Unhover the first field
+      await user.unhover(targetField);
+      expect(targetField.closest('[data-highlighted]')).toHaveAttribute(
+        'data-highlighted',
+        'false'
+      );
+      // Other bytes in the same field should not be highlighted
+      for (let i = 3; i < 9; i++) {
+        const cell = screen.getAllByRole('cell')[i];
+        expect(cell).toHaveAttribute('data-highlighted', 'false');
+      }
+    });
+
     it.todo('selects field when clicking a byte');
     it.todo('selects bytes when clicking a field');
     it.todo('navigate byte table with keyboard');
