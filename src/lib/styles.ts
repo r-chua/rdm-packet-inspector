@@ -4,6 +4,9 @@ export const SELECTED_CLASS =
   'data-[selected=true]:ring-2 data-[selected=true]:ring-inset ' +
   'data-[selected=true]:ring-blue-400';
 
+export const FOCUSED_CLASS =
+  'focus-visible:outline-2 focus-visible:outline-indigo-600';
+
 // These constants define the box-shadow styles for selected byte borders in
 // the HexView component.
 export const SELECTED_EDGE_SHADOW_Y =

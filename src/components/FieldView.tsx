@@ -1,5 +1,5 @@
 import React from 'react';
-import { HIGHLIGHT_CLASS, SELECTED_CLASS } from '../lib/styles';
+import { FOCUSED_CLASS, HIGHLIGHT_CLASS, SELECTED_CLASS } from '../lib/styles';
 import { cn, scrollBehavior } from '../lib/utils';
 import { type FieldEntry } from '../parser/fields';
 
@@ -73,7 +73,13 @@ export function FieldView({
         }}
         data-selected={entry === selectedField}
         data-highlighted={entry === highlightedField}
-        className={cn(HIGHLIGHT_CLASS, SELECTED_CLASS, 'py-2 px-3 rounded-md')}
+        className={cn(
+          HIGHLIGHT_CLASS,
+          SELECTED_CLASS,
+          FOCUSED_CLASS,
+          'py-2 px-3 rounded-md',
+          'focus-visible:outline-offset-1'
+        )}
       >
         <dt className="flex justify-between items-baseline text-sm font-medium text-gray-500">
           <span>{entry.name}</span>
@@ -105,7 +111,7 @@ export function FieldView({
       <h2 className="text-lg font-medium text-gray-900 mb-2">Field View</h2>
 
       <dl
-        className="divide-y divide-gray-200"
+        className={cn('divide-y divide-gray-200', FOCUSED_CLASS)}
         tabIndex={focusedFieldIndex === null ? 0 : -1}
         onKeyDown={(e) => {
           if (!fieldEntries || fieldEntries.length === 0) return;

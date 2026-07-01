@@ -4,6 +4,7 @@ import {
   SELECTED_EDGE_SHADOW_Y,
   SELECTED_EDGE_SHADOW_L,
   SELECTED_EDGE_SHADOW_R,
+  FOCUSED_CLASS,
 } from '../lib/styles';
 import { cn, scrollBehavior } from '../lib/utils';
 import type { FieldEntry } from '../parser/fields';
@@ -133,7 +134,8 @@ export function HexView({
           'table-auto ',
           'border-collapse border border-gray-300',
           'center text-sm font-mono',
-          'mx-auto'
+          'mx-auto',
+          FOCUSED_CLASS
         )}
         aria-labelledby="hex-view-title"
         onKeyDown={(e) => {
@@ -273,6 +275,7 @@ export function HexView({
                     data-selected={isByteInField(byteIndex, selectedField)}
                     className={cn(
                       'border border-gray-300 px-2 py-1 text-center',
+                      FOCUSED_CLASS,
                       HIGHLIGHT_CLASS
                     )}
                     style={{ boxShadow: selectedShadows }}
