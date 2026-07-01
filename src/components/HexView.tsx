@@ -171,7 +171,7 @@ export function HexView({
               });
               break;
             case 'Enter':
-            case 'Space':
+            case ' ':
               e.preventDefault();
               if (focusedByteIndex !== null && fieldEntries) {
                 const field = fieldForByteIndex(focusedByteIndex, fieldEntries);
