@@ -1,4 +1,5 @@
 import React from 'react';
+import { HIGHLIGHT_CLASS } from '../lib/styles';
 import { cn } from '../lib/utils';
 import type { FieldEntry } from '../parser/fields';
 
@@ -117,13 +118,14 @@ export function HexView({
                       }
                     }}
                     onMouseLeave={() => onHighlight(null)}
-                    className={cn(
-                      'border border-gray-300 px-2 py-1 text-center',
+                    data-highlighted={
                       highlightedField &&
-                        byteIndex >= highlightedField.startByte &&
-                        byteIndex <= highlightedField.endByte
-                        ? 'bg-yellow-100'
-                        : ''
+                      byteIndex >= highlightedField.startByte &&
+                      byteIndex <= highlightedField.endByte
+                    }
+                    className={cn(
+                      HIGHLIGHT_CLASS,
+                      'border border-gray-300 px-2 py-1 text-center'
                     )}
                   >
                     {byte.toString(16).toUpperCase().padStart(2, '0')}

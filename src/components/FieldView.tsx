@@ -1,3 +1,4 @@
+import { HIGHLIGHT_CLASS } from '../lib/styles';
 import { cn } from '../lib/utils';
 import { type FieldEntry } from '../parser/fields';
 
@@ -18,10 +19,8 @@ export function FieldView({
         key={`${entry.name}-${index}`}
         onMouseEnter={() => onHighlight(entry)}
         onMouseLeave={() => onHighlight(null)}
-        className={cn(
-          entry === highlightedField ? 'bg-yellow-100' : '',
-          'py-2 px-3 rounded-md'
-        )}
+        data-highlighted={entry === highlightedField}
+        className={cn(HIGHLIGHT_CLASS, 'py-2 px-3 rounded-md')}
       >
         <dt className="flex justify-between items-baseline text-sm font-medium text-gray-500">
           <span>{entry.name}</span>
