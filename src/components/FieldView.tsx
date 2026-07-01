@@ -1,3 +1,4 @@
+import React from 'react';
 import { HIGHLIGHT_CLASS, SELECTED_CLASS } from '../lib/styles';
 import { cn } from '../lib/utils';
 import { type FieldEntry } from '../parser/fields';
@@ -17,10 +18,28 @@ export function FieldView({
   selectedField,
   onSelect,
 }: FieldViewProps) {
+  const fieldRefs = React.useRef<Map<FieldEntry, HTMLDivElement>>(new Map());
+
+  React.useEffect(() => {
+    if (!selectedField) return;
+    const fieldElement = fieldRefs.current.get(selectedField);
+    fieldElement?.scrollIntoView({
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+        ? 'auto'
+        : 'smooth',
+      block: 'nearest',
+      inline: 'nearest',
+    });
+  }, [selectedField]);
+
   function renderFieldEntry(entry: FieldEntry, index: number) {
     return (
       <div
         key={`${entry.name}-${index}`}
+        ref={(el) => {
+          if (el) fieldRefs.current.set(entry, el);
+          else fieldRefs.current.delete(entry);
+        }}
         onMouseOver={(e) => {
           e.stopPropagation();
           onHighlight(entry);
