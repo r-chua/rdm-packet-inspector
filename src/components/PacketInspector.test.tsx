@@ -66,6 +66,8 @@ describe('PacketInspector', () => {
     expect(screen.queryAllByRole('term')).toHaveLength(0);
   });
 
+  it.todo('clears error on valid input after an error', async () => {});
+
   it('populates and parses from the example dropdown', async () => {
     render(<PacketInspector />);
 
@@ -90,4 +92,8 @@ describe('PacketInspector', () => {
     expect(screen.getByText('DISC_UNIQUE_BRANCH')).toBeInTheDocument();
     expect(screen.getByText('DISCOVERY_COMMAND')).toBeInTheDocument();
   });
+
+  it.todo('clears parse on reset button press', async () => {});
+
+  it.todo('clears error on reset button press', async () => {});
 });
