@@ -66,5 +66,28 @@ describe('PacketInspector', () => {
     expect(screen.queryAllByRole('term')).toHaveLength(0);
   });
 
-  it('populates and parses from the example dropdown', () => {});
+  it('populates and parses from the example dropdown', async () => {
+    render(<PacketInspector />);
+
+    const exampleDropdown = screen.getByRole('combobox', {
+      name: /example packets/i,
+    });
+    const user = userEvent.setup();
+
+    await user.selectOptions(
+      exampleDropdown,
+      examplePackets.DISCOVERY_UNIQUE_REQUEST
+    );
+
+    // Input is populated with the selected example
+    expect(screen.getByRole('textbox', { name: /packet data/i })).toHaveValue(
+      examplePackets.DISCOVERY_UNIQUE_REQUEST
+    );
+
+    // No error message should be displayed
+    expect(screen.queryByText('Error:')).not.toBeInTheDocument();
+
+    expect(screen.getByText('DISC_UNIQUE_BRANCH')).toBeInTheDocument();
+    expect(screen.getByText('DISCOVERY_COMMAND')).toBeInTheDocument();
+  });
 });
