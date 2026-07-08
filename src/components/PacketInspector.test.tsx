@@ -29,6 +29,10 @@ async function renderAndParsePacket(
   return { user };
 }
 
+function getByteCell(n: number) {
+  return screen.getAllByRole('cell')[n];
+}
+
 describe('PacketInspector', () => {
   it('renders the initial state correctly', () => {
     render(<PacketInspector />);
@@ -187,12 +191,12 @@ describe('PacketInspector', () => {
       const { user } = await renderAndParsePacket();
 
       // Hover over the first byte cell
-      const targetCell = screen.getAllByRole('cell')[4];
+      const targetCell = getByteCell(4);
       await user.hover(targetCell);
       expect(targetCell).toHaveAttribute('data-highlighted', 'true');
 
       // Other cells in the same field should also be highlighted
-      const neighboringCell = screen.getAllByRole('cell')[5];
+      const neighboringCell = getByteCell(5);
       expect(neighboringCell).toHaveAttribute('data-highlighted', 'true');
 
       // The corresponding field should be highlighted
@@ -233,13 +237,13 @@ describe('PacketInspector', () => {
       // Other bytes in the same field should be highlighted
       // Destination UID field corresponds to bytes 3-8 (0-indexed)
       for (let i = 3; i < 9; i++) {
-        const cell = screen.getAllByRole('cell')[i];
+        const cell = getByteCell(i);
         expect(cell).toHaveAttribute('data-highlighted', 'true');
       }
 
       // Other bytes should not be highlighted
-      const priorCell = screen.getAllByRole('cell')[2];
-      const followingCell = screen.getAllByRole('cell')[9];
+      const priorCell = getByteCell(2);
+      const followingCell = getByteCell(9);
       expect(priorCell).toHaveAttribute('data-highlighted', 'false');
       expect(followingCell).toHaveAttribute('data-highlighted', 'false');
 
@@ -251,7 +255,7 @@ describe('PacketInspector', () => {
       );
       // Other bytes in the same field should not be highlighted
       for (let i = 3; i < 9; i++) {
-        const cell = screen.getAllByRole('cell')[i];
+        const cell = getByteCell(i);
         expect(cell).toHaveAttribute('data-highlighted', 'false');
       }
     });
@@ -260,17 +264,17 @@ describe('PacketInspector', () => {
       const { user } = await renderAndParsePacket();
 
       // Click on cell 4
-      const targetCell = screen.getAllByRole('cell')[4];
+      const targetCell = getByteCell(4);
       await user.click(targetCell);
 
       // This field's cells should be selected
       // Destination UID field corresponds to bytes 3-8 (0-indexed)
       for (let i = 3; i < 9; i++) {
-        const cell = screen.getAllByRole('cell')[i];
+        const cell = getByteCell(i);
         expect(cell).toHaveAttribute('data-selected', 'true');
       }
-      const previousCell = screen.getAllByRole('cell')[2];
-      const nextCell = screen.getAllByRole('cell')[9];
+      const previousCell = getByteCell(2);
+      const nextCell = getByteCell(9);
       expect(previousCell).toHaveAttribute('data-selected', 'false');
       expect(nextCell).toHaveAttribute('data-selected', 'false');
 
@@ -288,7 +292,7 @@ describe('PacketInspector', () => {
       );
 
       // Click on cell 1 to change the selected field
-      const subStartCodeCell = screen.getAllByRole('cell')[1];
+      const subStartCodeCell = getByteCell(1);
       await user.click(subStartCodeCell);
 
       // The new cell should be selected
@@ -303,7 +307,7 @@ describe('PacketInspector', () => {
       expect(selectedField).toHaveAttribute('data-selected', 'false');
       // The previous field's cells should be deselected
       for (let i = 3; i < 9; i++) {
-        const cell = screen.getAllByRole('cell')[i];
+        const cell = getByteCell(i);
         expect(cell).toHaveAttribute('data-selected', 'false');
       }
     });
@@ -331,13 +335,13 @@ describe('PacketInspector', () => {
       // This field's cells should be selected
       // Destination UID field corresponds to bytes 3-8 (0-indexed)
       for (let i = 3; i < 9; i++) {
-        const cell = screen.getAllByRole('cell')[i];
+        const cell = getByteCell(i);
         expect(cell).toHaveAttribute('data-selected', 'true');
       }
 
       // Neighboring cells should not be selected
-      const previousCell = screen.getAllByRole('cell')[2];
-      const nextCell = screen.getAllByRole('cell')[9];
+      const previousCell = getByteCell(2);
+      const nextCell = getByteCell(9);
       expect(previousCell).toHaveAttribute('data-selected', 'false');
       expect(nextCell).toHaveAttribute('data-selected', 'false');
 
@@ -350,17 +354,14 @@ describe('PacketInspector', () => {
         .getByText('Sub Start Code')
         .closest('[data-selected]');
       expect(newSelectedField).toHaveAttribute('data-selected', 'true');
-      expect(screen.getAllByRole('cell')[1]).toHaveAttribute(
-        'data-selected',
-        'true'
-      );
+      expect(getByteCell(1)).toHaveAttribute('data-selected', 'true');
 
       // The previous field should be deselected
       expect(selectedField).toHaveAttribute('data-selected', 'false');
 
       // The previous field's cells should be deselected
       for (let i = 3; i < 9; i++) {
-        const cell = screen.getAllByRole('cell')[i];
+        const cell = getByteCell(i);
         expect(cell).toHaveAttribute('data-selected', 'false');
       }
     });
