@@ -4,6 +4,31 @@ import { describe, it, expect } from 'vitest';
 import { PacketInspector } from './PacketInspector';
 import * as examplePackets from '../parser/examples.ts';
 
+function getInputElement() {
+  return screen.getByRole('textbox', { name: /packet data/i });
+}
+
+function getSubmitButton() {
+  return screen.getByRole('button', { name: /submit/i });
+}
+
+async function renderAndParsePacket(
+  hexString: string = examplePackets.GET_DEVICE_INFO
+) {
+  render(<PacketInspector />);
+
+  const inputElement = getInputElement();
+  const user = userEvent.setup();
+
+  await user.click(inputElement);
+  await user.paste(hexString);
+
+  const submitButton = getSubmitButton();
+  await user.click(submitButton);
+
+  return { user };
+}
+
 describe('PacketInspector', () => {
   it('renders the initial state correctly', () => {
     render(<PacketInspector />);
@@ -14,7 +39,7 @@ describe('PacketInspector', () => {
     ).toBeInTheDocument();
 
     // Empty textarea should be present
-    const inputElement = screen.getByRole('textbox', { name: /packet data/i });
+    const inputElement = getInputElement();
     expect(inputElement).toHaveValue('');
 
     // No error message should be displayed
@@ -26,16 +51,7 @@ describe('PacketInspector', () => {
   });
 
   it('parses valid input', async () => {
-    render(<PacketInspector />);
-
-    const inputElement = screen.getByRole('textbox', { name: /packet data/i });
-    const user = userEvent.setup();
-
-    await user.click(inputElement);
-    await user.paste(examplePackets.GET_DEVICE_INFO);
-
-    const submitButton = screen.getByRole('button', { name: /submit/i });
-    await user.click(submitButton);
+    await renderAndParsePacket();
 
     // No error message should be displayed
     expect(screen.queryByText('Error:')).not.toBeInTheDocument();
@@ -46,16 +62,7 @@ describe('PacketInspector', () => {
   });
 
   it('displays error on invalid input', async () => {
-    render(<PacketInspector />);
-
-    const inputElement = screen.getByRole('textbox', { name: /packet data/i });
-    const user = userEvent.setup();
-
-    await user.click(inputElement);
-    await user.paste('o1 at gg qu');
-
-    const submitButton = screen.getByRole('button', { name: /submit/i });
-    await user.click(submitButton);
+    await renderAndParsePacket('o1 at gg qu');
 
     // Error message should be displayed
     expect(screen.getByText('Error:')).toBeInTheDocument();
@@ -67,22 +74,15 @@ describe('PacketInspector', () => {
   });
 
   it('clears error on valid input after an error', async () => {
-    render(<PacketInspector />);
-
-    const inputElement = screen.getByRole('textbox', { name: /packet data/i });
-    const user = userEvent.setup();
-
-    await user.click(inputElement);
-    await user.paste('o1 at gg qu');
-
-    const submitButton = screen.getByRole('button', { name: /submit/i });
-    await user.click(submitButton);
+    const { user } = await renderAndParsePacket('o1 at gg qu');
 
     // Error message should be displayed
     expect(screen.getByText('Error:')).toBeInTheDocument();
     expect(screen.getByText(/invalid hex/i)).toBeInTheDocument();
 
     // Now enter valid input
+    const inputElement = getInputElement();
+    const submitButton = getSubmitButton();
     await user.clear(inputElement);
     await user.paste(examplePackets.GET_DEVICE_INFO);
     await user.click(submitButton);
@@ -106,7 +106,7 @@ describe('PacketInspector', () => {
     );
 
     // Input is populated with the selected example
-    expect(screen.getByRole('textbox', { name: /packet data/i })).toHaveValue(
+    expect(getInputElement()).toHaveValue(
       examplePackets.DISCOVERY_UNIQUE_REQUEST
     );
 
@@ -118,16 +118,9 @@ describe('PacketInspector', () => {
   });
 
   it('clears parse on reset button press', async () => {
-    render(<PacketInspector />);
+    const { user } = await renderAndParsePacket();
 
-    const inputElement = screen.getByRole('textbox', { name: /packet data/i });
-    const user = userEvent.setup();
-
-    await user.click(inputElement);
-    await user.paste(examplePackets.GET_DEVICE_INFO);
-
-    const submitButton = screen.getByRole('button', { name: /submit/i });
-    await user.click(submitButton);
+    const inputElement = getInputElement();
 
     // Hex view and field view should be populated
     expect(screen.getByText('DEVICE_INFO')).toBeInTheDocument();
@@ -146,16 +139,9 @@ describe('PacketInspector', () => {
   });
 
   it('clears error on reset button press', async () => {
-    render(<PacketInspector />);
+    const { user } = await renderAndParsePacket('o1 at gg qu');
 
-    const inputElement = screen.getByRole('textbox', { name: /packet data/i });
-    const user = userEvent.setup();
-
-    await user.click(inputElement);
-    await user.paste('o1 at gg qu');
-
-    const submitButton = screen.getByRole('button', { name: /submit/i });
-    await user.click(submitButton);
+    const inputElement = getInputElement();
 
     // Error message should be displayed
     expect(screen.getByText('Error:')).toBeInTheDocument();
@@ -174,16 +160,10 @@ describe('PacketInspector', () => {
   });
 
   it('empty input clears without error', async () => {
-    render(<PacketInspector />);
+    const { user } = await renderAndParsePacket();
 
-    const inputElement = screen.getByRole('textbox', { name: /packet data/i });
-    const user = userEvent.setup();
-
-    await user.click(inputElement);
-    await user.paste(examplePackets.GET_DEVICE_INFO);
-
-    const submitButton = screen.getByRole('button', { name: /submit/i });
-    await user.click(submitButton);
+    const inputElement = getInputElement();
+    const submitButton = getSubmitButton();
 
     // Hex view and field view should be populated
     expect(screen.getByText('DEVICE_INFO')).toBeInTheDocument();
@@ -204,18 +184,7 @@ describe('PacketInspector', () => {
 
   describe('interaction', () => {
     it('highlights field when hovering a byte', async () => {
-      render(<PacketInspector />);
-
-      const inputElement = screen.getByRole('textbox', {
-        name: /packet data/i,
-      });
-      const user = userEvent.setup();
-
-      await user.click(inputElement);
-      await user.paste(examplePackets.GET_DEVICE_INFO);
-
-      const submitButton = screen.getByRole('button', { name: /submit/i });
-      await user.click(submitButton);
+      const { user } = await renderAndParsePacket();
 
       // Hover over the first byte cell
       const targetCell = screen.getAllByRole('cell')[4];
@@ -251,18 +220,7 @@ describe('PacketInspector', () => {
     });
 
     it('highlights bytes when hovering a field', async () => {
-      render(<PacketInspector />);
-
-      const inputElement = screen.getByRole('textbox', {
-        name: /packet data/i,
-      });
-      const user = userEvent.setup();
-
-      await user.click(inputElement);
-      await user.paste(examplePackets.GET_DEVICE_INFO);
-
-      const submitButton = screen.getByRole('button', { name: /submit/i });
-      await user.click(submitButton);
+      const { user } = await renderAndParsePacket();
 
       // Hover over the first field
       const targetField = screen.getByText('Destination UID');
@@ -299,18 +257,7 @@ describe('PacketInspector', () => {
     });
 
     it('selects field when clicking a byte', async () => {
-      render(<PacketInspector />);
-
-      const inputElement = screen.getByRole('textbox', {
-        name: /packet data/i,
-      });
-      const user = userEvent.setup();
-
-      await user.click(inputElement);
-      await user.paste(examplePackets.GET_DEVICE_INFO);
-
-      const submitButton = screen.getByRole('button', { name: /submit/i });
-      await user.click(submitButton);
+      const { user } = await renderAndParsePacket();
 
       // Click on cell 4
       const targetCell = screen.getAllByRole('cell')[4];
@@ -362,18 +309,7 @@ describe('PacketInspector', () => {
     });
 
     it('selects bytes when clicking a field', async () => {
-      render(<PacketInspector />);
-
-      const inputElement = screen.getByRole('textbox', {
-        name: /packet data/i,
-      });
-      const user = userEvent.setup();
-
-      await user.click(inputElement);
-      await user.paste(examplePackets.GET_DEVICE_INFO);
-
-      const submitButton = screen.getByRole('button', { name: /submit/i });
-      await user.click(submitButton);
+      const { user } = await renderAndParsePacket();
 
       // Click on the Destination UID field
       const targetField = screen.getByText('Destination UID');
