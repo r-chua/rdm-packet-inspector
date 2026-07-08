@@ -33,6 +33,10 @@ function getByteCell(n: number) {
   return screen.getAllByRole('cell')[n];
 }
 
+function getFieldEntry(fieldName: string) {
+  return screen.getByText(fieldName);
+}
+
 describe('PacketInspector', () => {
   it('renders the initial state correctly', () => {
     render(<PacketInspector />);
@@ -227,7 +231,7 @@ describe('PacketInspector', () => {
       const { user } = await renderAndParsePacket();
 
       // Hover over the first field
-      const targetField = screen.getByText('Destination UID');
+      const targetField = getFieldEntry('Destination UID');
       await user.hover(targetField);
       expect(targetField.closest('[data-highlighted]')).toHaveAttribute(
         'data-highlighted',
@@ -285,7 +289,7 @@ describe('PacketInspector', () => {
       expect(selectedField).toHaveAttribute('data-selected', 'true');
 
       // Other fields should not be selected
-      const otherField = screen.getByText('Source UID');
+      const otherField = getFieldEntry('Source UID');
       expect(otherField.closest('[data-selected]')).toHaveAttribute(
         'data-selected',
         'false'
@@ -298,9 +302,8 @@ describe('PacketInspector', () => {
       // The new cell should be selected
       expect(subStartCodeCell).toHaveAttribute('data-selected', 'true');
       // The new field should be selected
-      const newSelectedField = screen
-        .getByText('Sub Start Code')
-        .closest('[data-selected]');
+      const newSelectedField =
+        getFieldEntry('Sub Start Code').closest('[data-selected]');
       expect(newSelectedField).toHaveAttribute('data-selected', 'true');
 
       // The previous field should be deselected
@@ -316,17 +319,16 @@ describe('PacketInspector', () => {
       const { user } = await renderAndParsePacket();
 
       // Click on the Destination UID field
-      const targetField = screen.getByText('Destination UID');
+      const targetField = getFieldEntry('Destination UID');
       await user.click(targetField);
 
       // The corresponding field should be selected
-      const selectedField = screen
-        .getByText('Destination UID')
-        .closest('[data-selected]');
+      const selectedField =
+        getFieldEntry('Destination UID').closest('[data-selected]');
       expect(selectedField).toHaveAttribute('data-selected', 'true');
 
       // Other fields should not be selected
-      const otherField = screen.getByText('Source UID');
+      const otherField = getFieldEntry('Source UID');
       expect(otherField.closest('[data-selected]')).toHaveAttribute(
         'data-selected',
         'false'
@@ -346,13 +348,12 @@ describe('PacketInspector', () => {
       expect(nextCell).toHaveAttribute('data-selected', 'false');
 
       // Click on the Sub Start Code field to change the selected field
-      const subStartCodeField = screen.getByText('Sub Start Code');
+      const subStartCodeField = getFieldEntry('Sub Start Code');
       await user.click(subStartCodeField);
 
       // The new field should be selected
-      const newSelectedField = screen
-        .getByText('Sub Start Code')
-        .closest('[data-selected]');
+      const newSelectedField =
+        getFieldEntry('Sub Start Code').closest('[data-selected]');
       expect(newSelectedField).toHaveAttribute('data-selected', 'true');
       expect(getByteCell(1)).toHaveAttribute('data-selected', 'true');
 
