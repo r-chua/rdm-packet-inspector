@@ -34,7 +34,13 @@ function getByteCell(n: number) {
 }
 
 function getFieldEntry(fieldName: string) {
-  return screen.getByText(fieldName);
+  const fieldRow = screen
+    .getByText(fieldName)
+    .closest(`[${HIGHLIGHTED_ATTRIBUTE}]`);
+  if (!fieldRow) {
+    throw new Error(`Field row for "${fieldName}" not found`);
+  }
+  return fieldRow;
 }
 
 const HIGHLIGHTED_ATTRIBUTE = 'data-highlighted';
@@ -207,9 +213,7 @@ describe('PacketInspector', () => {
       expect(neighboringCell).toHaveAttribute(HIGHLIGHTED_ATTRIBUTE, 'true');
 
       // The corresponding field should be highlighted
-      const highlightedField = getFieldEntry('Destination UID').closest(
-        `[${HIGHLIGHTED_ATTRIBUTE}]`
-      );
+      const highlightedField = getFieldEntry('Destination UID');
       expect(highlightedField).toHaveAttribute(HIGHLIGHTED_ATTRIBUTE, 'true');
 
       // Only one field should be highlighted
@@ -236,10 +240,7 @@ describe('PacketInspector', () => {
       // Hover over the first field
       const targetField = getFieldEntry('Destination UID');
       await user.hover(targetField);
-      expect(targetField.closest(`[${HIGHLIGHTED_ATTRIBUTE}]`)).toHaveAttribute(
-        HIGHLIGHTED_ATTRIBUTE,
-        'true'
-      );
+      expect(targetField).toHaveAttribute(HIGHLIGHTED_ATTRIBUTE, 'true');
 
       // Other bytes in the same field should be highlighted
       // Destination UID field corresponds to bytes 3-8 (0-indexed)
@@ -256,10 +257,7 @@ describe('PacketInspector', () => {
 
       // Unhover the first field
       await user.unhover(targetField);
-      expect(targetField.closest(`[${HIGHLIGHTED_ATTRIBUTE}]`)).toHaveAttribute(
-        HIGHLIGHTED_ATTRIBUTE,
-        'false'
-      );
+      expect(targetField).toHaveAttribute(HIGHLIGHTED_ATTRIBUTE, 'false');
       // Other bytes in the same field should not be highlighted
       for (let i = 3; i < 9; i++) {
         const cell = getByteCell(i);
@@ -286,17 +284,12 @@ describe('PacketInspector', () => {
       expect(nextCell).toHaveAttribute(SELECTED_ATTRIBUTE, 'false');
 
       // The corresponding field should be selected
-      const selectedField = screen
-        .getByText('Destination UID')
-        .closest(`[${SELECTED_ATTRIBUTE}]`);
+      const selectedField = getFieldEntry('Destination UID');
       expect(selectedField).toHaveAttribute(SELECTED_ATTRIBUTE, 'true');
 
       // Other fields should not be selected
       const otherField = getFieldEntry('Source UID');
-      expect(otherField.closest(`[${SELECTED_ATTRIBUTE}]`)).toHaveAttribute(
-        SELECTED_ATTRIBUTE,
-        'false'
-      );
+      expect(otherField).toHaveAttribute(SELECTED_ATTRIBUTE, 'false');
 
       // Click on cell 1 to change the selected field
       const subStartCodeCell = getByteCell(1);
@@ -305,9 +298,7 @@ describe('PacketInspector', () => {
       // The new cell should be selected
       expect(subStartCodeCell).toHaveAttribute(SELECTED_ATTRIBUTE, 'true');
       // The new field should be selected
-      const newSelectedField = getFieldEntry('Sub Start Code').closest(
-        `[${SELECTED_ATTRIBUTE}]`
-      );
+      const newSelectedField = getFieldEntry('Sub Start Code');
       expect(newSelectedField).toHaveAttribute(SELECTED_ATTRIBUTE, 'true');
 
       // The previous field should be deselected
@@ -327,17 +318,12 @@ describe('PacketInspector', () => {
       await user.click(targetField);
 
       // The corresponding field should be selected
-      const selectedField = getFieldEntry('Destination UID').closest(
-        `[${SELECTED_ATTRIBUTE}]`
-      );
+      const selectedField = getFieldEntry('Destination UID');
       expect(selectedField).toHaveAttribute(SELECTED_ATTRIBUTE, 'true');
 
       // Other fields should not be selected
       const otherField = getFieldEntry('Source UID');
-      expect(otherField.closest(`[${SELECTED_ATTRIBUTE}]`)).toHaveAttribute(
-        SELECTED_ATTRIBUTE,
-        'false'
-      );
+      expect(otherField).toHaveAttribute(SELECTED_ATTRIBUTE, 'false');
 
       // This field's cells should be selected
       // Destination UID field corresponds to bytes 3-8 (0-indexed)
@@ -357,9 +343,7 @@ describe('PacketInspector', () => {
       await user.click(subStartCodeField);
 
       // The new field should be selected
-      const newSelectedField = getFieldEntry('Sub Start Code').closest(
-        `[${SELECTED_ATTRIBUTE}]`
-      );
+      const newSelectedField = getFieldEntry('Sub Start Code');
       expect(newSelectedField).toHaveAttribute(SELECTED_ATTRIBUTE, 'true');
       expect(getByteCell(1)).toHaveAttribute(SELECTED_ATTRIBUTE, 'true');
 
