@@ -20,4 +20,6 @@ Element.prototype.scrollIntoView = vi.fn();
 
 afterEach(() => {
   cleanup();
+
+  vi.clearAllMocks();
 });

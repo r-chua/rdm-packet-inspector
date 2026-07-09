@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import userEvent, { type UserEvent } from '@testing-library/user-event';
 import { describe, it, expect } from 'vitest';
 import { PacketInspector } from './PacketInspector';
 import * as examplePackets from '../parser/examples.ts';
@@ -45,6 +45,31 @@ function getFieldEntry(fieldName: string) {
 
 const HIGHLIGHTED_ATTRIBUTE = 'data-highlighted';
 const SELECTED_ATTRIBUTE = 'data-selected';
+
+/**
+ * Tabs through the document until the specified element is focused.
+ *
+ * @param user The userEvent instance to use for simulating user interactions.
+ * @param element The target element to focus by tabbing.
+ * @param maxAttempts The maximum number of tab attempts before throwing an
+ *    error.
+ * @throws Will throw an error if the element is not focused after the maximum
+ *    attempts.
+ */
+async function tabToElement(
+  user: UserEvent,
+  element: HTMLElement,
+  maxAttempts: number = 10
+) {
+  // Keep tabbing until the element is focused or maxAttempts is reached
+  for (let i = 0; i < maxAttempts; i++) {
+    if (document.activeElement === element) {
+      return;
+    }
+    await user.tab();
+  }
+  throw new Error('Failed to focus the element after maximum attempts');
+}
 
 describe('PacketInspector', () => {
   it('renders the initial state correctly', () => {
@@ -357,8 +382,89 @@ describe('PacketInspector', () => {
       }
     });
 
-    it.todo('navigate byte table with keyboard');
-    it.todo('navigate field list with keyboard');
+    it('navigate byte table with keyboard', async () => {
+      const { user } = await renderAndParsePacket();
+
+      // Tab through the interactive elements to reach the hex view table.
+      const table = screen.getByRole('table', { name: /hex view/i });
+      await tabToElement(user, table);
+      expect(table).toHaveFocus();
+
+      // Press ArrowRight to move focus to the first cell
+      await user.keyboard('{ArrowRight}'); // Move to the first cell
+      const firstCell = getByteCell(0);
+      expect(firstCell).toHaveFocus();
+
+      // Press ArrowRight to move focus to the Destination UID (cell 4)
+      for (let i = 0; i < 4; i++) {
+        await user.keyboard('{ArrowRight}');
+      }
+      const destinationUidCell = getByteCell(4);
+      expect(destinationUidCell).toHaveFocus();
+      expect(firstCell).not.toHaveFocus(); // First cell no longer has focus
+
+      // Press enter to select the Destination UID bytes
+      await user.keyboard('{Enter}');
+
+      // Destination UID cells are selected
+      for (let i = 3; i < 9; i++) {
+        const cell = getByteCell(i);
+        expect(cell).toHaveAttribute(SELECTED_ATTRIBUTE, 'true');
+      }
+
+      // Press ArrowLeft to move focus back to the first cell
+      for (let i = 0; i < 4; i++) {
+        await user.keyboard('{ArrowLeft}');
+      }
+      expect(firstCell).toHaveFocus();
+      // Destination UID cell no longer has focus
+      expect(destinationUidCell).not.toHaveFocus();
+
+      // Press ArrowDown to move focus to the first cell of the next row
+      await user.keyboard('{ArrowDown}');
+      const nextRowFirstCell = getByteCell(16);
+      expect(nextRowFirstCell).toHaveFocus();
+      expect(firstCell).not.toHaveFocus(); // First cell no longer has focus
+    });
+
+    it('navigate field list with keyboard', async () => {
+      const { user } = await renderAndParsePacket();
+
+      // Tab through the interactive elements to reach the field view table.
+      const fieldTable = document.getElementById('field-view-list');
+      if (!fieldTable) {
+        throw new Error('Field view table not found');
+      }
+      await tabToElement(user, fieldTable); // Focus on the field view table
+      expect(fieldTable).toHaveFocus();
+
+      // Press ArrowDown to move focus to the first field
+      await user.keyboard('{ArrowDown}');
+      const firstField = getFieldEntry('Start Code');
+      expect(firstField).toHaveFocus();
+
+      // Press ArrowDown to move focus to the Destination UID field
+      for (let i = 0; i < 3; i++) {
+        await user.keyboard('{ArrowDown}');
+      }
+      const destinationUidField = getFieldEntry('Destination UID');
+      expect(destinationUidField).toHaveFocus();
+      expect(firstField).not.toHaveFocus(); // First field no longer has focus
+
+      // Press enter to select the Destination UID field
+      await user.keyboard('{Enter}');
+      const selectedField = getFieldEntry('Destination UID');
+      expect(selectedField).toHaveAttribute(SELECTED_ATTRIBUTE, 'true');
+
+      // Press ArrowUp to move focus back to the first field
+      for (let i = 0; i < 3; i++) {
+        await user.keyboard('{ArrowUp}');
+      }
+      expect(firstField).toHaveFocus();
+      // Destination UID field no longer has focus
+      expect(destinationUidField).not.toHaveFocus();
+    });
+
     it.todo('selects field with keyboard');
     it.todo('syncs keyboard cursor to clicked cell');
     it.todo('clears selection on reset');
