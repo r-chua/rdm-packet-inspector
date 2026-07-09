@@ -465,8 +465,65 @@ describe('PacketInspector', () => {
       expect(destinationUidField).not.toHaveFocus();
     });
 
-    it.todo('selects field with keyboard');
-    it.todo('syncs keyboard cursor to clicked cell');
+    it('syncs keyboard cursor to clicked cell', async () => {
+      const { user } = await renderAndParsePacket();
+
+      // Tab to the hex view table
+      const table = screen.getByRole('table', { name: /hex view/i });
+      await tabToElement(user, table);
+      expect(table).toHaveFocus();
+
+      // ArrowRight to move focus to the first cell
+      await user.keyboard('{ArrowRight}');
+      const firstCell = getByteCell(0);
+      expect(firstCell).toHaveFocus();
+
+      // Click on cell 4 (Destination UID)
+      const targetCell = getByteCell(4);
+      await user.click(targetCell);
+
+      // The clicked cell should have focus
+      expect(targetCell).toHaveFocus();
+      expect(firstCell).not.toHaveFocus(); // First cell no longer has focus
+
+      // ArrowLeft should move focus to cell 3
+      await user.keyboard('{ArrowLeft}');
+      const previousCell = getByteCell(3);
+      expect(previousCell).toHaveFocus();
+      expect(targetCell).not.toHaveFocus(); // Clicked cell no longer has focus
+    });
+
+    it('syncs keyboard cursor to clicked field', async () => {
+      const { user } = await renderAndParsePacket();
+
+      // Tab to the field view table
+      const fieldTable = document.getElementById('field-view-list');
+      if (!fieldTable) {
+        throw new Error('Field view table not found');
+      }
+      await tabToElement(user, fieldTable);
+      expect(fieldTable).toHaveFocus();
+
+      // ArrowDown to move focus to the first field
+      await user.keyboard('{ArrowDown}');
+      const firstField = getFieldEntry('Start Code');
+      expect(firstField).toHaveFocus();
+
+      // Click on the Destination UID field
+      const targetField = getFieldEntry('Destination UID');
+      await user.click(targetField);
+
+      // The clicked field should have focus
+      expect(targetField).toHaveFocus();
+      expect(firstField).not.toHaveFocus(); // First field no longer has focus
+
+      // ArrowUp should move focus to the previous field
+      await user.keyboard('{ArrowUp}');
+      const previousField = getFieldEntry('Message Length');
+      expect(previousField).toHaveFocus();
+      expect(targetField).not.toHaveFocus(); // Clicked field no longer has focus
+    });
+
     it.todo('clears selection on reset');
     it.todo('clears selection on new parse');
   });
