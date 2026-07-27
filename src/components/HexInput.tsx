@@ -69,7 +69,7 @@ export function HexInput({ onParse }: HexInputProps) {
         <div className="mt-2 flex gap-2 items-center">
           <div className="flex-initial">
             <button
-              type="button"
+              type="submit"
               onClick={handleSubmit}
               className={cn(
                 'mt-2 px-4 py-2 rounded-md shadow-sm',
