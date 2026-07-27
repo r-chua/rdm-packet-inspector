@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent, { type UserEvent } from '@testing-library/user-event';
 import { describe, it, expect } from 'vitest';
 import { PacketInspector } from './PacketInspector';
@@ -89,7 +89,8 @@ describe('PacketInspector', () => {
 
     // No hex view or field view should be displayed initially
     expect(screen.queryAllByRole('cell')).toHaveLength(0);
-    expect(screen.queryAllByRole('term')).toHaveLength(0);
+    const fieldList = screen.getByRole('listbox', { name: /field view/i });
+    expect(within(fieldList).queryAllByRole('option')).toHaveLength(0);
   });
 
   it('parses valid input', async () => {
@@ -112,7 +113,8 @@ describe('PacketInspector', () => {
 
     // No hex view or field view should be displayed
     expect(screen.queryAllByRole('cell')).toHaveLength(0);
-    expect(screen.queryAllByRole('term')).toHaveLength(0);
+    const fieldList = screen.getByRole('listbox', { name: /field view/i });
+    expect(within(fieldList).queryAllByRole('option')).toHaveLength(0);
   });
 
   it('clears error on valid input after an error', async () => {
@@ -177,7 +179,12 @@ describe('PacketInspector', () => {
 
     // Hex view and field view should be cleared
     expect(screen.queryAllByRole('cell')).toHaveLength(0);
-    expect(screen.queryAllByRole('term')).toHaveLength(0);
+    const fieldListAfterReset = screen.getByRole('listbox', {
+      name: /field view/i,
+    });
+    expect(within(fieldListAfterReset).queryAllByRole('option')).toHaveLength(
+      0
+    );
   });
 
   it('clears error on reset button press', async () => {
@@ -221,7 +228,8 @@ describe('PacketInspector', () => {
 
     // Hex view and field view should be cleared
     expect(screen.queryAllByRole('cell')).toHaveLength(0);
-    expect(screen.queryAllByRole('term')).toHaveLength(0);
+    const fieldList = screen.getByRole('listbox', { name: /field view/i });
+    expect(within(fieldList).queryAllByRole('option')).toHaveLength(0);
   });
 
   describe('interaction', () => {
@@ -242,14 +250,12 @@ describe('PacketInspector', () => {
       expect(highlightedField).toHaveAttribute(HIGHLIGHTED_ATTRIBUTE, 'true');
 
       // Only one field should be highlighted
+      const fieldList = screen.getByRole('listbox', { name: /field view/i });
       expect(
-        screen
-          .queryAllByRole('term')
+        within(fieldList)
+          .getAllByRole('option')
           .filter(
-            (term) =>
-              term
-                .closest(`[${HIGHLIGHTED_ATTRIBUTE}]`)
-                ?.getAttribute(HIGHLIGHTED_ATTRIBUTE) === 'true'
+            (option) => option.getAttribute(HIGHLIGHTED_ATTRIBUTE) === 'true'
           )
       ).toHaveLength(1);
 
