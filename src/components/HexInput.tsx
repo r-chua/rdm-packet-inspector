@@ -75,7 +75,10 @@ export function HexInput({ onParse }: HexInputProps) {
           <div className="flex-initial">
             <button
               type="submit"
-              onClick={handleSubmit}
+              onClick={(e) => {
+                e.preventDefault();
+                handleSubmit();
+              }}
               className={cn(
                 'mt-2 px-4 py-2 rounded-md shadow-sm',
                 'bg-indigo-500 text-white',
