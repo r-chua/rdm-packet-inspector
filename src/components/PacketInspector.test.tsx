@@ -87,6 +87,9 @@ describe('PacketInspector', () => {
     // No error message should be displayed
     expect(screen.queryByText('Error:')).not.toBeInTheDocument();
 
+    // No status message should be displayed
+    expect(screen.getByRole('status')).toBeEmptyDOMElement();
+
     // No hex view or field view should be displayed initially
     expect(screen.queryAllByRole('cell')).toHaveLength(0);
     const fieldList = screen.getByRole('listbox', { name: /field view/i });
@@ -619,6 +622,43 @@ describe('PacketInspector', () => {
         .forEach((field) =>
           expect(field).toHaveAttribute(SELECTED_ATTRIBUTE, 'false')
         );
+    });
+
+    it('updates status bar with selected field', async () => {
+      const { user } = await renderAndParsePacket();
+
+      // Click on cell 4 (Destination UID)
+      const targetCell = getByteCell(4);
+      await user.click(targetCell);
+
+      // The status bar should display the selected field
+      expect(screen.getByRole('status')).toHaveTextContent(/selected/i);
+
+      // Press Escape key to clear selection
+      await user.keyboard('{Escape}');
+
+      // The status bar should indicate no field is selected
+      expect(screen.getByRole('status')).toHaveTextContent(/cleared/i);
+    });
+
+    it('clears status bar message on re-parse', async () => {
+      const { user } = await renderAndParsePacket();
+
+      // Click on cell 4 (Destination UID)
+      const targetCell = getByteCell(4);
+      await user.click(targetCell);
+
+      // The status bar should display the selected field
+      expect(screen.getByRole('status')).toHaveTextContent(/selected/i);
+
+      // Parse a new packet
+      const inputElement = getInputElement();
+      await user.click(inputElement);
+      await user.paste(examplePackets.GET_DEVICE_INFO_RESPONSE);
+      await user.click(getSubmitButton());
+
+      // The status bar should be empty
+      expect(screen.getByRole('status')).toBeEmptyDOMElement();
     });
   });
 });
