@@ -386,7 +386,7 @@ describe('PacketInspector', () => {
       const { user } = await renderAndParsePacket();
 
       // Tab through the interactive elements to reach the hex view table.
-      const table = screen.getByRole('table', { name: /hex view/i });
+      const table = screen.getByRole('grid', { name: /hex view/i });
       await tabToElement(user, table);
       expect(table).toHaveFocus();
 
@@ -469,7 +469,7 @@ describe('PacketInspector', () => {
       const { user } = await renderAndParsePacket();
 
       // Tab to the hex view table
-      const table = screen.getByRole('table', { name: /hex view/i });
+      const table = screen.getByRole('grid', { name: /hex view/i });
       await tabToElement(user, table);
       expect(table).toHaveFocus();
 
