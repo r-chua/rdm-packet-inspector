@@ -524,7 +524,56 @@ describe('PacketInspector', () => {
       expect(targetField).not.toHaveFocus(); // Clicked field no longer has focus
     });
 
-    it.todo('clears selection on reset');
-    it.todo('clears selection on new parse');
+    it('clears selection on reset', async () => {
+      const { user } = await renderAndParsePacket();
+
+      // Click on cell 4 (Destination UID)
+      const targetCell = getByteCell(4);
+      await user.click(targetCell);
+
+      // The cell should be selected
+      expect(targetCell).toHaveAttribute(SELECTED_ATTRIBUTE, 'true');
+
+      // Click the reset button
+      const resetButton = screen.getByRole('button', { name: /reset/i });
+      await user.click(resetButton);
+
+      // Needs new parse to have selectable fields
+      const inputElement = getInputElement();
+      await user.click(inputElement);
+      await user.paste(examplePackets.GET_DEVICE_INFO_RESPONSE);
+      await user.click(getSubmitButton());
+
+      // The cell should no longer be selected
+      screen
+        .getAllByRole('cell')
+        .forEach((cell) =>
+          expect(cell).toHaveAttribute(SELECTED_ATTRIBUTE, 'false')
+        );
+    });
+
+    it('clears selection on new parse', async () => {
+      const { user } = await renderAndParsePacket();
+
+      // Click on cell 4 (Destination UID)
+      const targetCell = getByteCell(4);
+      await user.click(targetCell);
+
+      // The cell should be selected
+      expect(targetCell).toHaveAttribute(SELECTED_ATTRIBUTE, 'true');
+
+      // Parse a new packet
+      const inputElement = getInputElement();
+      await user.click(inputElement);
+      await user.paste(examplePackets.GET_DEVICE_INFO_RESPONSE);
+      await user.click(getSubmitButton());
+
+      // The cell should no longer be selected
+      screen
+        .getAllByRole('cell')
+        .forEach((cell) =>
+          expect(cell).toHaveAttribute(SELECTED_ATTRIBUTE, 'false')
+        );
+    });
   });
 });
