@@ -581,5 +581,44 @@ describe('PacketInspector', () => {
           expect(cell).toHaveAttribute(SELECTED_ATTRIBUTE, 'false')
         );
     });
+
+    it('clears selection on escape key press', async () => {
+      const { user } = await renderAndParsePacket();
+
+      // Click on cell 4 (Destination UID)
+      const targetCell = getByteCell(4);
+      await user.click(targetCell);
+
+      // The cell should be selected
+      expect(targetCell).toHaveAttribute(SELECTED_ATTRIBUTE, 'true');
+
+      // Press Escape key
+      await user.keyboard('{Escape}');
+
+      // The cell should no longer be selected
+      screen
+        .getAllByRole('cell')
+        .forEach((cell) =>
+          expect(cell).toHaveAttribute(SELECTED_ATTRIBUTE, 'false')
+        );
+
+      // Click on the Destination UID field
+      const targetField = getFieldEntry('Destination UID');
+      await user.click(targetField);
+
+      // The field should be selected
+      expect(targetField).toHaveAttribute(SELECTED_ATTRIBUTE, 'true');
+
+      // Press Escape key
+      await user.keyboard('{Escape}');
+
+      // The field should no longer be selected
+      const fieldList = screen.getByRole('listbox', { name: /field view/i });
+      within(fieldList)
+        .getAllByRole('option')
+        .forEach((field) =>
+          expect(field).toHaveAttribute(SELECTED_ATTRIBUTE, 'false')
+        );
+    });
   });
 });

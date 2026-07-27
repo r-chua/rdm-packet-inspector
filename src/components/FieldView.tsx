@@ -153,6 +153,10 @@ export function FieldView({
                 onSelect(field);
               }
               break;
+            case 'Escape':
+              e.preventDefault();
+              onSelect(null);
+              break;
             default:
               break;
           }
