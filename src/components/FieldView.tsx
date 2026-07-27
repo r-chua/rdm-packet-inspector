@@ -106,12 +106,18 @@ export function FieldView({
 
   return (
     <section className="p-4">
-      <h2 className="text-lg font-medium text-gray-900 mb-2">Field View</h2>
+      <h2
+        id="field-view-title"
+        className="text-lg font-medium text-gray-900 mb-2"
+      >
+        Field View
+      </h2>
 
       <dl
         id="field-view-list"
         className={cn('divide-y divide-gray-200', FOCUSED_CLASS)}
         tabIndex={focusedFieldIndex === null ? 0 : -1}
+        aria-labelledby="field-view-title"
         onKeyDown={(e) => {
           if (!fieldEntries || fieldEntries.length === 0) return;
 
