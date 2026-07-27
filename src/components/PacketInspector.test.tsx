@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent, { type UserEvent } from '@testing-library/user-event';
 import { describe, it, expect } from 'vitest';
 import { PacketInspector } from './PacketInspector';
@@ -87,9 +87,13 @@ describe('PacketInspector', () => {
     // No error message should be displayed
     expect(screen.queryByText('Error:')).not.toBeInTheDocument();
 
+    // No status message should be displayed
+    expect(screen.getByRole('status')).toBeEmptyDOMElement();
+
     // No hex view or field view should be displayed initially
     expect(screen.queryAllByRole('cell')).toHaveLength(0);
-    expect(screen.queryAllByRole('term')).toHaveLength(0);
+    const fieldList = screen.getByRole('listbox', { name: /field view/i });
+    expect(within(fieldList).queryAllByRole('option')).toHaveLength(0);
   });
 
   it('parses valid input', async () => {
@@ -112,7 +116,8 @@ describe('PacketInspector', () => {
 
     // No hex view or field view should be displayed
     expect(screen.queryAllByRole('cell')).toHaveLength(0);
-    expect(screen.queryAllByRole('term')).toHaveLength(0);
+    const fieldList = screen.getByRole('listbox', { name: /field view/i });
+    expect(within(fieldList).queryAllByRole('option')).toHaveLength(0);
   });
 
   it('clears error on valid input after an error', async () => {
@@ -177,7 +182,12 @@ describe('PacketInspector', () => {
 
     // Hex view and field view should be cleared
     expect(screen.queryAllByRole('cell')).toHaveLength(0);
-    expect(screen.queryAllByRole('term')).toHaveLength(0);
+    const fieldListAfterReset = screen.getByRole('listbox', {
+      name: /field view/i,
+    });
+    expect(within(fieldListAfterReset).queryAllByRole('option')).toHaveLength(
+      0
+    );
   });
 
   it('clears error on reset button press', async () => {
@@ -221,7 +231,8 @@ describe('PacketInspector', () => {
 
     // Hex view and field view should be cleared
     expect(screen.queryAllByRole('cell')).toHaveLength(0);
-    expect(screen.queryAllByRole('term')).toHaveLength(0);
+    const fieldList = screen.getByRole('listbox', { name: /field view/i });
+    expect(within(fieldList).queryAllByRole('option')).toHaveLength(0);
   });
 
   describe('interaction', () => {
@@ -242,14 +253,12 @@ describe('PacketInspector', () => {
       expect(highlightedField).toHaveAttribute(HIGHLIGHTED_ATTRIBUTE, 'true');
 
       // Only one field should be highlighted
+      const fieldList = screen.getByRole('listbox', { name: /field view/i });
       expect(
-        screen
-          .queryAllByRole('term')
+        within(fieldList)
+          .getAllByRole('option')
           .filter(
-            (term) =>
-              term
-                .closest(`[${HIGHLIGHTED_ATTRIBUTE}]`)
-                ?.getAttribute(HIGHLIGHTED_ATTRIBUTE) === 'true'
+            (option) => option.getAttribute(HIGHLIGHTED_ATTRIBUTE) === 'true'
           )
       ).toHaveLength(1);
 
@@ -386,7 +395,7 @@ describe('PacketInspector', () => {
       const { user } = await renderAndParsePacket();
 
       // Tab through the interactive elements to reach the hex view table.
-      const table = screen.getByRole('table', { name: /hex view/i });
+      const table = screen.getByRole('grid', { name: /hex view/i });
       await tabToElement(user, table);
       expect(table).toHaveFocus();
 
@@ -469,7 +478,7 @@ describe('PacketInspector', () => {
       const { user } = await renderAndParsePacket();
 
       // Tab to the hex view table
-      const table = screen.getByRole('table', { name: /hex view/i });
+      const table = screen.getByRole('grid', { name: /hex view/i });
       await tabToElement(user, table);
       expect(table).toHaveFocus();
 
@@ -574,6 +583,82 @@ describe('PacketInspector', () => {
         .forEach((cell) =>
           expect(cell).toHaveAttribute(SELECTED_ATTRIBUTE, 'false')
         );
+    });
+
+    it('clears selection on escape key press', async () => {
+      const { user } = await renderAndParsePacket();
+
+      // Click on cell 4 (Destination UID)
+      const targetCell = getByteCell(4);
+      await user.click(targetCell);
+
+      // The cell should be selected
+      expect(targetCell).toHaveAttribute(SELECTED_ATTRIBUTE, 'true');
+
+      // Press Escape key
+      await user.keyboard('{Escape}');
+
+      // The cell should no longer be selected
+      screen
+        .getAllByRole('cell')
+        .forEach((cell) =>
+          expect(cell).toHaveAttribute(SELECTED_ATTRIBUTE, 'false')
+        );
+
+      // Click on the Destination UID field
+      const targetField = getFieldEntry('Destination UID');
+      await user.click(targetField);
+
+      // The field should be selected
+      expect(targetField).toHaveAttribute(SELECTED_ATTRIBUTE, 'true');
+
+      // Press Escape key
+      await user.keyboard('{Escape}');
+
+      // The field should no longer be selected
+      const fieldList = screen.getByRole('listbox', { name: /field view/i });
+      within(fieldList)
+        .getAllByRole('option')
+        .forEach((field) =>
+          expect(field).toHaveAttribute(SELECTED_ATTRIBUTE, 'false')
+        );
+    });
+
+    it('updates status bar with selected field', async () => {
+      const { user } = await renderAndParsePacket();
+
+      // Click on cell 4 (Destination UID)
+      const targetCell = getByteCell(4);
+      await user.click(targetCell);
+
+      // The status bar should display the selected field
+      expect(screen.getByRole('status')).toHaveTextContent(/selected/i);
+
+      // Press Escape key to clear selection
+      await user.keyboard('{Escape}');
+
+      // The status bar should indicate no field is selected
+      expect(screen.getByRole('status')).toHaveTextContent(/cleared/i);
+    });
+
+    it('clears status bar message on re-parse', async () => {
+      const { user } = await renderAndParsePacket();
+
+      // Click on cell 4 (Destination UID)
+      const targetCell = getByteCell(4);
+      await user.click(targetCell);
+
+      // The status bar should display the selected field
+      expect(screen.getByRole('status')).toHaveTextContent(/selected/i);
+
+      // Parse a new packet
+      const inputElement = getInputElement();
+      await user.click(inputElement);
+      await user.paste(examplePackets.GET_DEVICE_INFO_RESPONSE);
+      await user.click(getSubmitButton());
+
+      // The status bar should be empty
+      expect(screen.getByRole('status')).toBeEmptyDOMElement();
     });
   });
 });

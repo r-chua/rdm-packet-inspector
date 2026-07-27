@@ -71,6 +71,14 @@ export function FieldView({
         }}
         data-selected={entry === selectedField}
         data-highlighted={entry === highlightedField}
+        role={isTopLevel ? 'option' : undefined}
+        aria-selected={isTopLevel ? entry === selectedField : undefined}
+        aria-label={
+          isTopLevel
+            ? `${entry.name}, ${entry.displayValue}` +
+              `${entry.warning ? `, warning: ${entry.warning}` : ''}`
+            : undefined
+        }
         className={cn(
           HIGHLIGHT_CLASS,
           SELECTED_CLASS,
@@ -79,39 +87,46 @@ export function FieldView({
           'focus-visible:outline-offset-1'
         )}
       >
-        <dt className="flex justify-between items-baseline text-sm font-medium text-gray-500">
+        <div className="flex justify-between items-baseline text-sm font-medium text-gray-500">
           <span>{entry.name}</span>
           <span className="text-xs text-gray-400 font-mono">
             {entry.startByte === entry.endByte
               ? `byte ${entry.startByte}`
               : `bytes ${entry.startByte}-${entry.endByte}`}
           </span>
-        </dt>
-        <dd className="text-sm font-mono text-gray-900 mt-0.5">
+        </div>
+        <div className="text-sm font-mono text-gray-900 mt-0.5">
           {entry.displayValue}
           {entry.warning && (
             <p className="text-xs text-amber-600 mt-1">{entry.warning}</p>
           )}
           {entry.subFields && entry.subFields.length > 0 && (
-            <dl className="ml-4">
+            <div className="ml-4">
               {entry.subFields.map((sub, index) =>
                 renderFieldEntry(sub, index, false)
               )}
-            </dl>
+            </div>
           )}
-        </dd>
+        </div>
       </div>
     );
   }
 
   return (
-    <section className="p-4">
-      <h2 className="text-lg font-medium text-gray-900 mb-2">Field View</h2>
+    <section className="p-4" aria-labelledby="field-view-title">
+      <h2
+        id="field-view-title"
+        className="text-lg font-medium text-gray-900 mb-2"
+      >
+        Field View
+      </h2>
 
-      <dl
+      <div
         id="field-view-list"
         className={cn('divide-y divide-gray-200', FOCUSED_CLASS)}
         tabIndex={focusedFieldIndex === null ? 0 : -1}
+        aria-labelledby="field-view-title"
+        role="listbox"
         onKeyDown={(e) => {
           if (!fieldEntries || fieldEntries.length === 0) return;
 
@@ -138,6 +153,10 @@ export function FieldView({
                 onSelect(field);
               }
               break;
+            case 'Escape':
+              e.preventDefault();
+              onSelect(null);
+              break;
             default:
               break;
           }
@@ -146,7 +165,7 @@ export function FieldView({
         {fieldEntries?.map((entry, index) =>
           renderFieldEntry(entry, index, true)
         )}
-      </dl>
+      </div>
     </section>
   );
 }

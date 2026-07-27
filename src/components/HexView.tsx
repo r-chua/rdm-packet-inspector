@@ -119,7 +119,7 @@ export function HexView({
   }
 
   return (
-    <section className="p-4">
+    <section className="p-4" aria-labelledby="hex-view-title">
       <h2
         id="hex-view-title"
         className="text-lg font-medium text-gray-900 mb-2"
@@ -127,6 +127,7 @@ export function HexView({
         Hex View
       </h2>
       <table
+        role="grid"
         tabIndex={focusedByteIndex === null ? 0 : -1}
         className={cn(
           'table-auto ',
@@ -177,6 +178,10 @@ export function HexView({
                 const field = fieldForByteIndex(focusedByteIndex, fieldEntries);
                 onSelect(field);
               }
+              break;
+            case 'Escape':
+              e.preventDefault();
+              onSelect(null);
               break;
             default:
               break;
@@ -238,6 +243,11 @@ export function HexView({
                   )
                   .join(', ');
 
+                const fieldName = fieldForByteIndex(
+                  byteIndex,
+                  fieldEntries || []
+                )?.name;
+
                 return (
                   <td
                     key={colIndex}
@@ -271,6 +281,12 @@ export function HexView({
                       highlightedField
                     )}
                     data-selected={isByteInField(byteIndex, selectedField)}
+                    aria-selected={isByteInField(byteIndex, selectedField)}
+                    aria-label={
+                      `Byte ${byteIndex}: ` +
+                      `${byte.toString(16).toUpperCase().padStart(2, '0')}, ` +
+                      `${fieldName ? `Field: ${fieldName}` : 'No field'}`
+                    }
                     className={cn(
                       'border border-gray-300 px-2 py-1 text-center',
                       FOCUSED_CLASS,
