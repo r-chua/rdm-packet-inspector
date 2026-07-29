@@ -10,8 +10,8 @@ export const FOCUSED_CLASS =
 // These constants define the box-shadow styles for selected byte borders in
 // the HexView component.
 export const SELECTED_EDGE_SHADOW_Y =
-  'inset 0 2px 0 0 #60a5fa, inset 0 -2px 0 0 #60a5fa';
+  'inset 0 2px 0 0 var(--selection), inset 0 -2px 0 0 var(--selection)';
 
-export const SELECTED_EDGE_SHADOW_L = 'inset 2px 0 0 0 #60a5fa';
+export const SELECTED_EDGE_SHADOW_L = 'inset 2px 0 0 0 var(--selection)';
 
-export const SELECTED_EDGE_SHADOW_R = 'inset -2px 0 0 0 #60a5fa';
+export const SELECTED_EDGE_SHADOW_R = 'inset -2px 0 0 0 var(--selection)';
