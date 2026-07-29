@@ -120,7 +120,7 @@ export function FieldView({
 
       <div
         id="field-view-list"
-        className={cn('divide-y divide-gray-200', FOCUSED_CLASS)}
+        className={cn('divide-y divide-border', FOCUSED_CLASS)}
         tabIndex={focusedFieldIndex === null ? 0 : -1}
         aria-labelledby="field-view-title"
         role="listbox"

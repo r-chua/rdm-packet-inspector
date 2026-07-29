@@ -56,7 +56,7 @@ export function HexInput({ onParse }: HexInputProps) {
           className={cn(
             'mt-1 block w-full rounded-md',
             'border-border shadow-sm sm:text-sm',
-            'focus:border-indigo-500 focus:ring-indigo-500'
+            'focus:border-focus focus:ring-focus'
           )}
           rows={4}
           spellCheck={false}
@@ -80,7 +80,7 @@ export function HexInput({ onParse }: HexInputProps) {
                 'mt-2 px-4 py-2 rounded-md shadow-sm',
                 'bg-accent text-on-accent',
                 'hover:bg-accent-hover',
-                'focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
+                'focus:ring-2 focus:ring-offset-2 focus:ring-focus'
               )}
             >
               Submit
@@ -95,7 +95,7 @@ export function HexInput({ onParse }: HexInputProps) {
                 'text-fg',
                 'border-border',
                 'hover:bg-surface-subtle',
-                'focus:ring-2 focus:ring-offset-2 focus:ring-red-500'
+                'focus:ring-2 focus:ring-offset-2 focus:ring-focus'
               )}
             >
               Reset
@@ -115,7 +115,7 @@ export function HexInput({ onParse }: HexInputProps) {
                 'px-4',
                 'mt-1 rounded-md',
                 'border-border shadow-sm sm:text-sm',
-                'focus:border-indigo-500 focus:ring-indigo-500'
+                'focus:border-focus focus:ring-focus'
               )}
               onChange={(e) => {
                 const selectedValue = e.target.value;

@@ -14,6 +14,9 @@
   --accent: var(--color-indigo-600);
   --accent-hover: var(--color-indigo-700);
   --on-accent: var(--color-white);
+  --focus: var(--color-indigo-600);
+  --selection: var(--color-blue-600);
+  --highlight: var(--color-yellow-200);
   --warning: var(--color-amber-800);
   --danger: var(--color-red-700);
   --danger-surface: var(--color-red-50);
@@ -30,6 +33,9 @@
   --accent: var(--color-indigo-600);
   --accent-hover: var(--color-indigo-500);
   --on-accent: var(--color-white);
+  --focus: var(--color-indigo-400);
+  --selection: var(--color-blue-400);
+  --highlight: var(--color-yellow-800);
   --warning: var(--color-amber-400);
   --danger: var(--color-red-300);
   --danger-surface: var(--color-red-950);
@@ -46,6 +52,9 @@
   --color-accent: var(--accent);
   --color-accent-hover: var(--accent-hover);
   --color-on-accent: var(--on-accent);
+  --color-focus: var(--focus);
+  --color-selection: var(--selection);
+  --color-highlight: var(--highlight);
   --color-warning: var(--warning);
   --color-danger: var(--danger);
   --color-danger-surface: var(--danger-surface);
