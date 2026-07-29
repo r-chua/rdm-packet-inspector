@@ -29,14 +29,14 @@
   --surface-subtle: var(--color-slate-800);
   --border: var(--color-slate-700);
   --fg: var(--color-slate-100);
-  --fg-muted: var(--color-slate-400);
+  --fg-muted: var(--color-slate-300);
   --accent: var(--color-indigo-600);
-  --accent-hover: var(--color-indigo-500);
+  --accent-hover: var(--color-indigo-700);
   --on-accent: var(--color-white);
   --focus: var(--color-indigo-400);
   --selection: var(--color-blue-400);
   --highlight: var(--color-yellow-800);
-  --warning: var(--color-amber-400);
+  --warning: var(--color-amber-300);
   --danger: var(--color-red-300);
   --danger-surface: var(--color-red-950);
 }
