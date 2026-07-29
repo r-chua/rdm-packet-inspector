@@ -29,7 +29,7 @@
   --surface-subtle: var(--color-slate-800);
   --border: var(--color-slate-700);
   --fg: var(--color-slate-100);
-  --fg-muted: var(--color-slate-300);
+  --fg-muted: var(--color-slate-400);
   --accent: var(--color-indigo-600);
   --accent-hover: var(--color-indigo-700);
   --on-accent: var(--color-white);

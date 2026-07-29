@@ -80,6 +80,7 @@ export function FieldView({
             : undefined
         }
         className={cn(
+          'group',
           HIGHLIGHT_CLASS,
           SELECTED_CLASS,
           FOCUSED_CLASS,
@@ -87,9 +88,14 @@ export function FieldView({
           'focus-visible:outline-offset-1'
         )}
       >
-        <div className="flex justify-between items-baseline text-sm font-medium text-fg-muted">
+        <div
+          className={cn(
+            'flex justify-between items-baseline text-sm font-medium',
+            'text-fg-muted group-data-[highlighted=true]:text-fg'
+          )}
+        >
           <span>{entry.name}</span>
-          <span className="text-xs text-fg-muted font-mono">
+          <span className="text-xs font-mono">
             {entry.startByte === entry.endByte
               ? `byte ${entry.startByte}`
               : `bytes ${entry.startByte}-${entry.endByte}`}
