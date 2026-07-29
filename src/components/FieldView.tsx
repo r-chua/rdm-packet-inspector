@@ -87,9 +87,9 @@ export function FieldView({
           'focus-visible:outline-offset-1'
         )}
       >
-        <div className="flex justify-between items-baseline text-sm font-medium text-gray-500">
+        <div className="flex justify-between items-baseline text-sm font-medium text-fg-muted">
           <span>{entry.name}</span>
-          <span className="text-xs text-gray-400 font-mono">
+          <span className="text-xs text-fg-muted font-mono">
             {entry.startByte === entry.endByte
               ? `byte ${entry.startByte}`
               : `bytes ${entry.startByte}-${entry.endByte}`}
@@ -98,7 +98,7 @@ export function FieldView({
         <div className="text-sm font-mono mt-0.5">
           {entry.displayValue}
           {entry.warning && (
-            <p className="text-xs text-amber-600 mt-1">{entry.warning}</p>
+            <p className="text-xs text-warning mt-1">{entry.warning}</p>
           )}
           {entry.subFields && entry.subFields.length > 0 && (
             <div className="ml-4">

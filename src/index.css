@@ -9,11 +9,14 @@
   --surface: var(--color-white);
   --surface-subtle: var(--color-slate-50);
   --border: var(--color-slate-300);
-  --text: var(--color-slate-900);
-  --text-muted: var(--color-slate-600);
+  --fg: var(--color-slate-900);
+  --fg-muted: var(--color-slate-600);
   --accent: var(--color-indigo-600);
   --accent-hover: var(--color-indigo-700);
   --on-accent: var(--color-white);
+  --warning: var(--color-amber-800);
+  --danger: var(--color-red-700);
+  --danger-surface: var(--color-red-50);
 }
 
 [data-theme='dark'] {
@@ -22,11 +25,14 @@
   --surface: var(--color-slate-900);
   --surface-subtle: var(--color-slate-800);
   --border: var(--color-slate-700);
-  --text: var(--color-slate-100);
-  --text-muted: var(--color-slate-400);
+  --fg: var(--color-slate-100);
+  --fg-muted: var(--color-slate-400);
   --accent: var(--color-indigo-600);
   --accent-hover: var(--color-indigo-500);
   --on-accent: var(--color-white);
+  --warning: var(--color-amber-400);
+  --danger: var(--color-red-300);
+  --danger-surface: var(--color-red-950);
 }
 
 /* Register tokens as Tailwind colors → generates bg-bg, bg-surface, etc. */
@@ -35,9 +41,12 @@
   --color-surface: var(--surface);
   --color-surface-subtle: var(--surface-subtle);
   --color-border: var(--border);
-  --color-text: var(--text);
-  --color-text-muted: var(--text-muted);
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
   --color-accent: var(--accent);
   --color-accent-hover: var(--accent-hover);
   --color-on-accent: var(--on-accent);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-danger-surface: var(--danger-surface);
 }

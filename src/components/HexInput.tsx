@@ -47,7 +47,7 @@ export function HexInput({ onParse }: HexInputProps) {
       <form aria-labelledby="hex-input-title">
         <label
           htmlFor="hex-input"
-          className="block text-sm font-medium text-gray-700 mb-1"
+          className="block text-sm font-medium text-fg-muted mb-1"
         >
           Packet Data
         </label>
@@ -92,6 +92,7 @@ export function HexInput({ onParse }: HexInputProps) {
               className={cn(
                 'mt-2 ml-6 px-4 py-2 rounded-md shadow-sm',
                 'bg-surface',
+                'text-fg',
                 'border-border',
                 'hover:bg-surface-subtle',
                 'focus:ring-2 focus:ring-offset-2 focus:ring-red-500'
@@ -104,7 +105,7 @@ export function HexInput({ onParse }: HexInputProps) {
           <div className="flex-initial ml-auto mr-4">
             <label
               htmlFor="hex-select"
-              className="text-sm font-medium text-gray-700 mr-4"
+              className="text-sm font-medium text-fg-muted mr-4"
             >
               Example Packets
             </label>
