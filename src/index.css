@@ -7,19 +7,37 @@
   color-scheme: light;
   --bg: var(--color-slate-100);
   --surface: var(--color-white);
+  --surface-subtle: var(--color-slate-50);
+  --border: var(--color-slate-300);
   --text: var(--color-slate-900);
+  --text-muted: var(--color-slate-600);
+  --accent: var(--color-indigo-600);
+  --accent-hover: var(--color-indigo-700);
+  --on-accent: var(--color-white);
 }
 
 [data-theme='dark'] {
   color-scheme: dark;
   --bg: var(--color-slate-950);
   --surface: var(--color-slate-900);
+  --surface-subtle: var(--color-slate-800);
+  --border: var(--color-slate-700);
   --text: var(--color-slate-100);
+  --text-muted: var(--color-slate-400);
+  --accent: var(--color-indigo-600);
+  --accent-hover: var(--color-indigo-500);
+  --on-accent: var(--color-white);
 }
 
 /* Register tokens as Tailwind colors → generates bg-bg, bg-surface, etc. */
 @theme inline {
   --color-bg: var(--bg);
   --color-surface: var(--surface);
+  --color-surface-subtle: var(--surface-subtle);
+  --color-border: var(--border);
   --color-text: var(--text);
+  --color-text-muted: var(--text-muted);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-on-accent: var(--on-accent);
 }

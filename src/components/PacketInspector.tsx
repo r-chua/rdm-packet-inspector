@@ -42,18 +42,18 @@ export function PacketInspector() {
 
   return (
     <div className="flex flex-col h-screen">
-      <header className="bg-gray-900 text-white">
+      <header className="bg-surface border-b border-border">
         <h1 className="text-2xl font-bold p-4">RDM Packet Inspector</h1>
       </header>
 
       <div className="flex flex-col flex-1 min-h-0 p-4 gap-4">
-        <div className="bg-surface border rounded-lg">
+        <div className="bg-surface border-border rounded-lg">
           <HexInput onParse={handleParse} />
         </div>
 
         <div role="alert">
           {parseResult && !parseResult.success && (
-            <div className="bg-red-200 border rounded-lg p-4">
+            <div className="bg-red-200 border-border rounded-lg p-4">
               <p className="text-red-800 font-bold">Error:</p>
               <p className="italic">{parseResult.error.message}</p>
               {parseResult.error.byteOffset !== -1 && (
@@ -73,7 +73,7 @@ export function PacketInspector() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1 min-h-0">
-          <div className="overflow-auto bg-surface border rounded-lg">
+          <div className="overflow-auto bg-surface border-border rounded-lg">
             <HexView
               rawBytes={parseResult?.rawBytes || null}
               fieldEntries={fieldEntries}
@@ -83,7 +83,7 @@ export function PacketInspector() {
               onSelect={handleSelect}
             />
           </div>
-          <div className="overflow-auto bg-surface border rounded-lg">
+          <div className="overflow-auto bg-surface border-border rounded-lg">
             <FieldView
               fieldEntries={fieldEntries}
               highlightedField={highlightedField}
