@@ -1,1 +1,25 @@
 @import 'tailwindcss';
+
+/* Make the `dark:` variant follow the data attribute, not the OS setting */
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+:root {
+  color-scheme: light;
+  --bg: var(--color-slate-100);
+  --surface: var(--color-white);
+  --text: var(--color-slate-900);
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: var(--color-slate-950);
+  --surface: var(--color-slate-900);
+  --text: var(--color-slate-100);
+}
+
+/* Register tokens as Tailwind colors → generates bg-bg, bg-surface, etc. */
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-text: var(--text);
+}

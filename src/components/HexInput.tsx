@@ -41,10 +41,7 @@ export function HexInput({ onParse }: HexInputProps) {
 
   return (
     <section className="p-4" aria-labelledby="hex-input-title">
-      <h2
-        id="hex-input-title"
-        className="text-lg font-medium text-gray-900 mb-2"
-      >
+      <h2 id="hex-input-title" className="text-lg font-medium mb-2">
         Hex Input
       </h2>
       <form aria-labelledby="hex-input-title">
@@ -94,7 +91,7 @@ export function HexInput({ onParse }: HexInputProps) {
               onClick={handleClear}
               className={cn(
                 'mt-2 ml-6 px-4 py-2 rounded-md shadow-sm',
-                'bg-red-500 text-white',
+                'bg-surface',
                 'hover:bg-red-600',
                 'focus:ring-2 focus:ring-offset-2 focus:ring-red-500'
               )}

@@ -47,7 +47,7 @@ export function PacketInspector() {
       </header>
 
       <div className="flex flex-col flex-1 min-h-0 p-4 gap-4">
-        <div className="bg-blue-200 border rounded-lg">
+        <div className="bg-surface border rounded-lg">
           <HexInput onParse={handleParse} />
         </div>
 
@@ -73,7 +73,7 @@ export function PacketInspector() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1 min-h-0">
-          <div className="overflow-auto bg-green-200 border rounded-lg">
+          <div className="overflow-auto bg-surface border rounded-lg">
             <HexView
               rawBytes={parseResult?.rawBytes || null}
               fieldEntries={fieldEntries}
@@ -83,7 +83,7 @@ export function PacketInspector() {
               onSelect={handleSelect}
             />
           </div>
-          <div className="overflow-auto bg-amber-200 border rounded-lg">
+          <div className="overflow-auto bg-surface border rounded-lg">
             <FieldView
               fieldEntries={fieldEntries}
               highlightedField={highlightedField}

@@ -95,7 +95,7 @@ export function FieldView({
               : `bytes ${entry.startByte}-${entry.endByte}`}
           </span>
         </div>
-        <div className="text-sm font-mono text-gray-900 mt-0.5">
+        <div className="text-sm font-mono mt-0.5">
           {entry.displayValue}
           {entry.warning && (
             <p className="text-xs text-amber-600 mt-1">{entry.warning}</p>
@@ -114,10 +114,7 @@ export function FieldView({
 
   return (
     <section className="p-4" aria-labelledby="field-view-title">
-      <h2
-        id="field-view-title"
-        className="text-lg font-medium text-gray-900 mb-2"
-      >
+      <h2 id="field-view-title" className="text-lg font-medium mb-2">
         Field View
       </h2>
 
