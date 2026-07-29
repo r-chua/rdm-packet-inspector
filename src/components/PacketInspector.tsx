@@ -52,7 +52,7 @@ export function PacketInspector() {
           className={cn(
             'overflow-auto',
             'bg-surface',
-            'border-border rounded-lg shadow-sm'
+            'border border-border rounded-lg shadow-sm'
           )}
         >
           <HexInput onParse={handleParse} />
@@ -63,7 +63,7 @@ export function PacketInspector() {
             <div
               className={cn(
                 'bg-danger-surface',
-                'border-border rounded-lg shadow-sm p-4'
+                'border border-border rounded-lg shadow-sm p-4'
               )}
             >
               <p className="text-danger font-bold">Error:</p>
@@ -89,7 +89,7 @@ export function PacketInspector() {
             className={cn(
               'overflow-auto',
               'bg-surface',
-              'border-border rounded-lg shadow-sm'
+              'border border-border rounded-lg shadow-sm'
             )}
           >
             <HexView
@@ -105,7 +105,7 @@ export function PacketInspector() {
             className={cn(
               'overflow-auto',
               'bg-surface',
-              'border-border rounded-lg shadow-sm'
+              'border border-border rounded-lg shadow-sm'
             )}
           >
             <FieldView

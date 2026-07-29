@@ -55,7 +55,7 @@ export function HexInput({ onParse }: HexInputProps) {
           id="hex-input"
           className={cn(
             'mt-1 block w-full rounded-md',
-            'border-border shadow-sm sm:text-sm',
+            'border border-border shadow-sm sm:text-sm',
             'focus:border-focus focus:ring-focus'
           )}
           rows={4}
@@ -93,7 +93,7 @@ export function HexInput({ onParse }: HexInputProps) {
                 'mt-2 ml-6 px-4 py-2 rounded-md shadow-sm',
                 'bg-surface',
                 'text-fg',
-                'border-border',
+                'border border-border',
                 'hover:bg-surface-subtle',
                 'focus:ring-2 focus:ring-offset-2 focus:ring-focus'
               )}
@@ -114,7 +114,7 @@ export function HexInput({ onParse }: HexInputProps) {
               className={cn(
                 'px-4',
                 'mt-1 rounded-md',
-                'border-border shadow-sm sm:text-sm',
+                'border border-border shadow-sm sm:text-sm',
                 'focus:border-focus focus:ring-focus'
               )}
               onChange={(e) => {
