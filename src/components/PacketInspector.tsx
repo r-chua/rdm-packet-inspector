@@ -45,11 +45,7 @@ export function PacketInspector() {
   return (
     <div className="flex flex-col h-screen">
       <header
-        className={cn(
-          'flex items-center',
-          'bg-surface border-b border-border',
-          'p-4 gap-4'
-        )}
+        className={cn('flex items-center', 'bg-surface shadow-sm', 'p-4 gap-4')}
       >
         <h1 className="text-2xl font-bold">RDM Packet Inspector</h1>
         <ThemeSelect />
@@ -57,11 +53,7 @@ export function PacketInspector() {
 
       <div className="flex flex-col flex-1 min-h-0 p-4 gap-4">
         <div
-          className={cn(
-            'overflow-auto',
-            'bg-surface',
-            'border border-border rounded-lg shadow-sm'
-          )}
+          className={cn('overflow-auto', 'bg-surface', 'rounded-lg shadow-sm')}
         >
           <HexInput onParse={handleParse} />
         </div>
@@ -69,10 +61,7 @@ export function PacketInspector() {
         <div role="alert">
           {parseResult && !parseResult.success && (
             <div
-              className={cn(
-                'bg-danger-surface',
-                'border border-border rounded-lg shadow-sm p-4'
-              )}
+              className={cn('bg-danger-surface', 'rounded-lg shadow-sm p-4')}
             >
               <p className="text-danger font-bold">Error:</p>
               <p className="italic">{parseResult.error.message}</p>
@@ -97,7 +86,7 @@ export function PacketInspector() {
             className={cn(
               'overflow-auto',
               'bg-surface',
-              'border border-border rounded-lg shadow-sm'
+              'rounded-lg shadow-sm'
             )}
           >
             <HexView
@@ -113,7 +102,7 @@ export function PacketInspector() {
             className={cn(
               'overflow-auto',
               'bg-surface',
-              'border border-border rounded-lg shadow-sm'
+              'rounded-lg shadow-sm'
             )}
           >
             <FieldView

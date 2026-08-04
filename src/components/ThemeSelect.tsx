@@ -55,7 +55,7 @@ export function ThemeSelect() {
         id="theme-select"
         className={cn(
           'p-1 rounded-md',
-          'border border-border shadow-sm sm:text-sm',
+          'border border-border sm:text-sm',
           'focus:border-focus focus:ring-focus'
         )}
         onChange={(e) => {
