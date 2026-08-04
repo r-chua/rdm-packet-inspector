@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import userEvent from '@testing-library/user-event';
 import { screen } from '@testing-library/react';
 import { ThemeSelect } from './ThemeSelect';
@@ -23,6 +23,10 @@ function mockMatchMedia(matches: boolean) {
       listeners.forEach((h) => h({ matches } as MediaQueryListEvent)),
   };
 }
+
+beforeEach(() => {
+  mockMatchMedia(false); // default to light theme for tests
+});
 
 describe('ThemeSelect', () => {
   it('should render the theme select component', () => {
