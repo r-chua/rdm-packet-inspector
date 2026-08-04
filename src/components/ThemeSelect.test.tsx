@@ -63,6 +63,13 @@ describe('ThemeSelect', () => {
     expect(localStorage.getItem('theme')).toBe('light');
   });
 
+  it('should load with the correct theme based on localStorage', () => {
+    localStorage.setItem('theme', 'dark');
+    render(<ThemeSelect />);
+    expect(document.documentElement.dataset.theme).toBe('dark');
+    expect(screen.getByLabelText(/theme/i)).toHaveValue('dark');
+  });
+
   it('should clear the preference when system is selected', async () => {
     render(<ThemeSelect />);
 
