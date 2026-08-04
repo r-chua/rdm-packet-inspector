@@ -48,10 +48,7 @@ export function ThemeSelect() {
 
   return (
     <div className="flex-initial ml-auto mr-4">
-      <label
-        htmlFor="theme-select"
-        className="text-sm font-medium text-fg-muted mr-4 sr-only"
-      >
+      <label htmlFor="theme-select" className="sr-only">
         Theme
       </label>
       <select
