@@ -6,6 +6,7 @@ import type { ParseResult } from '../parser/types.ts';
 import { parseRdmPacket } from '../parser/parse.ts';
 import { getFieldEntries, type FieldEntry } from '../parser/fields.ts';
 import { cn } from '../lib/utils.ts';
+import { ThemeSelect } from './ThemeSelect.tsx';
 
 export function PacketInspector() {
   const [parseResult, setParseResult] = React.useState<ParseResult | null>(
@@ -18,52 +19,12 @@ export function PacketInspector() {
   );
   const [selectionWasMade, setSelectionWasMade] = React.useState(false);
 
-  const readThemePref = () => {
-    const theme = localStorage.getItem('theme');
-    if (theme === 'dark') {
-      return 'dark';
-    } else if (theme === 'light') {
-      return 'light';
-    } else {
-      return 'system';
-    }
-  };
-  const [theme, setTheme] = React.useState<string>(() => readThemePref());
-
   const fieldEntries = React.useMemo(() => {
     if (parseResult?.success) {
       return parseResult.packet ? getFieldEntries(parseResult.packet) : null;
     }
     return null;
   }, [parseResult]);
-
-  React.useEffect(() => {
-    if (theme !== 'system') return;
-
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-
-    const handleChange = (event: MediaQueryListEvent) => {
-      document.documentElement.dataset.theme = event.matches ? 'dark' : 'light';
-    };
-    mediaQuery.addEventListener('change', handleChange);
-    return () => {
-      mediaQuery.removeEventListener('change', handleChange);
-    };
-  }, [theme]);
-
-  React.useEffect(() => {
-    if (theme === 'dark') {
-      document.documentElement.dataset.theme = 'dark';
-    } else if (theme === 'light') {
-      document.documentElement.dataset.theme = 'light';
-    } else {
-      document.documentElement.dataset.theme = matchMedia(
-        '(prefers-color-scheme: dark)'
-      ).matches
-        ? 'dark'
-        : 'light';
-    }
-  }, [theme]);
 
   const handleParse = (hexString: string) => {
     setHighlightedField(null);
@@ -91,32 +52,7 @@ export function PacketInspector() {
         )}
       >
         <h1 className="text-2xl font-bold">RDM Packet Inspector</h1>
-        <div className="flex-initial ml-auto mr-4">
-          <label
-            htmlFor="theme-select"
-            className="text-sm font-medium text-fg-muted mr-4 sr-only"
-          >
-            Theme
-          </label>
-          <select
-            id="theme-select"
-            className={cn(
-              'px-4',
-              'mt-1 rounded-md',
-              'border border-border shadow-sm sm:text-sm',
-              'focus:border-focus focus:ring-focus'
-            )}
-            onChange={(e) => {
-              const selectedValue = e.target.value;
-              setTheme(selectedValue);
-            }}
-            value={theme}
-          >
-            <option value="system">System</option>
-            <option value="light">Light</option>
-            <option value="dark">Dark</option>
-          </select>
-        </div>
+        <ThemeSelect />
       </header>
 
       <div className="flex flex-col flex-1 min-h-0 p-4 gap-4">
