@@ -1,6 +1,13 @@
 import React from 'react';
 import { cn } from '../lib/utils';
 
+const THEME_OPTIONS = ['light', 'dark', 'system'] as const;
+type ThemeOption = (typeof THEME_OPTIONS)[number];
+
+function isValidThemeOption(value: string): value is ThemeOption {
+  return THEME_OPTIONS.includes(value as ThemeOption);
+}
+
 export function ThemeSelect() {
   const readThemePref = () => {
     const theme = localStorage.getItem('theme');
@@ -12,7 +19,7 @@ export function ThemeSelect() {
       return 'system';
     }
   };
-  const [theme, setTheme] = React.useState<string>(() => readThemePref());
+  const [theme, setTheme] = React.useState<ThemeOption>(() => readThemePref());
 
   React.useEffect(() => {
     if (theme !== 'system') return;
@@ -60,11 +67,13 @@ export function ThemeSelect() {
         )}
         onChange={(e) => {
           const selectedValue = e.target.value;
-          setTheme(selectedValue);
-          if (selectedValue === 'system') {
-            localStorage.removeItem('theme');
-          } else {
-            localStorage.setItem('theme', selectedValue);
+          if (isValidThemeOption(selectedValue)) {
+            setTheme(selectedValue);
+            if (selectedValue === 'system') {
+              localStorage.removeItem('theme');
+            } else {
+              localStorage.setItem('theme', selectedValue);
+            }
           }
         }}
         value={theme}
