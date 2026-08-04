@@ -61,6 +61,11 @@ export function ThemeSelect() {
         onChange={(e) => {
           const selectedValue = e.target.value;
           setTheme(selectedValue);
+          if (selectedValue === 'system') {
+            localStorage.removeItem('theme');
+          } else {
+            localStorage.setItem('theme', selectedValue);
+          }
         }}
         value={theme}
       >
