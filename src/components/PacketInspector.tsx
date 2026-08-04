@@ -5,6 +5,8 @@ import { HexView } from './HexView.tsx';
 import type { ParseResult } from '../parser/types.ts';
 import { parseRdmPacket } from '../parser/parse.ts';
 import { getFieldEntries, type FieldEntry } from '../parser/fields.ts';
+import { cn } from '../lib/utils.ts';
+import { ThemeSelect } from './ThemeSelect.tsx';
 
 export function PacketInspector() {
   const [parseResult, setParseResult] = React.useState<ParseResult | null>(
@@ -42,19 +44,37 @@ export function PacketInspector() {
 
   return (
     <div className="flex flex-col h-screen">
-      <header className="bg-gray-900 text-white">
-        <h1 className="text-2xl font-bold p-4">RDM Packet Inspector</h1>
+      <header
+        className={cn(
+          'flex items-center',
+          'bg-surface border-b border-border',
+          'p-4 gap-4'
+        )}
+      >
+        <h1 className="text-2xl font-bold">RDM Packet Inspector</h1>
+        <ThemeSelect />
       </header>
 
       <div className="flex flex-col flex-1 min-h-0 p-4 gap-4">
-        <div className="bg-blue-200 border rounded-lg">
+        <div
+          className={cn(
+            'overflow-auto',
+            'bg-surface',
+            'border border-border rounded-lg shadow-sm'
+          )}
+        >
           <HexInput onParse={handleParse} />
         </div>
 
         <div role="alert">
           {parseResult && !parseResult.success && (
-            <div className="bg-red-200 border rounded-lg p-4">
-              <p className="text-red-800 font-bold">Error:</p>
+            <div
+              className={cn(
+                'bg-danger-surface',
+                'border border-border rounded-lg shadow-sm p-4'
+              )}
+            >
+              <p className="text-danger font-bold">Error:</p>
               <p className="italic">{parseResult.error.message}</p>
               {parseResult.error.byteOffset !== -1 && (
                 <p>Byte Index: {parseResult.error.byteOffset}</p>
@@ -73,7 +93,13 @@ export function PacketInspector() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1 min-h-0">
-          <div className="overflow-auto bg-green-200 border rounded-lg">
+          <div
+            className={cn(
+              'overflow-auto',
+              'bg-surface',
+              'border border-border rounded-lg shadow-sm'
+            )}
+          >
             <HexView
               rawBytes={parseResult?.rawBytes || null}
               fieldEntries={fieldEntries}
@@ -83,7 +109,13 @@ export function PacketInspector() {
               onSelect={handleSelect}
             />
           </div>
-          <div className="overflow-auto bg-amber-200 border rounded-lg">
+          <div
+            className={cn(
+              'overflow-auto',
+              'bg-surface',
+              'border border-border rounded-lg shadow-sm'
+            )}
+          >
             <FieldView
               fieldEntries={fieldEntries}
               highlightedField={highlightedField}

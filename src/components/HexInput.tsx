@@ -41,16 +41,13 @@ export function HexInput({ onParse }: HexInputProps) {
 
   return (
     <section className="p-4" aria-labelledby="hex-input-title">
-      <h2
-        id="hex-input-title"
-        className="text-lg font-medium text-gray-900 mb-2"
-      >
+      <h2 id="hex-input-title" className="text-lg font-medium mb-2">
         Hex Input
       </h2>
       <form aria-labelledby="hex-input-title">
         <label
           htmlFor="hex-input"
-          className="block text-sm font-medium text-gray-700 mb-1"
+          className="block text-sm font-medium text-fg-muted mb-1"
         >
           Packet Data
         </label>
@@ -58,8 +55,8 @@ export function HexInput({ onParse }: HexInputProps) {
           id="hex-input"
           className={cn(
             'mt-1 block w-full rounded-md',
-            'border-gray-300 shadow-sm sm:text-sm',
-            'focus:border-indigo-500 focus:ring-indigo-500'
+            'border border-border shadow-sm sm:text-sm',
+            'focus:border-focus focus:ring-focus'
           )}
           rows={4}
           spellCheck={false}
@@ -81,9 +78,9 @@ export function HexInput({ onParse }: HexInputProps) {
               }}
               className={cn(
                 'mt-2 px-4 py-2 rounded-md shadow-sm',
-                'bg-indigo-500 text-white',
-                'hover:bg-indigo-600',
-                'focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
+                'bg-accent text-on-accent',
+                'hover:bg-accent-hover',
+                'focus:ring-2 focus:ring-offset-2 focus:ring-focus'
               )}
             >
               Submit
@@ -94,9 +91,11 @@ export function HexInput({ onParse }: HexInputProps) {
               onClick={handleClear}
               className={cn(
                 'mt-2 ml-6 px-4 py-2 rounded-md shadow-sm',
-                'bg-red-500 text-white',
-                'hover:bg-red-600',
-                'focus:ring-2 focus:ring-offset-2 focus:ring-red-500'
+                'bg-surface',
+                'text-fg',
+                'border border-border',
+                'hover:bg-surface-subtle',
+                'focus:ring-2 focus:ring-offset-2 focus:ring-focus'
               )}
             >
               Reset
@@ -106,7 +105,7 @@ export function HexInput({ onParse }: HexInputProps) {
           <div className="flex-initial ml-auto mr-4">
             <label
               htmlFor="hex-select"
-              className="text-sm font-medium text-gray-700 mr-4"
+              className="text-sm font-medium text-fg-muted mr-4"
             >
               Example Packets
             </label>
@@ -115,8 +114,8 @@ export function HexInput({ onParse }: HexInputProps) {
               className={cn(
                 'px-4',
                 'mt-1 rounded-md',
-                'border-gray-300 shadow-sm sm:text-sm',
-                'focus:border-indigo-500 focus:ring-indigo-500'
+                'border border-border shadow-sm sm:text-sm',
+                'focus:border-focus focus:ring-focus'
               )}
               onChange={(e) => {
                 const selectedValue = e.target.value;

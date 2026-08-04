@@ -120,10 +120,7 @@ export function HexView({
 
   return (
     <section className="p-4" aria-labelledby="hex-view-title">
-      <h2
-        id="hex-view-title"
-        className="text-lg font-medium text-gray-900 mb-2"
-      >
+      <h2 id="hex-view-title" className="text-lg font-medium mb-2">
         Hex View
       </h2>
       <table
@@ -131,7 +128,7 @@ export function HexView({
         tabIndex={focusedByteIndex === null ? 0 : -1}
         className={cn(
           'table-auto ',
-          'border-collapse border border-gray-300',
+          'border-collapse border border-border',
           'center text-sm font-mono',
           'mx-auto',
           FOCUSED_CLASS
@@ -193,9 +190,9 @@ export function HexView({
             <th
               scope="col"
               className={cn(
-                'border border-gray-300',
+                'border border-border',
                 'px-5 py-1',
-                'bg-gray-100',
+                'bg-surface-subtle',
                 'text-center'
               )}
             >
@@ -206,9 +203,9 @@ export function HexView({
                 key={i}
                 scope="col"
                 className={cn(
-                  'border border-gray-300',
+                  'border border-border',
                   'px-2 py-1',
-                  'bg-gray-100',
+                  'bg-surface-subtle',
                   'text-center'
                 )}
               >
@@ -222,7 +219,7 @@ export function HexView({
             <tr key={rowIndex}>
               <th
                 scope="row"
-                className="border border-gray-300 px-2 py-1 text-center"
+                className="border border-border px-2 py-1 text-center"
               >
                 {(rowIndex * BYTES_PER_ROW)
                   .toString(16)
@@ -288,7 +285,7 @@ export function HexView({
                       `${fieldName ? `Field: ${fieldName}` : 'No field'}`
                     }
                     className={cn(
-                      'border border-gray-300 px-2 py-1 text-center',
+                      'border border-border px-2 py-1 text-center',
                       FOCUSED_CLASS,
                       HIGHLIGHT_CLASS
                     )}

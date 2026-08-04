@@ -80,6 +80,7 @@ export function FieldView({
             : undefined
         }
         className={cn(
+          'group',
           HIGHLIGHT_CLASS,
           SELECTED_CLASS,
           FOCUSED_CLASS,
@@ -87,18 +88,23 @@ export function FieldView({
           'focus-visible:outline-offset-1'
         )}
       >
-        <div className="flex justify-between items-baseline text-sm font-medium text-gray-500">
+        <div
+          className={cn(
+            'flex justify-between items-baseline text-sm font-medium',
+            'text-fg-muted group-data-[highlighted=true]:text-fg'
+          )}
+        >
           <span>{entry.name}</span>
-          <span className="text-xs text-gray-400 font-mono">
+          <span className="text-xs font-mono">
             {entry.startByte === entry.endByte
               ? `byte ${entry.startByte}`
               : `bytes ${entry.startByte}-${entry.endByte}`}
           </span>
         </div>
-        <div className="text-sm font-mono text-gray-900 mt-0.5">
+        <div className="text-sm font-mono mt-0.5">
           {entry.displayValue}
           {entry.warning && (
-            <p className="text-xs text-amber-600 mt-1">{entry.warning}</p>
+            <p className="text-xs text-warning mt-1">{entry.warning}</p>
           )}
           {entry.subFields && entry.subFields.length > 0 && (
             <div className="ml-4">
@@ -114,16 +120,13 @@ export function FieldView({
 
   return (
     <section className="p-4" aria-labelledby="field-view-title">
-      <h2
-        id="field-view-title"
-        className="text-lg font-medium text-gray-900 mb-2"
-      >
+      <h2 id="field-view-title" className="text-lg font-medium mb-2">
         Field View
       </h2>
 
       <div
         id="field-view-list"
-        className={cn('divide-y divide-gray-200', FOCUSED_CLASS)}
+        className={cn('divide-y divide-border', FOCUSED_CLASS)}
         tabIndex={focusedFieldIndex === null ? 0 : -1}
         aria-labelledby="field-view-title"
         role="listbox"
