@@ -58,4 +58,36 @@ describe('ThemeSelect', () => {
     expect(document.documentElement.dataset.theme).toBe('light');
     expect(localStorage.getItem('theme')).toBe('light');
   });
+
+  it('should clear the preference when system is selected', async () => {
+    render(<ThemeSelect />);
+
+    const selectElement = screen.getByLabelText<HTMLSelectElement>(/theme/i);
+    // Change to dark theme first
+    await userEvent.selectOptions(selectElement, 'dark');
+    expect(localStorage.getItem('theme')).toBe('dark');
+
+    // Now change to system theme
+    await userEvent.selectOptions(selectElement, 'system');
+    expect(localStorage.getItem('theme')).toBeNull();
+  });
+
+  it('should respond to system theme changes when set to system', async () => {
+    const { fire } = mockMatchMedia(false); // the OS prefers light
+
+    render(<ThemeSelect />);
+
+    const selectElement = screen.getByLabelText<HTMLSelectElement>(/theme/i);
+    // Ensure it's set to system
+    await userEvent.selectOptions(selectElement, 'system');
+    expect(document.documentElement.dataset.theme).toBe('light');
+
+    // Simulate a system theme change to dark
+    fire(true);
+    expect(document.documentElement.dataset.theme).toBe('dark');
+
+    // Simulate a system theme change back to light
+    fire(false);
+    expect(document.documentElement.dataset.theme).toBe('light');
+  });
 });
