@@ -83,7 +83,7 @@ describe('ThemeSelect', () => {
 
     const selectElement = screen.getByLabelText<HTMLSelectElement>(/theme/i);
     // Ensure it's set to system
-    await userEvent.selectOptions(selectElement, 'system');
+    expect(selectElement).toHaveValue('system');
     expect(document.documentElement.dataset.theme).toBe('light');
 
     // Simulate a system theme change to dark
