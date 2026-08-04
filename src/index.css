@@ -45,6 +45,7 @@
 
 @theme {
   --font-sans: 'Inter', system-ui, sans-serif;
+  --font-mono--font-feature-settings: 'calt' 0, 'clig' 0, 'liga' 0;
 }
 
 /* Register tokens as Tailwind colors → generates bg-bg, bg-surface, etc. */
