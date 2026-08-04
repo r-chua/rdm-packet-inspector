@@ -91,19 +91,32 @@ export function PacketInspector() {
         )}
       >
         <h1 className="text-2xl font-bold">RDM Packet Inspector</h1>
-        <button
-          className={cn(
-            'mt-2 ml-auto px-4 py-2 rounded-md shadow-sm',
-            'bg-surface',
-            'text-fg',
-            'border border-border',
-            'hover:bg-surface-subtle',
-            'focus:ring-2 focus:ring-offset-2 focus:ring-focus'
-          )}
-          onClick={() => {}}
-        >
-          Theme
-        </button>
+        <div className="flex-initial ml-auto mr-4">
+          <label
+            htmlFor="theme-select"
+            className="text-sm font-medium text-fg-muted mr-4 sr-only"
+          >
+            Theme
+          </label>
+          <select
+            id="theme-select"
+            className={cn(
+              'px-4',
+              'mt-1 rounded-md',
+              'border border-border shadow-sm sm:text-sm',
+              'focus:border-focus focus:ring-focus'
+            )}
+            onChange={(e) => {
+              const selectedValue = e.target.value;
+              setTheme(selectedValue);
+            }}
+            value={theme}
+          >
+            <option value="system">System</option>
+            <option value="light">Light</option>
+            <option value="dark">Dark</option>
+          </select>
+        </div>
       </header>
 
       <div className="flex flex-col flex-1 min-h-0 p-4 gap-4">
