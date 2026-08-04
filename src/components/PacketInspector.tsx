@@ -38,6 +38,20 @@ export function PacketInspector() {
   }, [parseResult]);
 
   React.useEffect(() => {
+    if (theme !== 'system') return;
+
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+    const handleChange = (event: MediaQueryListEvent) => {
+      document.documentElement.dataset.theme = event.matches ? 'dark' : 'light';
+    };
+    mediaQuery.addEventListener('change', handleChange);
+    return () => {
+      mediaQuery.removeEventListener('change', handleChange);
+    };
+  }, [theme]);
+
+  React.useEffect(() => {
     if (theme === 'dark') {
       document.documentElement.dataset.theme = 'dark';
     } else if (theme === 'light') {
