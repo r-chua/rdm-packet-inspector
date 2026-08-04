@@ -3,42 +3,44 @@
 /* Make the `dark:` variant follow the data attribute, not the OS setting */
 @custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
 
+/* Nocturne palette. Derived colors use color-mix on --fg so every tint
+   tracks the theme's ink automatically. */
 :root {
   color-scheme: light;
-  --bg: var(--color-slate-100);
-  --surface: var(--color-white);
-  --surface-subtle: var(--color-slate-50);
-  --border: var(--color-slate-300);
-  --fg: var(--color-slate-900);
-  --fg-muted: var(--color-slate-600);
-  --accent: var(--color-indigo-600);
-  --accent-hover: var(--color-indigo-700);
-  --on-accent: var(--color-white);
-  --focus: var(--color-indigo-600);
-  --selection: var(--color-blue-600);
-  --highlight: var(--color-yellow-200);
-  --warning: var(--color-amber-800);
-  --danger: var(--color-red-700);
-  --danger-surface: var(--color-red-50);
+  --bg: #f3f5fe;
+  --surface: #fdfdff;
+  --surface-subtle: color-mix(in srgb, var(--fg) 5%, var(--surface));
+  --border: color-mix(in srgb, var(--fg) 16%, transparent);
+  --fg: #292b31;
+  --fg-muted: color-mix(in srgb, var(--fg) 76%, transparent);
+  --accent: #5d5294;
+  --accent-hover: #423a6a;
+  --on-accent: #f5f4ff;
+  --focus: #5d5294;
+  --selection: #5d5294;
+  --highlight: color-mix(in srgb, var(--fg) 10%, transparent);
+  --warning: #75490b;
+  --danger: #7d2f31;
+  --danger-surface: color-mix(in srgb, #992a2c 12%, transparent);
 }
 
 [data-theme='dark'] {
   color-scheme: dark;
-  --bg: var(--color-slate-950);
-  --surface: var(--color-slate-900);
-  --surface-subtle: var(--color-slate-800);
-  --border: var(--color-slate-700);
-  --fg: var(--color-slate-100);
-  --fg-muted: var(--color-slate-400);
-  --accent: var(--color-indigo-600);
-  --accent-hover: var(--color-indigo-700);
-  --on-accent: var(--color-white);
-  --focus: var(--color-indigo-400);
-  --selection: var(--color-blue-400);
-  --highlight: var(--color-yellow-800);
-  --warning: var(--color-amber-300);
-  --danger: var(--color-red-300);
-  --danger-surface: var(--color-red-950);
+  --bg: #161826;
+  --surface: #232532;
+  --surface-subtle: color-mix(in srgb, var(--fg) 5%, var(--surface));
+  --border: color-mix(in srgb, var(--fg) 16%, transparent);
+  --fg: #e9e9ed;
+  --fg-muted: color-mix(in srgb, var(--fg) 66%, transparent);
+  --accent: #9184d9;
+  --accent-hover: #b5abfc;
+  --on-accent: #161826;
+  --focus: #9184d9;
+  --selection: #9184d9;
+  --highlight: color-mix(in srgb, var(--fg) 10%, transparent);
+  --warning: #e8ae4d;
+  --danger: #f0b3b3;
+  --danger-surface: color-mix(in srgb, #e79393 12%, transparent);
 }
 
 /* Register tokens as Tailwind colors → generates bg-bg, bg-surface, etc. */
