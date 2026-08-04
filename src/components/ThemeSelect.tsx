@@ -60,8 +60,7 @@ export function ThemeSelect() {
       <select
         id="theme-select"
         className={cn(
-          'px-4',
-          'mt-1 rounded-md',
+          'p-1 mt-1 rounded-md',
           'border border-border shadow-sm sm:text-sm',
           'focus:border-focus focus:ring-focus'
         )}
