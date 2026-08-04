@@ -43,8 +43,27 @@ export function PacketInspector() {
 
   return (
     <div className="flex flex-col h-screen">
-      <header className="bg-surface border-b border-border">
-        <h1 className="text-2xl font-bold p-4">RDM Packet Inspector</h1>
+      <header
+        className={cn(
+          'flex items-center',
+          'bg-surface border-b border-border',
+          'p-4 gap-4'
+        )}
+      >
+        <h1 className="text-2xl font-bold">RDM Packet Inspector</h1>
+        <button
+          className={cn(
+            'mt-2 ml-auto px-4 py-2 rounded-md shadow-sm',
+            'bg-surface',
+            'text-fg',
+            'border border-border',
+            'hover:bg-surface-subtle',
+            'focus:ring-2 focus:ring-offset-2 focus:ring-focus'
+          )}
+          onClick={() => {}}
+        >
+          Theme
+        </button>
       </header>
 
       <div className="flex flex-col flex-1 min-h-0 p-4 gap-4">
