@@ -18,12 +18,38 @@ export function PacketInspector() {
   );
   const [selectionWasMade, setSelectionWasMade] = React.useState(false);
 
+  const readThemePref = () => {
+    const theme = localStorage.getItem('theme');
+    if (theme === 'dark') {
+      return 'dark';
+    } else if (theme === 'light') {
+      return 'light';
+    } else {
+      return 'system';
+    }
+  };
+  const [theme, setTheme] = React.useState<string>(() => readThemePref());
+
   const fieldEntries = React.useMemo(() => {
     if (parseResult?.success) {
       return parseResult.packet ? getFieldEntries(parseResult.packet) : null;
     }
     return null;
   }, [parseResult]);
+
+  React.useEffect(() => {
+    if (theme === 'dark') {
+      document.documentElement.dataset.theme = 'dark';
+    } else if (theme === 'light') {
+      document.documentElement.dataset.theme = 'light';
+    } else {
+      document.documentElement.dataset.theme = matchMedia(
+        '(prefers-color-scheme: dark)'
+      ).matches
+        ? 'dark'
+        : 'light';
+    }
+  }, [theme]);
 
   const handleParse = (hexString: string) => {
     setHighlightedField(null);
