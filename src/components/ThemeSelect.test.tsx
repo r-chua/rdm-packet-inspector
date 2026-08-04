@@ -1,5 +1,6 @@
 import { render } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
+import userEvent from '@testing-library/user-event';
 import { screen } from '@testing-library/react';
 import { ThemeSelect } from './ThemeSelect';
 
@@ -39,5 +40,22 @@ describe('ThemeSelect', () => {
     expect(screen.getByLabelText(/theme/i)).toHaveValue('system');
     expect(document.documentElement.dataset.theme).toBe('dark');
     expect(localStorage.getItem('theme')).toBeNull();
+  });
+
+  it('should apply the selected theme and persist it in localStorage', async () => {
+    render(<ThemeSelect />);
+
+    const selectElement = screen.getByLabelText<HTMLSelectElement>(/theme/i);
+    // Change to dark theme
+    await userEvent.selectOptions(selectElement, 'dark');
+
+    expect(document.documentElement.dataset.theme).toBe('dark');
+    expect(localStorage.getItem('theme')).toBe('dark');
+
+    // Change to light theme
+    await userEvent.selectOptions(selectElement, 'light');
+
+    expect(document.documentElement.dataset.theme).toBe('light');
+    expect(localStorage.getItem('theme')).toBe('light');
   });
 });
