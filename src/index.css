@@ -43,6 +43,10 @@
   --danger-surface: color-mix(in srgb, #e79393 12%, transparent);
 }
 
+@theme {
+  --font-sans: 'Inter', system-ui, sans-serif;
+}
+
 /* Register tokens as Tailwind colors → generates bg-bg, bg-surface, etc. */
 @theme inline {
   --color-bg: var(--bg);
