@@ -82,7 +82,7 @@ describe('ThemeSelect', () => {
     expect(localStorage.getItem('theme')).toBeNull();
   });
 
-  it('should respond to system theme changes when set to system', async () => {
+  it('should respond to system theme changes when set to system', () => {
     const { fire } = mockMatchMedia(false); // the OS prefers light
 
     render(<ThemeSelect />);
@@ -101,7 +101,7 @@ describe('ThemeSelect', () => {
     expect(document.documentElement.dataset.theme).toBe('light');
   });
 
-  it('should not respond to system theme changes when set to dark or light', async () => {
+  it('should not respond to system theme changes when set to dark or light', () => {
     const { fire } = mockMatchMedia(false); // the OS prefers light
     localStorage.setItem('theme', 'dark');
 
