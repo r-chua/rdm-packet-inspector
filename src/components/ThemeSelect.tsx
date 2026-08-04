@@ -11,13 +11,10 @@ function isValidThemeOption(value: string): value is ThemeOption {
 export function ThemeSelect() {
   const readThemePref = () => {
     const theme = localStorage.getItem('theme');
-    if (theme === 'dark') {
-      return 'dark';
-    } else if (theme === 'light') {
-      return 'light';
-    } else {
-      return 'system';
+    if (theme !== null && isValidThemeOption(theme)) {
+      return theme;
     }
+    return 'system';
   };
   const [theme, setTheme] = React.useState<ThemeOption>(() => readThemePref());
 
