@@ -90,11 +90,13 @@ export function FieldView({
       >
         <div
           className={cn(
-            'flex justify-between items-baseline text-sm font-medium',
-            'text-fg-muted group-data-[highlighted=true]:text-fg'
+            'flex justify-between items-baseline',
+            'text-[11px] tracking-[0.06em]',
+            'text-fg-muted group-data-[highlighted=true]:text-fg',
+            'group-data-[selected=true]:text-accent'
           )}
         >
-          <span>{entry.name}</span>
+          <span className="uppercase">{entry.name}</span>
           <span className="text-xs font-mono">
             {entry.startByte === entry.endByte
               ? `byte ${entry.startByte}`
@@ -120,7 +122,7 @@ export function FieldView({
 
   return (
     <section className="p-4" aria-labelledby="field-view-title">
-      <h2 id="field-view-title" className="text-lg font-medium mb-2">
+      <h2 id="field-view-title" className="pane-label mb-2">
         Field View
       </h2>
 

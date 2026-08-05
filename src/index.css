@@ -21,7 +21,11 @@
   --highlight: color-mix(in srgb, var(--fg) 10%, transparent);
   --warning: #75490b;
   --danger: #7d2f31;
-  --danger-surface: color-mix(in srgb, #992a2c 12%, transparent);
+  --danger-vivid: #992a2c;
+  --danger-surface: color-mix(in srgb, var(--danger-vivid) 12%, transparent);
+  --elev-sm: 0 0 0 1px #cfd3e5;
+  --elev-md: 0 0 0 1px #cfd3e5, 0 6px 18px rgba(41, 43, 49, 0.1);
+  --elev-lg: 0 0 0 1px #cfd3e5, 0 16px 40px rgba(41, 43, 49, 0.15);
 }
 
 [data-theme='dark'] {
@@ -40,7 +44,16 @@
   --highlight: color-mix(in srgb, var(--fg) 10%, transparent);
   --warning: #e8ae4d;
   --danger: #f0b3b3;
-  --danger-surface: color-mix(in srgb, #e79393 12%, transparent);
+  --danger-vivid: #e79393;
+  --danger-surface: color-mix(in srgb, var(--danger-vivid) 12%, transparent);
+  --elev-sm: 0 0 0 1px #3f424d;
+  --elev-md: 0 0 0 1px #595d6c, 0 6px 18px rgba(0, 0, 0, 0.55);
+  --elev-lg: 0 0 0 1px #9397ab, 0 16px 40px rgba(0, 0, 0, 0.65);
+}
+
+@theme {
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-mono--font-feature-settings: 'calt' 0, 'clig' 0, 'liga' 0;
 }
 
 /* Register tokens as Tailwind colors → generates bg-bg, bg-surface, etc. */
@@ -59,5 +72,18 @@
   --color-highlight: var(--highlight);
   --color-warning: var(--warning);
   --color-danger: var(--danger);
+  --color-danger-vivid: var(--danger-vivid);
   --color-danger-surface: var(--danger-surface);
+  --shadow-sm: var(--elev-sm);
+  --shadow-md: var(--elev-md);
+  --shadow-lg: var(--elev-lg);
+}
+
+@layer components {
+  .pane-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--fg-muted);
+  }
 }

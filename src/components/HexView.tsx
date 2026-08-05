@@ -120,7 +120,7 @@ export function HexView({
 
   return (
     <section className="p-4" aria-labelledby="hex-view-title">
-      <h2 id="hex-view-title" className="text-lg font-medium mb-2">
+      <h2 id="hex-view-title" className="pane-label mb-2">
         Hex View
       </h2>
       <table

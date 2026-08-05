@@ -41,7 +41,7 @@ export function HexInput({ onParse }: HexInputProps) {
 
   return (
     <section className="p-4" aria-labelledby="hex-input-title">
-      <h2 id="hex-input-title" className="text-lg font-medium mb-2">
+      <h2 id="hex-input-title" className="pane-label mb-2">
         Hex Input
       </h2>
       <form aria-labelledby="hex-input-title">
@@ -55,8 +55,9 @@ export function HexInput({ onParse }: HexInputProps) {
           id="hex-input"
           className={cn(
             'mt-1 block w-full rounded-md',
-            'border border-border shadow-sm sm:text-sm',
-            'focus:border-focus focus:ring-focus'
+            'border border-border sm:text-sm',
+            'focus:border-focus focus:ring-focus',
+            'font-mono tracking-[0.04em] leading-relaxed'
           )}
           rows={4}
           spellCheck={false}
@@ -77,7 +78,7 @@ export function HexInput({ onParse }: HexInputProps) {
                 handleSubmit();
               }}
               className={cn(
-                'mt-2 px-4 py-2 rounded-md shadow-sm',
+                'mt-2 px-4 py-2 rounded-md',
                 'bg-accent text-on-accent',
                 'hover:bg-accent-hover',
                 'focus:ring-2 focus:ring-offset-2 focus:ring-focus'
@@ -90,7 +91,7 @@ export function HexInput({ onParse }: HexInputProps) {
               type="button"
               onClick={handleClear}
               className={cn(
-                'mt-2 ml-6 px-4 py-2 rounded-md shadow-sm',
+                'mt-2 ml-6 px-4 py-2 rounded-md',
                 'bg-surface',
                 'text-fg',
                 'border border-border',
@@ -114,7 +115,7 @@ export function HexInput({ onParse }: HexInputProps) {
               className={cn(
                 'px-4',
                 'mt-1 rounded-md',
-                'border border-border shadow-sm sm:text-sm',
+                'border border-border sm:text-sm',
                 'focus:border-focus focus:ring-focus'
               )}
               onChange={(e) => {
