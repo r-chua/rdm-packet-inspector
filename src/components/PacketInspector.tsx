@@ -71,7 +71,7 @@ export function PacketInspector() {
                 'rounded-lg p-4'
               )}
             >
-              <p className="text-danger font-bold">Error:</p>
+              <p className="text-danger pane-label">Error:</p>
               <p className="italic">{parseResult.error.message}</p>
               {parseResult.error.byteOffset !== -1 && (
                 <p>Byte Index: {parseResult.error.byteOffset}</p>
