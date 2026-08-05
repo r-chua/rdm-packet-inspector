@@ -65,7 +65,11 @@ export function PacketInspector() {
         <div role="alert">
           {parseResult && !parseResult.success && (
             <div
-              className={cn('bg-danger-surface', 'rounded-lg shadow-sm p-4')}
+              className={cn(
+                'bg-danger-surface',
+                'inset-ring inset-ring-danger-vivid/40',
+                'rounded-lg p-4'
+              )}
             >
               <p className="text-danger font-bold">Error:</p>
               <p className="italic">{parseResult.error.message}</p>
