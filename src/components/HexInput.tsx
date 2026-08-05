@@ -56,7 +56,8 @@ export function HexInput({ onParse }: HexInputProps) {
           className={cn(
             'mt-1 block w-full rounded-md',
             'border border-border sm:text-sm',
-            'focus:border-focus focus:ring-focus'
+            'focus:border-focus focus:ring-focus',
+            'font-mono tracking-[0.04em] leading-relaxed'
           )}
           rows={4}
           spellCheck={false}
