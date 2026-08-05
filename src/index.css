@@ -75,3 +75,12 @@
   --shadow-md: var(--elev-md);
   --shadow-lg: var(--elev-lg);
 }
+
+@layer components {
+  .pane-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: var(--fg-muted);
+  }
+}

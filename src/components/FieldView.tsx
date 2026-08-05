@@ -120,7 +120,7 @@ export function FieldView({
 
   return (
     <section className="p-4" aria-labelledby="field-view-title">
-      <h2 id="field-view-title" className="text-lg font-medium mb-2">
+      <h2 id="field-view-title" className="pane-label mb-2">
         Field View
       </h2>
 

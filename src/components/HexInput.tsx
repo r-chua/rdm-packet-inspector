@@ -41,7 +41,7 @@ export function HexInput({ onParse }: HexInputProps) {
 
   return (
     <section className="p-4" aria-labelledby="hex-input-title">
-      <h2 id="hex-input-title" className="text-lg font-medium mb-2">
+      <h2 id="hex-input-title" className="pane-label mb-2">
         Hex Input
       </h2>
       <form aria-labelledby="hex-input-title">
