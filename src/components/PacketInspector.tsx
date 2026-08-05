@@ -45,7 +45,11 @@ export function PacketInspector() {
   return (
     <div className="flex flex-col h-screen">
       <header
-        className={cn('flex items-center', 'bg-surface shadow-sm', 'p-4 gap-4')}
+        className={cn(
+          'flex items-center',
+          'bg-linear-to-b from-fg-/5 to-transparent',
+          'p-4 gap-4'
+        )}
       >
         <h1 className="text-2xl font-bold">RDM Packet Inspector</h1>
         <ThemeSelect />
