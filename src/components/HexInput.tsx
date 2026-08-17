@@ -45,8 +45,8 @@ export function HexInput({ onParse }: HexInputProps) {
         <textarea
           id="hex-input"
           className={cn(
-            'flex-1 min-w-0 h-[67px]',
-            'p-1',
+            'flex-1 min-w-0 h-[75px]',
+            'py-2 px-2.5',
             'block w-full rounded-md',
             'bg-surface',
             'border border-border sm:text-sm',
@@ -58,7 +58,6 @@ export function HexInput({ onParse }: HexInputProps) {
             'focus-visible:outline-hidden',
             'font-mono tracking-[0.04em] leading-relaxed'
           )}
-          rows={4}
           spellCheck={false}
           autoComplete="off"
           placeholder="Enter hex data here..."
@@ -108,12 +107,12 @@ export function HexInput({ onParse }: HexInputProps) {
               }}
               className={cn(
                 'flex-1',
-                'px-2 rounded-md',
+                'px-2 py-1 rounded-md',
                 'bg-transparent',
                 'border border-accent',
                 'text-accent text-sm',
                 'hover:bg-accent/10 active:bg-accent/20',
-                'focus-visible:outline-2 focus-visible:outline-offset-2 ',
+                'focus-visible:outline-2 focus-visible:outline-offset-2',
                 'focus-visible:outline-focus'
               )}
             >
@@ -125,12 +124,12 @@ export function HexInput({ onParse }: HexInputProps) {
               onClick={handleClear}
               className={cn(
                 'flex-none',
-                'px-2 rounded-md',
+                'px-2 py-1 rounded-md',
                 'bg-transparent',
                 'text-fg-muted text-sm',
                 'border border-border',
                 'hover:bg-fg/8 active:bg-fg/15',
-                'focus-visible:outline-2 focus-visible:outline-offset-2 ',
+                'focus-visible:outline-2 focus-visible:outline-offset-2',
                 'focus-visible:outline-focus'
               )}
             >
