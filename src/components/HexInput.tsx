@@ -47,7 +47,9 @@ export function HexInput({ onParse }: HexInputProps) {
           className={cn(
             'flex-1 min-w-0',
             'block w-full rounded-md',
+            'bg-surface',
             'border border-border sm:text-sm',
+            'shadow-sm',
             'caret-accent',
             'focus-visible:border-focus',
             'font-mono tracking-[0.04em] leading-relaxed'
@@ -71,6 +73,7 @@ export function HexInput({ onParse }: HexInputProps) {
                 'px-4 py-2',
                 'w-full min-w-0',
                 'rounded-md',
+                'bg-surface',
                 'border border-border sm:text-sm',
                 'focus-visible:outline-2 focus-visible:outline-offset-2',
                 'focus-visible:outline-focus'
