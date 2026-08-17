@@ -86,4 +86,9 @@
     letter-spacing: 0.09em;
     color: var(--fg-muted);
   }
+
+  .rdm-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--fg) 18%, transparent) transparent;
+  }
 }

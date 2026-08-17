@@ -56,7 +56,8 @@ export function ThemeSelect() {
         className={cn(
           'p-1 rounded-md',
           'border border-border sm:text-sm',
-          'focus:border-focus focus:ring-focus'
+          'focus-visible:outline-2 focus-visible:outline-offset-2',
+          'focus-visible:outline-focus'
         )}
         onChange={(e) => {
           const selectedValue = e.target.value;

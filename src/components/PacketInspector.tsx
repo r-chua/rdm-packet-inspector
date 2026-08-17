@@ -56,11 +56,7 @@ export function PacketInspector() {
       </header>
 
       <div className="flex flex-col flex-1 min-h-0 p-4 gap-4">
-        <div
-          className={cn('overflow-auto', 'bg-surface', 'rounded-lg shadow-sm')}
-        >
-          <HexInput onParse={handleParse} />
-        </div>
+        <HexInput onParse={handleParse} />
 
         <div role="alert">
           {parseResult && !parseResult.success && (
@@ -92,7 +88,7 @@ export function PacketInspector() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1 min-h-0">
           <div
             className={cn(
-              'overflow-auto',
+              'overflow-auto rdm-scroll',
               'bg-surface',
               'rounded-lg shadow-sm'
             )}
@@ -108,7 +104,7 @@ export function PacketInspector() {
           </div>
           <div
             className={cn(
-              'overflow-auto',
+              'overflow-auto rdm-scroll',
               'bg-surface',
               'rounded-lg shadow-sm'
             )}
