@@ -54,6 +54,7 @@ export function HexInput({ onParse }: HexInputProps) {
             'resize-none caret-accent',
             'rdm-scroll',
             'focus-visible:border-focus',
+            'focus-visible:outline-hidden',
             'font-mono tracking-[0.04em] leading-relaxed'
           )}
           rows={4}
