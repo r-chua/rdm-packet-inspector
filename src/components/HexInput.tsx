@@ -79,9 +79,12 @@ export function HexInput({ onParse }: HexInputProps) {
               }}
               className={cn(
                 'mt-2 px-4 py-2 rounded-md',
-                'bg-accent text-on-accent',
-                'hover:bg-accent-hover',
-                'focus:ring-2 focus:ring-offset-2 focus:ring-focus'
+                'bg-transparent',
+                'border border-accent',
+                'text-accent',
+                'hover:bg-accent/10 active:bg-accent/20',
+                'focus-visible:outline-2 focus-visible:outline-offset-2 ',
+                'focus-visible:outline-focus'
               )}
             >
               Submit
