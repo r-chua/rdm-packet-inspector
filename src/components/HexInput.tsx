@@ -56,6 +56,7 @@ export function HexInput({ onParse }: HexInputProps) {
           className={cn(
             'mt-1 block w-full rounded-md',
             'border border-border sm:text-sm',
+            'caret-accent',
             'focus-visible:border-focus',
             'font-mono tracking-[0.04em] leading-relaxed'
           )}
