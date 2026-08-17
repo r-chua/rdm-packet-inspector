@@ -95,14 +95,15 @@ export function HexInput({ onParse }: HexInputProps) {
               onClick={handleClear}
               className={cn(
                 'mt-2 ml-6 px-4 py-2 rounded-md',
-                'bg-surface',
-                'text-fg',
+                'bg-transparent',
+                'text-fg-muted',
                 'border border-border',
-                'hover:bg-surface-subtle',
-                'focus:ring-2 focus:ring-offset-2 focus:ring-focus'
+                'hover:bg-fg/8 active:bg-fg/15',
+                'focus-visible:outline-2 focus-visible:outline-offset-2 ',
+                'focus-visible:outline-focus'
               )}
             >
-              Reset
+              Clear
             </button>
           </div>
 
