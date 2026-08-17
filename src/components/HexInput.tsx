@@ -77,7 +77,7 @@ export function HexInput({ onParse }: HexInputProps) {
                 'w-full min-w-0',
                 'rounded-md',
                 'bg-surface',
-                'border border-border sm:text-sm',
+                'border border-border text-sm',
                 'hover:border-fg/45',
                 'focus-visible:outline-2 focus-visible:outline-offset-2',
                 'focus-visible:outline-focus'
