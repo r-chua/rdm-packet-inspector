@@ -52,6 +52,7 @@ export function HexInput({ onParse }: HexInputProps) {
             'border border-border sm:text-sm',
             'shadow-sm',
             'resize-none caret-accent',
+            'rdm-scroll',
             'focus-visible:border-focus',
             'font-mono tracking-[0.04em] leading-relaxed'
           )}

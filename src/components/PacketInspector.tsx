@@ -88,7 +88,7 @@ export function PacketInspector() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1 min-h-0">
           <div
             className={cn(
-              'overflow-auto',
+              'overflow-auto rdm-scroll',
               'bg-surface',
               'rounded-lg shadow-sm'
             )}
@@ -104,7 +104,7 @@ export function PacketInspector() {
           </div>
           <div
             className={cn(
-              'overflow-auto',
+              'overflow-auto rdm-scroll',
               'bg-surface',
               'rounded-lg shadow-sm'
             )}
