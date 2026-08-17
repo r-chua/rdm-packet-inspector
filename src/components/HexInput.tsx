@@ -45,12 +45,13 @@ export function HexInput({ onParse }: HexInputProps) {
         <textarea
           id="hex-input"
           className={cn(
-            'flex-1 min-w-0',
+            'flex-1 min-w-0 h-[67px]',
+            'p-1',
             'block w-full rounded-md',
             'bg-surface',
             'border border-border sm:text-sm',
             'shadow-sm',
-            'caret-accent',
+            'resize-none caret-accent',
             'focus-visible:border-focus',
             'font-mono tracking-[0.04em] leading-relaxed'
           )}
