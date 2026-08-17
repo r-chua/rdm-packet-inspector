@@ -56,11 +56,7 @@ export function PacketInspector() {
       </header>
 
       <div className="flex flex-col flex-1 min-h-0 p-4 gap-4">
-        <div
-          className={cn('overflow-auto', 'bg-surface', 'rounded-lg shadow-sm')}
-        >
-          <HexInput onParse={handleParse} />
-        </div>
+        <HexInput onParse={handleParse} />
 
         <div role="alert">
           {parseResult && !parseResult.success && (
