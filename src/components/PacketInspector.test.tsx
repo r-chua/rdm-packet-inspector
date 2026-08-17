@@ -174,7 +174,7 @@ describe('PacketInspector', () => {
     expect(screen.getByText('GET_COMMAND')).toBeInTheDocument();
 
     // Now click the reset button
-    const resetButton = screen.getByRole('button', { name: /reset/i });
+    const resetButton = screen.getByRole('button', { name: /clear/i });
     await user.click(resetButton);
 
     // Input should be cleared
@@ -200,7 +200,7 @@ describe('PacketInspector', () => {
     expect(screen.getByText(/invalid hex/i)).toBeInTheDocument();
 
     // Now click the reset button
-    const resetButton = screen.getByRole('button', { name: /reset/i });
+    const resetButton = screen.getByRole('button', { name: /clear/i });
     await user.click(resetButton);
 
     // Input should be cleared
@@ -544,7 +544,7 @@ describe('PacketInspector', () => {
       expect(targetCell).toHaveAttribute(SELECTED_ATTRIBUTE, 'true');
 
       // Click the reset button
-      const resetButton = screen.getByRole('button', { name: /reset/i });
+      const resetButton = screen.getByRole('button', { name: /clear/i });
       await user.click(resetButton);
 
       // Needs new parse to have selectable fields
