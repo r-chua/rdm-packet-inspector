@@ -103,7 +103,7 @@ export function HexInput({ onParse }: HexInputProps) {
                 'px-2 rounded-md',
                 'bg-transparent',
                 'border border-accent',
-                'text-accent',
+                'text-accent text-sm',
                 'hover:bg-accent/10 active:bg-accent/20',
                 'focus-visible:outline-2 focus-visible:outline-offset-2 ',
                 'focus-visible:outline-focus'
@@ -119,7 +119,7 @@ export function HexInput({ onParse }: HexInputProps) {
                 'flex-none',
                 'px-2 rounded-md',
                 'bg-transparent',
-                'text-fg-muted',
+                'text-fg-muted text-sm',
                 'border border-border',
                 'hover:bg-fg/8 active:bg-fg/15',
                 'focus-visible:outline-2 focus-visible:outline-offset-2 ',
