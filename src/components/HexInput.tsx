@@ -40,7 +40,7 @@ export function HexInput({ onParse }: HexInputProps) {
     : '';
 
   return (
-    <section className="p-4" aria-label="Hex Input">
+    <section aria-label="Hex Input">
       <form aria-label="Hex Input" className="flex gap-4">
         <textarea
           id="hex-input"
