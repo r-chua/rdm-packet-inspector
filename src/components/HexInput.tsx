@@ -53,6 +53,7 @@ export function HexInput({ onParse }: HexInputProps) {
             'shadow-sm',
             'resize-none caret-accent',
             'rdm-scroll',
+            'hover:border-fg/45',
             'focus-visible:border-focus',
             'focus-visible:outline-hidden',
             'font-mono tracking-[0.04em] leading-relaxed'
@@ -78,6 +79,7 @@ export function HexInput({ onParse }: HexInputProps) {
                 'rounded-md',
                 'bg-surface',
                 'border border-border sm:text-sm',
+                'hover:border-fg/45',
                 'focus-visible:outline-2 focus-visible:outline-offset-2',
                 'focus-visible:outline-focus'
               )}
