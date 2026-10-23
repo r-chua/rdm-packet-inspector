@@ -12,6 +12,10 @@ function getSubmitButton() {
   return screen.getByRole('button', { name: /submit/i });
 }
 
+function getFieldList() {
+  return screen.getByRole('listbox', { name: /field view/i });
+}
+
 async function renderAndParsePacket(
   hexString: string = examplePackets.GET_DEVICE_INFO
 ) {
@@ -103,8 +107,8 @@ describe('PacketInspector', () => {
     expect(screen.queryByText('Error:')).not.toBeInTheDocument();
 
     // Hex view and field view should be populated
-    expect(screen.getByText('DEVICE_INFO')).toBeInTheDocument();
-    expect(screen.getByText('GET_COMMAND')).toBeInTheDocument();
+    expect(within(getFieldList()).getByText('DEVICE_INFO')).toBeInTheDocument();
+    expect(within(getFieldList()).getByText('GET_COMMAND')).toBeInTheDocument();
   });
 
   it('displays error on invalid input', async () => {
@@ -160,8 +164,12 @@ describe('PacketInspector', () => {
     // No error message should be displayed
     expect(screen.queryByText('Error:')).not.toBeInTheDocument();
 
-    expect(screen.getByText('DISC_UNIQUE_BRANCH')).toBeInTheDocument();
-    expect(screen.getByText('DISCOVERY_COMMAND')).toBeInTheDocument();
+    expect(
+      within(getFieldList()).getByText('DISC_UNIQUE_BRANCH')
+    ).toBeInTheDocument();
+    expect(
+      within(getFieldList()).getByText('DISCOVERY_COMMAND')
+    ).toBeInTheDocument();
   });
 
   it('clears parse on reset button press', async () => {
@@ -170,8 +178,8 @@ describe('PacketInspector', () => {
     const inputElement = getInputElement();
 
     // Hex view and field view should be populated
-    expect(screen.getByText('DEVICE_INFO')).toBeInTheDocument();
-    expect(screen.getByText('GET_COMMAND')).toBeInTheDocument();
+    expect(within(getFieldList()).getByText('DEVICE_INFO')).toBeInTheDocument();
+    expect(within(getFieldList()).getByText('GET_COMMAND')).toBeInTheDocument();
 
     // Now click the reset button
     const resetButton = screen.getByRole('button', { name: /clear/i });
@@ -218,8 +226,8 @@ describe('PacketInspector', () => {
     const submitButton = getSubmitButton();
 
     // Hex view and field view should be populated
-    expect(screen.getByText('DEVICE_INFO')).toBeInTheDocument();
-    expect(screen.getByText('GET_COMMAND')).toBeInTheDocument();
+    expect(within(getFieldList()).getByText('DEVICE_INFO')).toBeInTheDocument();
+    expect(within(getFieldList()).getByText('GET_COMMAND')).toBeInTheDocument();
 
     // Now clear the input
     await user.clear(inputElement);

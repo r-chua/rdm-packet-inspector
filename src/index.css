@@ -19,6 +19,7 @@
   --focus: #5d5294;
   --selection: #5d5294;
   --highlight: color-mix(in srgb, var(--fg) 10%, transparent);
+  --success: #1f6042;
   --warning: #75490b;
   --danger: #7d2f31;
   --danger-vivid: #992a2c;
@@ -42,6 +43,7 @@
   --focus: #9184d9;
   --selection: #9184d9;
   --highlight: color-mix(in srgb, var(--fg) 10%, transparent);
+  --success: #7ecb9c;
   --warning: #e8ae4d;
   --danger: #f0b3b3;
   --danger-vivid: #e79393;
@@ -70,6 +72,7 @@
   --color-focus: var(--focus);
   --color-selection: var(--selection);
   --color-highlight: var(--highlight);
+  --color-success: var(--success);
   --color-warning: var(--warning);
   --color-danger: var(--danger);
   --color-danger-vivid: var(--danger-vivid);
