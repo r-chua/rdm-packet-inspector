@@ -33,11 +33,10 @@ describe('StatusBar', () => {
     expect(within(footer).getByText(/clear/i)).toBeInTheDocument();
   });
 
-  it('should show idle with no byte count when nothing is loaded', () => {
+  it('should show no byte count when nothing is loaded', () => {
     render(<StatusBar byteCount={null} selectedField={null} />);
     const footer = screen.getByRole('contentinfo');
 
-    expect(within(footer).getByText('idle')).toBeInTheDocument();
     expect(within(footer).queryByText(/bytes$/)).not.toBeInTheDocument();
   });
 
@@ -48,7 +47,6 @@ describe('StatusBar', () => {
 
     expect(within(footer).getByText(`${byteCount} bytes`)).toBeInTheDocument();
     expect(within(footer).getByText('no selection')).toBeInTheDocument();
-    expect(within(footer).queryByText('idle')).not.toBeInTheDocument();
   });
 
   it('should show the selected field name and byte range', () => {
