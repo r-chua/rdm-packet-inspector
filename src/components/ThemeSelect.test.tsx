@@ -120,4 +120,30 @@ describe('ThemeSelect', () => {
     // The theme should still be dark
     expect(document.documentElement.dataset.theme).toBe('dark');
   });
+
+  it('should be a single tab stop where arrow keys move the selection', async () => {
+    const user = userEvent.setup();
+    render(<ThemeSelect />);
+
+    // The whole group is one tab stop: Tab lands on the checked radio
+    await user.tab();
+    expect(screen.getByRole('radio', { name: /system/i })).toHaveFocus();
+
+    // Arrow keys move focus AND selection together
+    await user.keyboard('{ArrowRight}');
+    const lightRadio = screen.getByRole('radio', { name: /light/i });
+    expect(lightRadio).toHaveFocus();
+    expect(lightRadio).toBeChecked();
+    expect(document.documentElement.dataset.theme).toBe('light');
+    expect(localStorage.getItem('theme')).toBe('light');
+
+    // Arrow back re-selects system and clears the stored preference
+    await user.keyboard('{ArrowLeft}');
+    expect(screen.getByRole('radio', { name: /system/i })).toBeChecked();
+    expect(localStorage.getItem('theme')).toBeNull();
+
+    // Tab leaves the group: unchecked radios are not tab stops
+    await user.tab();
+    expect(document.body).toHaveFocus();
+  });
 });
