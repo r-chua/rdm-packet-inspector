@@ -7,6 +7,7 @@ import { parseRdmPacket } from '../parser/parse.ts';
 import { getFieldEntries, type FieldEntry } from '../parser/fields.ts';
 import { cn } from '../lib/utils.ts';
 import { ThemeSelect } from './ThemeSelect.tsx';
+import { StatusBar } from './StatusBar.tsx';
 
 export function PacketInspector() {
   const [parseResult, setParseResult] = React.useState<ParseResult | null>(
@@ -119,6 +120,11 @@ export function PacketInspector() {
           </div>
         </div>
       </div>
+
+      <StatusBar
+        byteCount={parseResult?.rawBytes?.length ?? null}
+        selectedField={selectedField}
+      />
     </div>
   );
 }
