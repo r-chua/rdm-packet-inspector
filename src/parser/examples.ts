@@ -81,3 +81,9 @@ export const GET_DEVICE_INFO_WITH_MESSAGE_COUNT =
 export const INVALID_RESPONSE_TYPE_RESPONSE =
   'cc 01 1a 01 04 12 34 56 78 01 04 98 76 54 32 25 ' +
   'ac 00 00 00 21 00 60 02 00 32 05 1f';
+
+// Example packet with an unknown direction (neither command nor response).
+// GET_DEVICE_INFO request with unknown direction and updated checksum.
+export const UNKNOWN_DIRECTION_PACKET =
+  'cc 01 18 01 04 98 76 54 32 01 04 12 34 56 78 25 ' +
+  '01 00 00 00 25 00 60 00 04 42';
