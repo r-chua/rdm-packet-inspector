@@ -8,6 +8,7 @@ import { getFieldEntries, type FieldEntry } from '../parser/fields.ts';
 import { cn } from '../lib/utils.ts';
 import { ThemeSelect } from './ThemeSelect.tsx';
 import { StatusBar } from './StatusBar.tsx';
+import { PacketSummary } from './PacketSummary.tsx';
 
 export function PacketInspector() {
   const [parseResult, setParseResult] = React.useState<ParseResult | null>(
@@ -58,6 +59,10 @@ export function PacketInspector() {
 
       <div className="flex flex-col flex-1 min-h-0 p-4 gap-4">
         <HexInput onParse={handleParse} />
+
+        <PacketSummary
+          packet={parseResult?.success ? parseResult.packet : null}
+        />
 
         <div role="alert">
           {parseResult && !parseResult.success && (
