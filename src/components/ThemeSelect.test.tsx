@@ -31,9 +31,9 @@ beforeEach(() => {
 describe('ThemeSelect', () => {
   it('should render the theme select component', () => {
     // Render the ThemeSelect component and check if it renders correctly
-    const { getByLabelText } = render(<ThemeSelect />);
-    const selectElement = getByLabelText(/Theme/i);
-    expect(selectElement).toBeInTheDocument();
+    render(<ThemeSelect />);
+    const radioGroup = screen.getByRole('group', { name: /theme/i });
+    expect(radioGroup).toBeInTheDocument();
   });
 
   it('should default to system theme when no preference is set', () => {
@@ -41,7 +41,7 @@ describe('ThemeSelect', () => {
 
     render(<ThemeSelect />);
 
-    expect(screen.getByLabelText(/theme/i)).toHaveValue('system');
+    expect(screen.getByRole('radio', { name: /system/i })).toBeChecked();
     expect(document.documentElement.dataset.theme).toBe('dark');
     expect(localStorage.getItem('theme')).toBeNull();
   });
@@ -49,15 +49,14 @@ describe('ThemeSelect', () => {
   it('should apply the selected theme and persist it in localStorage', async () => {
     render(<ThemeSelect />);
 
-    const selectElement = screen.getByLabelText<HTMLSelectElement>(/theme/i);
     // Change to dark theme
-    await userEvent.selectOptions(selectElement, 'dark');
+    await userEvent.click(screen.getByRole('radio', { name: /dark/i }));
 
     expect(document.documentElement.dataset.theme).toBe('dark');
     expect(localStorage.getItem('theme')).toBe('dark');
 
     // Change to light theme
-    await userEvent.selectOptions(selectElement, 'light');
+    await userEvent.click(screen.getByRole('radio', { name: /light/i }));
 
     expect(document.documentElement.dataset.theme).toBe('light');
     expect(localStorage.getItem('theme')).toBe('light');
@@ -67,19 +66,18 @@ describe('ThemeSelect', () => {
     localStorage.setItem('theme', 'dark');
     render(<ThemeSelect />);
     expect(document.documentElement.dataset.theme).toBe('dark');
-    expect(screen.getByLabelText(/theme/i)).toHaveValue('dark');
+    expect(screen.getByRole('radio', { name: /dark/i })).toBeChecked();
   });
 
   it('should clear the preference when system is selected', async () => {
     render(<ThemeSelect />);
 
-    const selectElement = screen.getByLabelText<HTMLSelectElement>(/theme/i);
     // Change to dark theme first
-    await userEvent.selectOptions(selectElement, 'dark');
+    await userEvent.click(screen.getByRole('radio', { name: /dark/i }));
     expect(localStorage.getItem('theme')).toBe('dark');
 
     // Now change to system theme
-    await userEvent.selectOptions(selectElement, 'system');
+    await userEvent.click(screen.getByRole('radio', { name: /system/i }));
     expect(localStorage.getItem('theme')).toBeNull();
   });
 
@@ -88,9 +86,8 @@ describe('ThemeSelect', () => {
 
     render(<ThemeSelect />);
 
-    const selectElement = screen.getByLabelText<HTMLSelectElement>(/theme/i);
     // Ensure it's set to system
-    expect(selectElement).toHaveValue('system');
+    expect(screen.getByRole('radio', { name: /system/i })).toBeChecked();
     expect(document.documentElement.dataset.theme).toBe('light');
 
     // Simulate a system theme change to dark
@@ -108,17 +105,16 @@ describe('ThemeSelect', () => {
 
     render(<ThemeSelect />);
 
-    const selectElement = screen.getByLabelText<HTMLSelectElement>(/theme/i);
     // Ensure it's set to dark
-    expect(selectElement).toHaveValue('dark');
+    expect(screen.getByRole('radio', { name: /dark/i })).toBeChecked();
     expect(document.documentElement.dataset.theme).toBe('dark');
 
-    // Simulate a system theme change to dark
+    // Simulate a system theme change to light
     fire(false);
     // The theme should still be dark
     expect(document.documentElement.dataset.theme).toBe('dark');
 
-    // Simulate a system theme change to light
+    // Simulate a system theme change to dark
     fire(true);
     // The theme should still be dark
     expect(document.documentElement.dataset.theme).toBe('dark');
