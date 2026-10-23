@@ -59,10 +59,9 @@ describe('PacketSummary', () => {
   it('should show the source and destination UIDs', () => {
     const { summary, packet } = renderSummary();
     expect(
-      within(summary).getByText(packet.sourceUid.value)
-    ).toBeInTheDocument();
-    expect(
-      within(summary).getByText(packet.destinationUid.value)
+      within(summary).getByText(
+        packet.sourceUid.value + ' → ' + packet.destinationUid.value
+      )
     ).toBeInTheDocument();
   });
 
