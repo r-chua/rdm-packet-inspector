@@ -26,6 +26,7 @@ function mockMatchMedia(matches: boolean) {
 beforeEach(() => {
   mockMatchMedia(false); // default to light theme for tests
   delete document.documentElement.dataset.theme; // reset theme before each test
+  localStorage.clear(); // stored preference must not leak between tests
 });
 
 describe('ThemeSelect', () => {
