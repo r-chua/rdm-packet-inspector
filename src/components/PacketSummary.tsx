@@ -33,7 +33,12 @@ export function PacketSummary({ packet }: PacketSummaryProps) {
       <dl className="flex items-center gap-3.5">
         <div className="shrink-0">
           <dt className="sr-only">Direction</dt>
-          <dd className={cn(PILL_STYLE, 'text-accent bg-accent/16')}>
+          <dd
+            className={cn(
+              PILL_STYLE,
+              'text-accent dark:text-accent-hover bg-accent/16'
+            )}
+          >
             {packet.direction.toUpperCase()}
           </dd>
         </div>
